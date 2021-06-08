@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/athleticsFragment"
+        android:name="com.example.fn_android.AthleticsFragment"
+        android:label="fragment_athletics"
+        tools:layout="@layout/fragment_athletics" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.fn_android.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_athleticsFragment"
+            app:destination="@id/athleticsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_transportationFragment"
+            app:destination="@id/transportationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_phoneFragment"
+            app:destination="@id/phoneFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_healthSafetyFragment"
+            app:destination="@id/healthSafetyFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_diningFragment"
+            app:destination="@id/diningFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_CLPFragment"
+            app:destination="@id/CLPFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CLPFragment"
+        android:name="com.example.fn_android.CLPFragment"
+        android:label="fragment_c_l_p"
+        tools:layout="@layout/fragment_c_l_p" />
+    <fragment
+        android:id="@+id/diningFragment"
+        android:name="com.example.fn_android.DiningFragment"
+        android:label="fragment_dining"
+        tools:layout="@layout/fragment_dining" />
+    <fragment
+        android:id="@+id/healthSafetyFragment"
+        android:name="com.example.fn_android.HealthSafetyFragment"
+        android:label="fragment_health_safety"
+        tools:layout="@layout/fragment_health_safety" />
+    <fragment
+        android:id="@+id/phoneFragment"
+        android:name="com.example.fn_android.PhoneFragment"
+        android:label="fragment_phone"
+        tools:layout="@layout/fragment_phone" />
+    <fragment
+        android:id="@+id/transportationFragment"
+        android:name="com.example.fn_android.TransportationFragment"
+        android:label="fragment_transportation"
+        tools:layout="@layout/fragment_transportation" />
+</navigation>
