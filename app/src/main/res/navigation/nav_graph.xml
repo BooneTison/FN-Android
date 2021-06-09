@@ -31,14 +31,23 @@
             android:id="@+id/action_homeFragment_to_diningFragment"
             app:destination="@id/diningFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_CLPFragment"
-            app:destination="@id/CLPFragment" />
+            android:id="@+id/action_homeFragment_to_EventsFragment"
+            app:destination="@id/EventsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_hoursFragment"
+            app:destination="@id/hoursFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_datesFragment"
+            app:destination="@id/datesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
-        android:id="@+id/CLPFragment"
-        android:name="com.example.fn_android.CLPFragment"
-        android:label="fragment_c_l_p"
-        tools:layout="@layout/fragment_c_l_p" />
+        android:id="@+id/EventsFragment"
+        android:name="com.example.fn_android.EventsFragment"
+        android:label="fragment_eventsp"
+        tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/diningFragment"
         android:name="com.example.fn_android.DiningFragment"
@@ -59,4 +68,19 @@
         android:name="com.example.fn_android.TransportationFragment"
         android:label="fragment_transportation"
         tools:layout="@layout/fragment_transportation" />
+    <fragment
+        android:id="@+id/hoursFragment"
+        android:name="com.example.fn_android.HoursFragment"
+        android:label="fragment_hours"
+        tools:layout="@layout/fragment_hours" />
+    <fragment
+        android:id="@+id/datesFragment"
+        android:name="com.example.fn_android.DatesFragment"
+        android:label="fragment_dates"
+        tools:layout="@layout/fragment_dates" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.fn_android.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>

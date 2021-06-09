@@ -5,19 +5,59 @@
     android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".HomeFragment">
 
     <ImageButton
-        android:id="@+id/phone_button"
+        android:id="@+id/transportation_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:contentDescription="@string/phone_text"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/transportation_text"
+        app:layout_constraintBottom_toTopOf="@+id/events_button"
+        app:layout_constraintEnd_toStartOf="@+id/dining_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_popup_reminder"
+        app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/dining_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:contentDescription="@string/dining_text"
+        app:layout_constraintBottom_toTopOf="@+id/athletics_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/transportation_button"
-        app:srcCompat="@android:drawable/stat_sys_phone_call"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/hours_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:contentDescription="@string/hours_text"
+        android:src="@android:drawable/ic_menu_recent_history"
+        app:layout_constraintBottom_toTopOf="@+id/dates_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dining_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/events_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:contentDescription="@string/events_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/athletics_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_btn_speak_now"
         app:tint="@color/furman_purple" />
 
     <ImageButton
@@ -28,49 +68,23 @@
         android:contentDescription="@string/athletics_text"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/transportation_button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/btn_star"
         app:tint="@color/furman_purple" />
 
     <ImageButton
-        android:id="@+id/transportation_button"
+        android:id="@+id/dates_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
-        android:contentDescription="@string/transportation_text"
+        android:contentDescription="@string/dates_text"
+        android:src="@android:drawable/ic_menu_my_calendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/athletics_button"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_dialog_map"
-        app:tint="@color/furman_purple" />
-
-    <ImageButton
-        android:id="@+id/dining_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:contentDescription="@string/dining_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/transportation_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_dialog_info"
-        app:tint="@color/furman_purple" />
-
-    <ImageButton
-        android:id="@+id/clp_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:contentDescription="@string/clp_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/phone_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/athletics_button"
-        app:srcCompat="@android:drawable/ic_btn_speak_now"
         app:tint="@color/furman_purple" />
 
     <ImageButton
@@ -80,10 +94,171 @@
         android:background="@color/transparent"
         android:contentDescription="@string/health_safety_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/phone_button"
-        app:layout_constraintTop_toBottomOf="@+id/dining_button"
+        app:layout_constraintEnd_toStartOf="@+id/map_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/events_button"
         app:srcCompat="@android:drawable/stat_notify_error"
         app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/map_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:contentDescription="@string/map_text"
+        android:src="@android:drawable/ic_dialog_map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/athletics_button"
+        app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/phone_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:contentDescription="@string/phone_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/map_button"
+        app:layout_constraintTop_toBottomOf="@+id/dates_button"
+        app:srcCompat="@android:drawable/stat_sys_phone_call"
+        app:tint="@color/furman_purple" />
+
+    <TextView
+        android:id="@+id/transportation_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/transportation_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/dining_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transportation_button" />
+
+    <TextView
+        android:id="@+id/dining_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/dining_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/hours_button"
+        app:layout_constraintStart_toEndOf="@+id/transportation_button"
+        app:layout_constraintTop_toBottomOf="@+id/dining_button" />
+
+    <TextView
+        android:id="@+id/hours_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/hours_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dining_button"
+        app:layout_constraintTop_toBottomOf="@+id/hours_button" />
+
+    <TextView
+        android:id="@+id/events_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/events_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/athletics_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/events_button" />
+
+    <TextView
+        android:id="@+id/athletics_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/athletics_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/dates_button"
+        app:layout_constraintStart_toEndOf="@+id/events_button"
+        app:layout_constraintTop_toBottomOf="@+id/athletics_button" />
+
+    <TextView
+        android:id="@+id/dates_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/dates_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/athletics_button"
+        app:layout_constraintTop_toBottomOf="@+id/dates_button" />
+
+    <TextView
+        android:id="@+id/health_safety_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/health_safety_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/map_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/health_safety_button" />
+
+    <TextView
+        android:id="@+id/map_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/map_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/phone_button"
+        app:layout_constraintStart_toEndOf="@+id/health_safety_button"
+        app:layout_constraintTop_toBottomOf="@+id/map_button" />
+
+    <TextView
+        android:id="@+id/phone_btext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="sans-serif"
+        android:text="@string/phone_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/map_button"
+        app:layout_constraintTop_toBottomOf="@+id/phone_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

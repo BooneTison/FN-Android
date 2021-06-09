@@ -10,22 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-    public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -43,52 +31,49 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.athletics_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_athleticsFragment);
-            }
-        });
+        view.findViewById(R.id.athletics_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_athleticsFragment));
+        view.findViewById(R.id.athletics_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_athleticsFragment));
 
-        view.findViewById(R.id.clp_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_CLPFragment);
-            }
-        });
+        view.findViewById(R.id.events_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_EventsFragment));
+        view.findViewById(R.id.events_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_EventsFragment));
 
-        view.findViewById(R.id.dining_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_diningFragment);
-            }
-        });
+        view.findViewById(R.id.dining_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_diningFragment));
+        view.findViewById(R.id.dining_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_diningFragment));
 
-        view.findViewById(R.id.health_safety_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_healthSafetyFragment);
-            }
-        });
+        view.findViewById(R.id.health_safety_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_healthSafetyFragment));
+        view.findViewById(R.id.health_safety_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_healthSafetyFragment));
 
-        view.findViewById(R.id.phone_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_phoneFragment);
-            }
-        });
+        view.findViewById(R.id.phone_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_phoneFragment));
+        view.findViewById(R.id.phone_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_phoneFragment));
 
-        view.findViewById(R.id.transportation_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this)
-                        .navigate(R.id.action_homeFragment_to_transportationFragment);
-            }
-        });
+        view.findViewById(R.id.transportation_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_transportationFragment));
+        view.findViewById(R.id.transportation_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_transportationFragment));
+
+        view.findViewById(R.id.hours_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_hoursFragment));
+        view.findViewById(R.id.hours_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_hoursFragment));
+
+        view.findViewById(R.id.dates_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_datesFragment));
+        view.findViewById(R.id.dates_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_datesFragment));
+
+        view.findViewById(R.id.map_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_mapFragment));
+        view.findViewById(R.id.map_btext).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(R.id.action_homeFragment_to_mapFragment));
     }
 }
