@@ -14,11 +14,12 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/transportation_text"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/events_button"
         app:layout_constraintEnd_toStartOf="@+id/dining_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_popup_reminder"
+        app:srcCompat="@drawable/ic_baseline_directions_car_24"
         app:tint="@color/furman_purple" />
 
     <ImageButton
@@ -27,11 +28,12 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/dining_text"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/athletics_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:srcCompat="@drawable/ic_baseline_local_dining_24"
         app:tint="@color/furman_purple" />
 
     <ImageButton
@@ -40,7 +42,8 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/hours_text"
-        android:src="@android:drawable/ic_menu_recent_history"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_baseline_access_time_24"
         app:layout_constraintBottom_toTopOf="@+id/dates_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dining_button"
@@ -53,11 +56,12 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/events_text"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/athletics_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_btn_speak_now"
+        app:srcCompat="@drawable/ic_baseline_calendar_today_24"
         app:tint="@color/furman_purple" />
 
     <ImageButton
@@ -80,6 +84,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/dates_text"
+        android:scaleType="fitXY"
         android:src="@android:drawable/ic_menu_my_calendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,6 +98,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/health_safety_text"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/map_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,6 +112,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/map_text"
+        android:scaleType="fitXY"
         android:src="@android:drawable/ic_dialog_map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,6 +126,7 @@
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:contentDescription="@string/phone_text"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/map_button"
