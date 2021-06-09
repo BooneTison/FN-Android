@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/EventsFragment"
         android:name="com.example.fn_android.EventsFragment"
-        android:label="fragment_eventsp"
+        android:label="fragment_events"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/diningFragment"
