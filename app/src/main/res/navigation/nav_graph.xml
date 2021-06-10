@@ -9,7 +9,11 @@
         android:id="@+id/athleticsFragment"
         android:name="com.example.fn_android.AthleticsFragment"
         android:label="fragment_athletics"
-        tools:layout="@layout/fragment_athletics" />
+        tools:layout="@layout/fragment_athletics" >
+        <action
+            android:id="@+id/action_athleticsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.fn_android.HomeFragment"
@@ -42,45 +46,85 @@
         <action
             android:id="@+id/action_homeFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_itemFragment"
+            app:destination="@id/itemFragment" />
     </fragment>
     <fragment
         android:id="@+id/EventsFragment"
         android:name="com.example.fn_android.EventsFragment"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events" />
+        tools:layout="@layout/fragment_events" >
+        <action
+            android:id="@+id/action_EventsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/diningFragment"
         android:name="com.example.fn_android.DiningFragment"
         android:label="fragment_dining"
-        tools:layout="@layout/fragment_dining" />
+        tools:layout="@layout/fragment_dining" >
+        <action
+            android:id="@+id/action_diningFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/healthSafetyFragment"
         android:name="com.example.fn_android.HealthSafetyFragment"
         android:label="fragment_health_safety"
-        tools:layout="@layout/fragment_health_safety" />
+        tools:layout="@layout/fragment_health_safety" >
+        <action
+            android:id="@+id/action_healthSafetyFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/phoneFragment"
         android:name="com.example.fn_android.PhoneFragment"
         android:label="fragment_phone"
-        tools:layout="@layout/fragment_phone" />
+        tools:layout="@layout/fragment_phone" >
+        <action
+            android:id="@+id/action_phoneFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/transportationFragment"
         android:name="com.example.fn_android.TransportationFragment"
         android:label="fragment_transportation"
-        tools:layout="@layout/fragment_transportation" />
+        tools:layout="@layout/fragment_transportation" >
+        <action
+            android:id="@+id/action_transportationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/hoursFragment"
         android:name="com.example.fn_android.HoursFragment"
         android:label="fragment_hours"
-        tools:layout="@layout/fragment_hours" />
+        tools:layout="@layout/fragment_hours" >
+        <action
+            android:id="@+id/action_hoursFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/datesFragment"
         android:name="com.example.fn_android.DatesFragment"
         android:label="fragment_dates"
-        tools:layout="@layout/fragment_dates" />
+        tools:layout="@layout/fragment_dates" >
+        <action
+            android:id="@+id/action_datesFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.fn_android.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="com.example.fn_android.ItemFragment"
+        android:label="fragment_item_list"
+        tools:layout="@layout/fragment_item_list" />
 </navigation>
