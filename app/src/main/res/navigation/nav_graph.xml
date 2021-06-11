@@ -46,9 +46,6 @@
         <action
             android:id="@+id/action_homeFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_itemFragment"
-            app:destination="@id/itemFragment" />
     </fragment>
     <fragment
         android:id="@+id/EventsFragment"
@@ -99,7 +96,7 @@
         android:id="@+id/hoursFragment"
         android:name="com.example.fn_android.HoursFragment"
         android:label="fragment_hours"
-        tools:layout="@layout/fragment_hours" >
+        tools:layout="@layout/fragment_hours_list" >
         <action
             android:id="@+id/action_hoursFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -122,9 +119,4 @@
             android:id="@+id/action_mapFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/itemFragment"
-        android:name="com.example.fn_android.ItemFragment"
-        android:label="fragment_item_list"
-        tools:layout="@layout/fragment_item_list" />
 </navigation>

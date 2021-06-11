@@ -2,6 +2,8 @@ package com.example.fn_android;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +25,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A fragment representing a list of Items.
@@ -76,41 +81,24 @@ public class ItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            // Use this to change content
-            String str = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
-            List<String> s = Arrays.asList(new String[]{"alpha", "beta", "charlie", "delta",str});
-            //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s));
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+            executor.execute(() -> {
+                // Use this to change content
+                List<String> s = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                //List<String> s = Arrays.asList(new String[]{"alpha", "beta", "charlie", "delta",str});
+
+                handler.post(() -> {
+                    //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
+                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s,-1));
+                });
+            });
+
         }
         return view;
     }
 
-    public String getJSON() throws IOException, JSONException {
-        URL url = new URL("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        InputStream temp = connection.getInputStream();
-        InputStream inputStream = new BufferedInputStream(temp);
-
-        /**BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        line = sb.toString();
-        connection.disconnect();
-        inputStream.close();
-        sb.delete(0,sb.length());*/
-
-        /**JSONTokener tokener = new JSONTokener(line);
-        JSONObject obj = new JSONObject(tokener);
-        JSONArray array = obj.getJSONArray("buildingID");
-        String id = array.getString(0);
-        return id;*/
-        return "";
-    }
-
-    public static String makeServiceCall (String reqUrl) {
+    public static List<String> makeServiceCall (String reqUrl) {
         String response = "nada";
         String line = "No Data";
         try {
@@ -118,17 +106,28 @@ public class ItemFragment extends Fragment {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(connection.getInputStream());
             line = "pls";
-            /**BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
             line = sb.toString();
             connection.disconnect();
-            inputStream.close();*/
+            in.close();
+
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                list.add(jsonObject.getString("name"));
+            }
+            return list;
         } catch (Exception e) {
             System.out.println (e);
         }
-        return line;
+        return null;
     }
+
 }

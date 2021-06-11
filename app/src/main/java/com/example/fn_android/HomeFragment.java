@@ -76,8 +76,5 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.map_button_text).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
                 .navigate(R.id.action_homeFragment_to_mapFragment));
 
-        view.findViewById(R.id.button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_itemFragment));
-
     }
 }
