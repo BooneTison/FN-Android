@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -85,18 +87,23 @@ public class HoursFragment extends Fragment {
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
                 // Use this to change content
-                List<String> s = Arrays.asList(new String[]{"ATM","Barnes & Noble","Counseling Center","Earle Student Health Center",
-                "Enrollment Services","James B. Duke Library","Physical Activities Center","Post (Office) & Print Express",
-                "Trone Student Center"});
+                List<String> s = Arrays.asList("ATM","Barnes & Noble","Counseling Center","Earle Student Health Center",
+                        "Enrollment Services","James B. Duke Library","Physical Activities Center","Post (Office) & Print Express",
+                        "Trone Student Center");
 
                 handler.post(() -> {
                     //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
+                    recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
                     recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s,0));
                 });
             });
 
+
+
         }
         return view;
     }
+
+
 
 }
