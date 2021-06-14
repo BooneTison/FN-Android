@@ -12,19 +12,23 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:layout_weight="1"
+        android:clickable="true"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/furman_purple"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:focusable="true" />
 
     <TextView
         android:id="@+id/item_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:clickable="true"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="@color/furman_purple"
-        android:textStyle="bold" />
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:focusable="true" />
 
     <ImageButton
         android:id="@+id/arrowButton"
@@ -34,6 +38,7 @@
         android:background="@color/transparent"
         android:clickable="true"
         app:srcCompat="@drawable/ic_baseline_navigate_next_24"
-        app:tint="#8BA39C9C" />
+        app:tint="#8BA39C9C"
+        android:focusable="true" />
 
 </LinearLayout>

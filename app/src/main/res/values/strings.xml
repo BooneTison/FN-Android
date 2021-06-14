@@ -10,4 +10,7 @@
     <string name="hours_text">Hours</string>
     <string name="dates_text">Academic Dates</string>
     <string name="map_text">Campus Map</string>
+    <string name="daily_hours_text">DAILY HOURS:</string>
+    <string name="map_view_text">Map view </string>
+
 </resources>

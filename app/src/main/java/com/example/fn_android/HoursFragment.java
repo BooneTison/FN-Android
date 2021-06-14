@@ -87,9 +87,9 @@ public class HoursFragment extends Fragment {
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
                 // Use this to change content
-                List<String> s = Arrays.asList("ATM","Barnes & Noble","Counseling Center","Earle Student Health Center",
-                        "Enrollment Services","James B. Duke Library","Physical Activities Center","Post (Office) & Print Express",
-                        "Trone Student Center");
+                List<String[]> s = (List<String[]>) Arrays.asList(new String[]{"ATM", "15"},new String[]{"Barnes & Noble", "3"},new String[]{"Counseling Center", "8"}
+                ,new String[]{"Earle Student Health Center", "1"}, new String[]{"Enrollment Services", "7"},new String[]{"James B. Duke Library", "6"}
+                ,new String[]{"Physical Activities Center", "5"},new String[]{"Post (Office) & Print Express", "4"}, new String[]{"Trone Student Center", "2"});
 
                 handler.post(() -> {
                     //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
@@ -103,7 +103,5 @@ public class HoursFragment extends Fragment {
         }
         return view;
     }
-
-
 
 }

@@ -90,7 +90,7 @@ public class ItemFragment extends Fragment {
 
                 handler.post(() -> {
                     //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
-                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s,-1));
+                    //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s,-1));
                 });
             });
 
@@ -105,7 +105,6 @@ public class ItemFragment extends Fragment {
             URL url = new URL(reqUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(connection.getInputStream());
-            line = "pls";
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
