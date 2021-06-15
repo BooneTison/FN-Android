@@ -1,8 +1,6 @@
 package com.example.fn_android;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -22,14 +20,14 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
+public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecyclerViewAdapter.ViewHolder> {
 
     private final List<String[]> ourList;
     private final int type;
     private final int  HOURS = 0;
     private final int HOURS_DETAIL = 1;
 
-    public MyItemRecyclerViewAdapter(List<String[]> items, int fragType) {
+    public HoursRecyclerViewAdapter(List<String[]> items, int fragType) {
         type = fragType;
         ourList = items;
     }

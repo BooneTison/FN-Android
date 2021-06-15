@@ -1,23 +1,29 @@
 package com.example.fn_android;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -26,9 +32,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,6 +74,7 @@ public class HoursDetailFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
     }
 
     @Override
@@ -102,7 +109,8 @@ public class HoursDetailFragment extends Fragment {
             String locString = "";
             List<String[]> hoursList = new ArrayList<>();
             try {
-                String service = makeServiceCallByName("http://cs.furman.edu/~csdaemon/FUNow/contactsGet.php",buildingName);
+                // Get the phone number
+                String service = makeServiceCallByID("http://cs.furman.edu/~csdaemon/FUNow/contactsGet.php",buildingID);
                 if (!service.equals("]")) {
                     JSONArray phoneArray = new JSONArray(service);
                     JSONObject phoneObject = phoneArray.getJSONObject(0);
@@ -110,6 +118,7 @@ public class HoursDetailFragment extends Fragment {
                     phoneString = phoneString.substring(0,3) + "." + phoneString.substring(3,6) + "." + phoneString.substring(6);
                 }
 
+                // Get the location
                 service = makeServiceCallByID("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php",buildingID);
                 if (!service.equals("]")) {
                     JSONArray locArray = new JSONArray(service);
@@ -118,6 +127,9 @@ public class HoursDetailFragment extends Fragment {
                     locString = "Location: " + locString;
                 }
 
+                if (buildingName.equals("ATM")) buildingID = "2"; // ATM does not have listed hours, uses Trone's hours
+
+                // Get the hours
                 service = makeServiceCallByID("https://cs.furman.edu/~csdaemon/FUNow/hoursGet.php",buildingID);
                 if(!service.equals("]")) {
                     List<HoursTime> list = new ArrayList<>();
@@ -145,7 +157,8 @@ public class HoursDetailFragment extends Fragment {
             String finalPhoneString = phoneString;
             String finalLocString = locString;
             handler.post(() -> {
-                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(hoursList,1));
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerView.setAdapter(new HoursRecyclerViewAdapter(hoursList,1));
                 phone.setText(finalPhoneString);
                 location.setText(finalLocString);
             });
@@ -189,39 +202,24 @@ public class HoursDetailFragment extends Fragment {
         }
     }
 
-    public static String makeServiceCallByName (String reqUrl, String key) {
-        String response = "nada";
-        String line = "No Data";
-        try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            line = sb.toString();
-            connection.disconnect();
-            in.close();
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        ImageButton button = (ImageButton) view.findViewById(R.id.phoneButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                TextView textView = (TextView) getView().findViewById(R.id.phonenumber);
+                String s = textView.getText().toString();
+                s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
 
-            String str = "[";
-            int brack = line.indexOf("[");
-            line = line.substring(brack,line.length()-1);
-            JSONArray jsonArray = new JSONArray(line);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString("name").equals(key)) {
-                    str += jsonObject.toString() + ",";
+                if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
+                startActivity(callIntent);
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "I died";
-        }
+        });
     }
 
 }

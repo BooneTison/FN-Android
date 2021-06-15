@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,17 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,14 +82,23 @@ public class HoursFragment extends Fragment {
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
                 // Use this to change content
-                List<String[]> s = (List<String[]>) Arrays.asList(new String[]{"ATM", "15"},new String[]{"Barnes & Noble", "3"},new String[]{"Counseling Center", "8"}
-                ,new String[]{"Earle Student Health Center", "1"}, new String[]{"Enrollment Services", "7"},new String[]{"James B. Duke Library", "6"}
-                ,new String[]{"Physical Activities Center", "5"},new String[]{"Post (Office) & Print Express", "4"}, new String[]{"Trone Student Center", "2"});
+                List<String[]> s = new ArrayList<>();
+                try {
+                    String service = makeServiceCallByHasHours("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                    if (!service.equals("]")) {
+                        JSONArray jsonArray = new JSONArray(service);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            s.add(new String[]{jsonObject.getString("name"),jsonObject.getString("buildingID")});
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 handler.post(() -> {
-                    //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS));
                     recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-                    recyclerView.setAdapter(new MyItemRecyclerViewAdapter(s,0));
+                    recyclerView.setAdapter(new HoursRecyclerViewAdapter(s,0));
                 });
             });
 
@@ -102,6 +106,41 @@ public class HoursFragment extends Fragment {
 
         }
         return view;
+    }
+
+    public static String makeServiceCallByHasHours (String reqUrl) {
+        String response = "nada";
+        String line = "No Data";
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            String str = "[";
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.getString("hasHours").equals("1")) {
+                    str += jsonObject.toString() + ",";
+                }
+            }
+            str = str.substring(0,str.length()-1);
+            str += "]";
+            return str;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
     }
 
 }

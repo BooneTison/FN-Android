@@ -89,7 +89,8 @@
         app:layout_constraintStart_toEndOf="@+id/phonenumber"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_local_phone_24"
-        app:tint="@color/furman_purple" />
+        app:tint="@color/furman_purple"
+        android:contentDescription="@string/phone_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

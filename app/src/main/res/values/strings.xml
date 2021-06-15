@@ -12,5 +12,6 @@
     <string name="map_text">Campus Map</string>
     <string name="daily_hours_text">DAILY HOURS:</string>
     <string name="map_view_text">Map view </string>
+    <string name="action_settings">Settings</string>
 
 </resources>
