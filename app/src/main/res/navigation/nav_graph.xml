@@ -100,6 +100,9 @@
         <action
             android:id="@+id/action_hoursFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_hoursFragment_to_hoursDetailFragment"
+            app:destination="@id/hoursDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/datesFragment"
@@ -118,5 +121,20 @@
         <action
             android:id="@+id/action_mapFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hoursDetailFragment"
+        android:name="com.example.fn_android.HoursDetailFragment"
+        android:label="fragment_hours_detail_list"
+        tools:layout="@layout/fragment_hours_detail_list" >
+        <action
+            android:id="@+id/action_hoursDetailFragment_to_hoursFragment"
+            app:destination="@id/hoursFragment" />
+        <argument
+            android:name="hours_buildingID"
+            app:argType="string" />
+        <argument
+            android:name="hours_name"
+            app:argType="string" />
     </fragment>
 </navigation>
