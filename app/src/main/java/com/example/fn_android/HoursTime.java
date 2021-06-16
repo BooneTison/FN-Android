@@ -2,6 +2,9 @@ package com.example.fn_android;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class HoursTime implements Comparable<HoursTime>{
     private final int startHour;
     private final int startMin;
@@ -53,12 +56,12 @@ public class HoursTime implements Comparable<HoursTime>{
         }
     }
 
-    public String startM() {
+    public String startAMPM() {
         if (startHour < 12) return "am";
         return "pm";
     }
 
-    public String endM() {
+    public String endAMPM() {
         if (endHour < 12) return "am";
         return "pm";
     }
@@ -77,11 +80,11 @@ public class HoursTime implements Comparable<HoursTime>{
     public String toString() {
         if (startHour != 0) {
             if (meal.equals("null")) {
-                return day + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startM()
-                        + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endM();
+                return day + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startAMPM()
+                        + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endAMPM();
             }
-            return meal + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startM()
-                    + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endM();
+            return meal + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startAMPM()
+                    + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endAMPM();
         }
         return "Closed " + day;
     }
@@ -101,7 +104,30 @@ public class HoursTime implements Comparable<HoursTime>{
 
     public boolean isPlaceOpen(HoursTime restHours) {
         // The time of this should have the same start and end
+        if (this.startHour != this.endHour || this.startMin != this.endMin)
+            return false;
+        if (restHours.meal.equals("null"))
+            return isInDayRange(this.day, restHours.day)
+                    && isInTimeRange(restHours.startHour,restHours.startMin,restHours.endHour,restHours.endMin);
+        else
+            return isInTimeRange(restHours.startHour,restHours.startMin,restHours.endHour,restHours.endMin);
+    }
 
-        return false;
+    private boolean isInDayRange(String day, String range) {
+        if (!range.contains("-"))
+            return day.equals(range);
+        else {
+            List<String> arr = Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun");
+            int dayIndex = arr.indexOf(day);
+            int startIndex = arr.indexOf(range.substring(0,3));
+            int endIndex = arr.indexOf(range.substring(4));
+            return dayIndex >= startIndex && dayIndex <= endIndex;
+        }
+    }
+
+    private boolean isInTimeRange(int sHour, int sMin, int eHour, int eMin) {
+        if (this.startHour == sHour) return this.startMin >= sMin;
+        if (this.startHour == eHour) return this.startMin <= eMin;
+        return this.startHour > sHour && this.startHour < eHour;
     }
 }
