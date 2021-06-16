@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fn_android.databinding.FragmentHoursBinding;
+import com.example.fn_android.databinding.FragmentDiningBinding;
+import com.example.fn_android.databinding.FragmentDiningDetailBinding;
 import com.example.fn_android.databinding.FragmentHoursDetailBinding;
 import com.example.fn_android.databinding.FragmentItemBinding;
 import com.example.fn_android.placeholder.PlaceholderContent.PlaceholderItem;
@@ -20,12 +21,12 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecyclerViewAdapter.ViewHolder> {
+public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecyclerViewAdapter.ViewHolder> {
 
     private final List<String[]> ourList;
     private final int type;
 
-    public HoursRecyclerViewAdapter(List<String[]> items, int fragType) {
+    public DiningRecyclerViewAdapter(List<String[]> items, int fragType) {
         type = fragType;
         ourList = items;
     }
@@ -34,12 +35,12 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewHolder viewHolder;
-        int HOURS = 0;
-        int HOURS_DETAIL = 1;
-        if (type == HOURS)  // Hours Fragment
-            viewHolder = new ViewHolder(FragmentHoursBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-        else if (type == HOURS_DETAIL) // Hours detail fragment
-            viewHolder = new ViewHolder(FragmentHoursDetailBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        int DINING = 0;
+        int DINING_DETAIL = 1;
+        if (type == DINING)  // Dining Fragment
+            viewHolder = new ViewHolder(FragmentDiningBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        else if (type == DINING_DETAIL) // Dining detail fragment
+            viewHolder = new ViewHolder(FragmentDiningDetailBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         else {
             viewHolder = new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
@@ -58,16 +59,14 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
             Bundle bundle = new Bundle();
             bundle.putString("id",holder.mIdView.getText().toString());
             bundle.putString("name",holder.mContentView.getText().toString());
-            HoursDetailFragment hoursDetailFragment = new HoursDetailFragment();
-            hoursDetailFragment.setArguments(bundle);
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,hoursDetailFragment).addToBackStack(null).commit();
+            DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
+            diningDetailFragment.setArguments(bundle);
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,diningDetailFragment).addToBackStack(null).commit();
         });
     }
 
     @Override
     public int getItemCount() {
-
-        //return mValues.size();
         return ourList.size();
     }
 
@@ -83,15 +82,15 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
             mContentView = binding.content;
         }
 
-        // Hours Fragment
-        public ViewHolder(FragmentHoursBinding binding) {
+        // Dining Fragment
+        public ViewHolder(FragmentDiningBinding binding) {
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;
         }
 
         // Hours Detail Fragment
-        public ViewHolder(FragmentHoursDetailBinding binding) {
+        public ViewHolder(FragmentDiningDetailBinding binding) {
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;

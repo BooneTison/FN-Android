@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".HoursDetailFragment">
+    tools:context=".DiningDetailFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/halfScreenGuideline"
@@ -18,24 +18,36 @@
         android:id="@+id/menuList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="125dp"
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/halfScreenGuideline"
-        tools:context=".HoursDetailFragment"
-        tools:listitem="@layout/fragment_hours_detail" />
+        tools:context=".DiningDetailFragment"
+        tools:listitem="@layout/fragment_dining_detail" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hoursList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@+id/menuText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hoursText"
+        tools:context=".DiningDetailFragment"
+        tools:listitem="@layout/fragment_dining_detail" />
 
     <TextView
-        android:id="@+id/dailyHours"
+        android:id="@+id/regularText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/furman_gray"
         android:fontFamily="sans-serif"
-        android:text="@string/daily_hours_text"
+        android:text="@string/regular_menu_text"
         android:textColor="@color/furman_purple"
-        android:textSize="28sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="sans"
         app:layout_constraintBottom_toTopOf="@+id/menuList"
@@ -51,9 +63,10 @@
         android:text="@string/map_view_text"
         android:textColor="@color/white"
         app:backgroundTint="@color/furman_purple"
-        app:layout_constraintBottom_toTopOf="@+id/dailyHours"
+        app:layout_constraintBottom_toTopOf="@+id/regularText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/location"
@@ -68,29 +81,29 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/phonenumber"
+        android:id="@+id/menuText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/menu_text"
         android:textColor="@color/furman_purple"
-        android:textSize="24sp"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/regularText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/hoursText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hours_dining_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/phoneButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="12dp"
-        android:background="@color/transparent"
-        app:layout_constraintStart_toEndOf="@+id/phonenumber"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_local_phone_24"
-        app:tint="@color/furman_purple"
-        android:contentDescription="@string/phone_text" />
+        app:layout_constraintTop_toBottomOf="@+id/mapviewButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -97,7 +97,7 @@ public class HoursFragment extends Fragment {
                 }
 
                 handler.post(() -> {
-                    recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                    recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                     recyclerView.setAdapter(new HoursRecyclerViewAdapter(s,0));
                 });
             });
@@ -109,8 +109,7 @@ public class HoursFragment extends Fragment {
     }
 
     public static String makeServiceCallByHasHours (String reqUrl) {
-        String response = "nada";
-        String line = "No Data";
+        String line;
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

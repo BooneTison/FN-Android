@@ -13,21 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -85,7 +70,7 @@ public class ItemFragment extends Fragment {
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
                 // Use this to change content
-                List<String> s = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                //List<String> s = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
                 //List<String> s = Arrays.asList(new String[]{"alpha", "beta", "charlie", "delta",str});
 
                 handler.post(() -> {
@@ -96,37 +81,6 @@ public class ItemFragment extends Fragment {
 
         }
         return view;
-    }
-
-    public static List<String> makeServiceCall (String reqUrl) {
-        String response = "nada";
-        String line = "No Data";
-        try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            line = sb.toString();
-            connection.disconnect();
-            in.close();
-
-            int brack = line.indexOf("[");
-            line = line.substring(brack,line.length()-1);
-            JSONArray jsonArray = new JSONArray(line);
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                list.add(jsonObject.getString("name"));
-            }
-            return list;
-        } catch (Exception e) {
-            System.out.println (e);
-        }
-        return null;
     }
 
 }

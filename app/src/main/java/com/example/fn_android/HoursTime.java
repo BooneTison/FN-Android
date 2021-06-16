@@ -9,6 +9,7 @@ public class HoursTime implements Comparable<HoursTime>{
     private final int endMin;
     private final int dayOrder;
     private final String day;
+    private final String meal;
 
     public HoursTime(String start, String end, String dayOrder, String day) {
         if (start.equals("null")) {
@@ -18,6 +19,7 @@ public class HoursTime implements Comparable<HoursTime>{
             this.startMin = 0;
             this.endHour = 0;
             this.endMin = 0;
+            meal = "null";
         }
         else {
             this.startHour = Integer.parseInt(start.substring(0, 2));
@@ -26,6 +28,28 @@ public class HoursTime implements Comparable<HoursTime>{
             this.endMin = Integer.parseInt(end.substring(3, 5));
             this.dayOrder = Integer.parseInt(dayOrder);
             this.day = day;
+            meal = "null";
+        }
+    }
+
+    public HoursTime(String start, String end, String dayOrder, String day, String meal) {
+        if (start.equals("null")) {
+            this.dayOrder = Integer.parseInt(dayOrder);
+            this.day = day;
+            this.startHour = 0;
+            this.startMin = 0;
+            this.endHour = 0;
+            this.endMin = 0;
+            this.meal = meal;
+        }
+        else {
+            this.startHour = Integer.parseInt(start.substring(0, 2));
+            this.startMin = Integer.parseInt(start.substring(3, 5));
+            this.endHour = Integer.parseInt(end.substring(0, 2));
+            this.endMin = Integer.parseInt(end.substring(3, 5));
+            this.dayOrder = Integer.parseInt(dayOrder);
+            this.day = day;
+            this.meal = meal;
         }
     }
 
@@ -52,9 +76,12 @@ public class HoursTime implements Comparable<HoursTime>{
     @NonNull
     public String toString() {
         if (startHour != 0) {
-            return day + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startM()
-                    + " to " +
-                    to12Hour(endHour) + ":" + minConvert(endMin) + endM();
+            if (meal.equals("null")) {
+                return day + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startM()
+                        + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endM();
+            }
+            return meal + " from " + to12Hour(startHour) + ":" + minConvert(startMin) + startM()
+                    + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endM();
         }
         return "Closed " + day;
     }
@@ -70,5 +97,11 @@ public class HoursTime implements Comparable<HoursTime>{
             else if (this.startMin > o.startMin) return 1; // Equal hours, greater min
             return 0; // Equal time
         }
+    }
+
+    public boolean isPlaceOpen(HoursTime restHours) {
+        // The time of this should have the same start and end
+
+        return false;
     }
 }

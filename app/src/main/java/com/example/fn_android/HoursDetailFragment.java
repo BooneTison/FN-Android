@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -34,7 +33,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -91,11 +89,10 @@ public class HoursDetailFragment extends Fragment {
         // Set non-list content
         TextView phone = view.getRootView().findViewById(R.id.phonenumber);
         TextView location = view.getRootView().findViewById(R.id.location);
-        List<String[]> hours = new ArrayList<>();
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.categories);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.menuList);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -157,7 +154,7 @@ public class HoursDetailFragment extends Fragment {
             String finalPhoneString = phoneString;
             String finalLocString = locString;
             handler.post(() -> {
-                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 recyclerView.setAdapter(new HoursRecyclerViewAdapter(hoursList,1));
                 phone.setText(finalPhoneString);
                 location.setText(finalLocString);
@@ -168,8 +165,7 @@ public class HoursDetailFragment extends Fragment {
     }
 
     public static String makeServiceCallByID (String reqUrl, String key) {
-        String response = "nada";
-        String line = "No Data";
+        String line;
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -204,21 +200,18 @@ public class HoursDetailFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         ImageButton button = (ImageButton) view.findViewById(R.id.phoneButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                TextView textView = (TextView) getView().findViewById(R.id.phonenumber);
-                String s = textView.getText().toString();
-                s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
-                s = "tel:" + s;
-                callIntent.setData(Uri.parse(s));
+        button.setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            TextView textView = (TextView) requireView().findViewById(R.id.phonenumber);
+            String s = textView.getText().toString();
+            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
+            s = "tel:" + s;
+            callIntent.setData(Uri.parse(s));
 
-                if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                startActivity(callIntent);
+            if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                return;
             }
+            startActivity(callIntent);
         });
     }
 
