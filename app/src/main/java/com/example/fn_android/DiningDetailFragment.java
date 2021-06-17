@@ -1,21 +1,14 @@
 package com.example.fn_android;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,9 +35,7 @@ import java.util.concurrent.Executors;
  */
 public class DiningDetailFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private String buildingID;
     private String buildingName;
@@ -56,7 +47,6 @@ public class DiningDetailFragment extends Fragment {
     public DiningDetailFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static DiningDetailFragment newInstance(int columnCount) {
         DiningDetailFragment fragment = new DiningDetailFragment();
@@ -104,7 +94,7 @@ public class DiningDetailFragment extends Fragment {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            // Use this to change content
+            // Get the menu list and hours list
             String locString = "";
             List<String[]> hoursList = new ArrayList<>();
             List<String[]> menuList = new ArrayList<>();
@@ -143,7 +133,7 @@ public class DiningDetailFragment extends Fragment {
                     for (int k = 0; k < hoursArray.length(); k++)
                         hoursList.add(new String[]{list.remove(0).toString(), buildingID});
 
-                    // Create the hours
+                    // Create the menu
                     switch (buildingName) {
                         case "Daniel Dining Hall":
                             // TODO - DH menu
@@ -189,7 +179,7 @@ public class DiningDetailFragment extends Fragment {
                             break;
                         default:
                             menuList = (List<String[]>) Arrays.asList(new String[]{"Food", buildingID},new String[]{"Drinks", buildingID},
-                                    new String[]{"...andmore", buildingID});
+                                    new String[]{"...and more", buildingID});
                     }
 
                 }
@@ -200,7 +190,7 @@ public class DiningDetailFragment extends Fragment {
 
             String finalLocString = locString;
             List<String[]> finalMenuList = menuList;
-            handler.post(() -> {
+            handler.post(() -> { // UI updates
                 //recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1));
                 menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1));
@@ -227,27 +217,23 @@ public class DiningDetailFragment extends Fragment {
             connection.disconnect();
             in.close();
 
-            String str = "[";
+            StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (jsonObject.getString("id").equals(key)) {
-                    str += jsonObject.toString() + ",";
+                    str.append(jsonObject.toString()).append(",");
                 }
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "I died";
         }
-    }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-
     }
 
 }

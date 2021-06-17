@@ -39,6 +39,7 @@
         android:clickable="true"
         app:srcCompat="@drawable/ic_baseline_navigate_next_24"
         app:tint="#8BA39C9C"
-        android:focusable="true" />
+        android:focusable="true"
+        android:contentDescription="@string/hours_text" />
 
 </LinearLayout>

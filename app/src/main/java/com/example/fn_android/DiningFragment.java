@@ -33,9 +33,7 @@ import java.util.concurrent.Executors;
  */
 public class DiningFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     /**
@@ -45,7 +43,6 @@ public class DiningFragment extends Fragment {
     public DiningFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static DiningFragment newInstance(int columnCount) {
         DiningFragment fragment = new DiningFragment();
@@ -96,7 +93,7 @@ public class DiningFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                handler.post(() -> {
+                handler.post(() -> { // Update UI
                     recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                     recyclerMenuView.setAdapter(new DiningRecyclerViewAdapter(s,0));
                 });
@@ -108,7 +105,7 @@ public class DiningFragment extends Fragment {
         return view;
     }
 
-    public static String makeServiceCall (String reqUrl) {
+    public static String makeServiceCall(String reqUrl) {
         String line;
         try {
             URL url = new URL(reqUrl);
@@ -123,17 +120,17 @@ public class DiningFragment extends Fragment {
             connection.disconnect();
             in.close();
 
-            String str = "[";
+            StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                str += jsonObject.toString() + ",";
+                str.append(jsonObject.toString()).append(",");
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "I died";

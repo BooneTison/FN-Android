@@ -6,21 +6,18 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fn_android.databinding.FragmentDiningBinding;
 import com.example.fn_android.databinding.FragmentDiningDetailBinding;
-import com.example.fn_android.databinding.FragmentHoursDetailBinding;
 import com.example.fn_android.databinding.FragmentItemBinding;
-import com.example.fn_android.placeholder.PlaceholderContent.PlaceholderItem;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -30,19 +27,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecyclerViewAdapter.ViewHolder> {
 
     private final List<String[]> ourList;
@@ -63,7 +54,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             viewHolder = new ViewHolder(FragmentDiningBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         else if (type == DINING_DETAIL) // Dining detail fragment
             viewHolder = new ViewHolder(FragmentDiningDetailBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-        else {
+        else { // Default itme fragment
             viewHolder = new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
@@ -75,8 +66,9 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mIdView.setText(ourList.get(position)[1]);
+        //holder.mProgText.setText("P");
 
-        holder.mContentView.setOnClickListener(v -> {
+        holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
             AppCompatActivity activity = (AppCompatActivity) v.getContext();
             Bundle bundle = new Bundle();
             bundle.putString("id",holder.mIdView.getText().toString());
@@ -86,13 +78,14 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,diningDetailFragment).addToBackStack(null).commit();
         });
 
-        if (holder.mOpenCloseButton != null) {
+        if (holder.mOpenCloseButton != null && holder.mProgressBar != null) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
                 // Get the list of restaurants
-                List<String[]> s = new ArrayList<>();
-                Boolean open = false;
+                boolean open = false; // Found an hour where the restaurant is open
+                boolean foundWithin = false; // Found an hour where the rest is 1 hr before open or close
+                int prog = 0; // Integer of progress bar
                 try {
                     String service = makeServiceCallByID("https://cs.furman.edu/~csdaemon/FUNow/restaurantHoursGet.php",ourList.get(position)[1]);
                     if (!service.equals("]")) {
@@ -118,18 +111,26 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                             HoursTime curr = new HoursTime(strDate.substring(0,5), strDate.substring(0,5),"0", strDate.substring(6));
                             if (curr.isPlaceOpen(range))
                                 open = true;
+                            if (curr.isWithinHour(range) && !foundWithin) {
+                                prog = curr.withinHour(range);
+                                foundWithin = true;
+                            }
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                Boolean finalOpen = open;
+                boolean finalOpen = open;
+                int finalProg = prog;
                 handler.post(() -> {
                     if (finalOpen)
                         holder.mOpenCloseButton.setImageResource(R.drawable.ic_baseline_check_circle_24);
                     else
                         holder.mOpenCloseButton.setImageResource(R.drawable.ic_baseline_remove_circle_24);
+                    holder.mProgressBar.setProgress(finalProg);
+                    holder.mProgressBar.setMax(60);
+                    //holder.mProgText.setText(Integer.toString(finalProg));
                 });
             });
         }
@@ -145,6 +146,8 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
         public final TextView mContentView;
         public String mItem;
         public ImageButton mOpenCloseButton;
+        public ProgressBar mProgressBar;
+        //public TextView mProgText;
 
         // Basic Item Fragment
         public ViewHolder(FragmentItemBinding binding) {
@@ -152,6 +155,8 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             mIdView = binding.itemNumber;
             mContentView = binding.content;
             mOpenCloseButton = null;
+            mProgressBar = null;
+            //mProgText = null;
         }
 
         // Dining Fragment
@@ -160,6 +165,8 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             mIdView = binding.itemNumber;
             mContentView = binding.content;
             mOpenCloseButton = binding.openclosedButton;
+            mProgressBar = binding.progressBar;
+            //mProgText = binding.progText;
         }
 
         // Hours Detail Fragment
@@ -168,6 +175,8 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             mIdView = binding.itemNumber;
             mContentView = binding.content;
             mOpenCloseButton = null;
+            mProgressBar = null;
+            //mProgText = null;
         }
 
         @NonNull
@@ -192,19 +201,19 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             connection.disconnect();
             in.close();
 
-            String str = "[";
+            StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (key.equals(jsonObject.getString("id"))) {
-                    str += jsonObject.toString() + ",";
+                    str.append(jsonObject.toString()).append(",");
                 }
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "I died";

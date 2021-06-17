@@ -28,8 +28,20 @@
         android:focusable="true"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/furman_purple"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+        android:theme="@style/Theme.FNAndroid.PurpleProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@color/transparent"
+        android:max="60"
+        android:progress="30"
+        android:rotation="270" />
 
     <ImageButton
         android:id="@+id/openclosedButton"
@@ -37,7 +49,8 @@
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:background="@color/transparent"
-        app:srcCompat="@drawable/ic_baseline_remove_circle_24" />
+        app:srcCompat="@drawable/ic_baseline_remove_circle_24"
+        android:contentDescription="@string/dining_text" />
 
     <ImageButton
         android:id="@+id/arrowButton"
@@ -48,6 +61,7 @@
         android:clickable="true"
         android:focusable="true"
         app:srcCompat="@drawable/ic_baseline_navigate_next_24"
-        app:tint="#8BA39C9C" />
+        app:tint="#8BA39C9C"
+        android:contentDescription="@string/dining_text" />
 
 </LinearLayout>

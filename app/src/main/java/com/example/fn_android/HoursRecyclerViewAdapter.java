@@ -12,14 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fn_android.databinding.FragmentHoursBinding;
 import com.example.fn_android.databinding.FragmentHoursDetailBinding;
 import com.example.fn_android.databinding.FragmentItemBinding;
-import com.example.fn_android.placeholder.PlaceholderContent.PlaceholderItem;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecyclerViewAdapter.ViewHolder> {
 
     private final List<String[]> ourList;
@@ -40,7 +35,7 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
             viewHolder = new ViewHolder(FragmentHoursBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         else if (type == HOURS_DETAIL) // Hours detail fragment
             viewHolder = new ViewHolder(FragmentHoursDetailBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-        else {
+        else { // Default item fragment
             viewHolder = new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
@@ -53,7 +48,7 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mIdView.setText(ourList.get(position)[1]);
 
-        holder.mContentView.setOnClickListener(v -> {
+        holder.mContentView.setOnClickListener(v -> { // Navigate to hours detail page
             AppCompatActivity activity = (AppCompatActivity) v.getContext();
             Bundle bundle = new Bundle();
             bundle.putString("id",holder.mIdView.getText().toString());
@@ -66,8 +61,6 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
 
     @Override
     public int getItemCount() {
-
-        //return mValues.size();
         return ourList.size();
     }
 

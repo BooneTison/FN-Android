@@ -33,9 +33,7 @@ import java.util.concurrent.Executors;
  */
 public class HoursFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     /**
@@ -45,7 +43,6 @@ public class HoursFragment extends Fragment {
     public HoursFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static HoursFragment newInstance(int columnCount) {
         HoursFragment fragment = new HoursFragment();
@@ -81,15 +78,15 @@ public class HoursFragment extends Fragment {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
-                // Use this to change content
-                List<String[]> s = new ArrayList<>();
+                // Get the list of buildings
+                List<String[]> buildingList = new ArrayList<>();
                 try {
                     String service = makeServiceCallByHasHours("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
                     if (!service.equals("]")) {
                         JSONArray jsonArray = new JSONArray(service);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            s.add(new String[]{jsonObject.getString("name"),jsonObject.getString("buildingID")});
+                            buildingList.add(new String[]{jsonObject.getString("name"),jsonObject.getString("buildingID")});
                         }
                     }
                 } catch (JSONException e) {
@@ -98,7 +95,7 @@ public class HoursFragment extends Fragment {
 
                 handler.post(() -> {
                     recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                    recyclerView.setAdapter(new HoursRecyclerViewAdapter(s,0));
+                    recyclerView.setAdapter(new HoursRecyclerViewAdapter(buildingList,0));
                 });
             });
 
@@ -123,19 +120,19 @@ public class HoursFragment extends Fragment {
             connection.disconnect();
             in.close();
 
-            String str = "[";
+            StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (jsonObject.getString("hasHours").equals("1")) {
-                    str += jsonObject.toString() + ",";
+                    str.append(jsonObject.toString()).append(",");
                 }
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "I died";

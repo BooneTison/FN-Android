@@ -41,9 +41,7 @@ import java.util.concurrent.Executors;
  */
 public class HoursDetailFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private String buildingID;
     private String buildingName;
@@ -55,7 +53,6 @@ public class HoursDetailFragment extends Fragment {
     public HoursDetailFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static HoursDetailFragment newInstance(int columnCount) {
         HoursDetailFragment fragment = new HoursDetailFragment();
@@ -133,7 +130,7 @@ public class HoursDetailFragment extends Fragment {
                     JSONArray hoursArray = new JSONArray(service);
                     for (int i =0; i < hoursArray.length(); i++) {
                         JSONObject hoursObject = hoursArray.getJSONObject(i);
-                        if (hoursObject.isNull("Start") || hoursObject.isNull("End")) {
+                        if (hoursObject.isNull("Start") || hoursObject.isNull("End")) { // Closed
                             list.add(new HoursTime("null","null", hoursObject.getString("dayorder"),
                                     hoursObject.getString("day")));
                         }
@@ -179,19 +176,19 @@ public class HoursDetailFragment extends Fragment {
             connection.disconnect();
             in.close();
 
-            String str = "[";
+            StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (jsonObject.getString("buildingID").equals(key)) {
-                    str += jsonObject.toString() + ",";
+                    str.append(jsonObject.toString()).append(",");
                 }
             }
-            str = str.substring(0,str.length()-1);
-            str += "]";
-            return str;
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "I died";
@@ -200,7 +197,7 @@ public class HoursDetailFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         ImageButton button = (ImageButton) view.findViewById(R.id.phoneButton);
-        button.setOnClickListener(v -> {
+        button.setOnClickListener(v -> { // Phone call TODO - Check if this is working
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             TextView textView = (TextView) requireView().findViewById(R.id.phonenumber);
             String s = textView.getText().toString();

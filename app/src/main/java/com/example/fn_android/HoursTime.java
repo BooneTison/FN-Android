@@ -16,44 +16,39 @@ public class HoursTime implements Comparable<HoursTime>{
 
     public HoursTime(String start, String end, String dayOrder, String day) {
         if (start.equals("null")) {
-            this.dayOrder = Integer.parseInt(dayOrder);
-            this.day = day;
             this.startHour = 0;
             this.startMin = 0;
             this.endHour = 0;
             this.endMin = 0;
-            meal = "null";
         }
         else {
             this.startHour = Integer.parseInt(start.substring(0, 2));
             this.startMin = Integer.parseInt(start.substring(3, 5));
             this.endHour = Integer.parseInt(end.substring(0, 2));
             this.endMin = Integer.parseInt(end.substring(3, 5));
-            this.dayOrder = Integer.parseInt(dayOrder);
-            this.day = day;
-            meal = "null";
         }
+        this.dayOrder = Integer.parseInt(dayOrder);
+        this.day = day;
+        meal = "null";
     }
 
     public HoursTime(String start, String end, String dayOrder, String day, String meal) {
         if (start.equals("null")) {
-            this.dayOrder = Integer.parseInt(dayOrder);
-            this.day = day;
             this.startHour = 0;
             this.startMin = 0;
             this.endHour = 0;
             this.endMin = 0;
-            this.meal = meal;
         }
         else {
             this.startHour = Integer.parseInt(start.substring(0, 2));
             this.startMin = Integer.parseInt(start.substring(3, 5));
             this.endHour = Integer.parseInt(end.substring(0, 2));
             this.endMin = Integer.parseInt(end.substring(3, 5));
-            this.dayOrder = Integer.parseInt(dayOrder);
-            this.day = day;
-            this.meal = meal;
+
         }
+        this.dayOrder = Integer.parseInt(dayOrder);
+        this.day = day;
+        this.meal = meal;
     }
 
     public String startAMPM() {
@@ -106,10 +101,10 @@ public class HoursTime implements Comparable<HoursTime>{
         // The time of this should have the same start and end
         if (this.startHour != this.endHour || this.startMin != this.endMin)
             return false;
-        if (restHours.meal.equals("null"))
+        if (restHours.meal.equals("null")) // Has days, check time and days
             return isInDayRange(this.day, restHours.day)
                     && isInTimeRange(restHours.startHour,restHours.startMin,restHours.endHour,restHours.endMin);
-        else
+        else // Everyday, only check time
             return isInTimeRange(restHours.startHour,restHours.startMin,restHours.endHour,restHours.endMin);
     }
 
@@ -126,8 +121,55 @@ public class HoursTime implements Comparable<HoursTime>{
     }
 
     private boolean isInTimeRange(int sHour, int sMin, int eHour, int eMin) {
-        if (this.startHour == sHour) return this.startMin >= sMin;
-        if (this.startHour == eHour) return this.startMin <= eMin;
-        return this.startHour > sHour && this.startHour < eHour;
+        if (this.startHour == sHour) return this.startMin >= sMin; // Same hour as open, check minutes
+        if (this.startHour == eHour) return this.startMin <= eMin; // Same hour as close, check minutes
+        return this.startHour > sHour && this.startHour < eHour; // Different hour, check hours
+    }
+
+    public int withinHour(HoursTime restHours) {
+        // The time of this should have the same start and end
+        if (this.startHour != this.endHour || this.startMin != this.endMin)
+            return 0;
+        if (!restHours.meal.equals("null")) { // Open everyday
+            if (hourBeforeOpenClose(restHours.startHour,restHours.startMin)) { // Before opening
+                double result = (1 - (calculateTimeLeft(restHours.startHour,restHours.startMin)/60.0)) * 60;
+                return (int) result;
+            }
+            else if (hourBeforeOpenClose(restHours.endHour,restHours.endMin)) { // Before closing
+                double result = (1 - (calculateTimeLeft(restHours.endHour,restHours.endMin)/60.0)) * 60;
+                return (int) result;
+            }
+        }
+        else {
+            if (!isInDayRange(this.day, restHours.day)) return 0; //Not same day
+            // Same day then
+            if (hourBeforeOpenClose(restHours.startHour,restHours.startMin)) { // Before opening
+                double result = (1 - (calculateTimeLeft(restHours.startHour,restHours.startMin)/60.0)) * 60;
+                return (int) result;
+            }
+            else if (hourBeforeOpenClose(restHours.endHour,restHours.endMin)) { // Before closing
+                double result = (1 - (calculateTimeLeft(restHours.endHour,restHours.endMin)/60.0)) * 60;
+                return (int) result;
+            }
+        }
+        return 0; // Not within an hour
+    }
+
+    private boolean hourBeforeOpenClose(int hour, int min) {
+        if (this.startHour > hour) return false; // Already open or closed now
+        double currTime = this.startHour + (this.startMin/60.0);
+        double otherTime = hour + (min/60.0);
+        if (otherTime - currTime > 1 || otherTime - currTime < 0) return false; // More than an hour
+        return true; // Less than an hour
+    }
+
+    private int calculateTimeLeft(int hour, int min) {
+        double currTime = this.startHour + (this.startMin/60.0);
+        double otherTime = hour + (min/60.0);
+        return (int) ((otherTime - currTime) * 60);
+    }
+
+    public boolean isWithinHour(HoursTime restHours) {
+        return hourBeforeOpenClose(restHours.startHour,restHours.startMin) || hourBeforeOpenClose(restHours.endHour,restHours.endMin);
     }
 }
