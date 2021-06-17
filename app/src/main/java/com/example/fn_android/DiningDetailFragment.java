@@ -83,7 +83,7 @@ public class DiningDetailFragment extends Fragment {
         // Set the adapter
         Context context = view.getContext();
         RecyclerView hoursRecyclerView = (RecyclerView) view.findViewById(R.id.hoursList);
-        RecyclerView menuRecyclerView = (RecyclerView) view.findViewById(R.id.menuList);
+        RecyclerView menuRecyclerView = (RecyclerView) view.findViewById(R.id.dailyHoursList);
         if (mColumnCount <= 1) {
             hoursRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             menuRecyclerView.setLayoutManager(new LinearLayoutManager(context));

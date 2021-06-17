@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,10 +87,12 @@ public class HoursDetailFragment extends Fragment {
         // Set non-list content
         TextView phone = view.getRootView().findViewById(R.id.phonenumber);
         TextView location = view.getRootView().findViewById(R.id.location);
+        ImageButton phoneButton = view.getRootView().findViewById(R.id.phoneButton);
+        TextView specialText = view.getRootView().findViewById(R.id.specialText);
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.menuList);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dailyHoursList);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -110,6 +113,9 @@ public class HoursDetailFragment extends Fragment {
                     JSONObject phoneObject = phoneArray.getJSONObject(0);
                     phoneString = phoneObject.getString("number");
                     phoneString = phoneString.substring(0,3) + "." + phoneString.substring(3,6) + "." + phoneString.substring(6);
+                }
+                else { // no phone number found, so remove the phone button
+                    phoneButton.setColorFilter(Color.TRANSPARENT);
                 }
 
                 // Get the location
@@ -142,8 +148,8 @@ public class HoursDetailFragment extends Fragment {
                     Collections.sort(list);
                     for (int k = 0; k < hoursArray.length(); k++)
                         hoursList.add(new String[]{list.remove(0).toString(), buildingID});
-                }
 
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -155,6 +161,9 @@ public class HoursDetailFragment extends Fragment {
                 recyclerView.setAdapter(new HoursRecyclerViewAdapter(hoursList,1));
                 phone.setText(finalPhoneString);
                 location.setText(finalLocString);
+                // Set the special text, only applies to Earle
+                if (buildingName.equals("Earle Student Health Center"))
+                    specialText.setText(R.string.earle_special_text);
             });
         });
 
@@ -209,6 +218,17 @@ public class HoursDetailFragment extends Fragment {
                 return;
             }
             startActivity(callIntent);
+        });
+
+        // Navigate to website when clicked
+        TextView specialText = (TextView) view.findViewById(R.id.specialText);
+        specialText.setOnClickListener(v -> {
+            if (buildingName.equals("Earle Student Health Center")) {
+                String url = "https://mychart.ghs.org/mychart/Authentication/Login?";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
         });
     }
 

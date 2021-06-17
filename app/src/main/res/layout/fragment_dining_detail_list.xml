@@ -15,7 +15,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/menuList"
+        android:id="@+id/dailyHoursList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="125dp"
@@ -50,7 +50,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="sans"
-        app:layout_constraintBottom_toTopOf="@+id/menuList"
+        app:layout_constraintBottom_toTopOf="@+id/dailyHoursList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
