@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -136,7 +137,7 @@ public class DiningDetailFragment extends Fragment {
                     // Create the menu
                     switch (buildingName) {
                         case "Daniel Dining Hall":
-                            // TODO - DH menu
+                            menuList = getDHMenu();
                             break;
                         case "Bread and Bowl":
                             menuList = (List<String[]>) Arrays.asList(new String[]{"Snacks", buildingID}, new String[]{"Misc. Sandwiches", buildingID},
@@ -234,6 +235,82 @@ public class DiningDetailFragment extends Fragment {
             e.printStackTrace();
             return "I died";
         }
+    }
+
+    public static String makeServiceCall(String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
+
+    private List<String[]> getDHMenu() throws JSONException {
+        List<String[]> list = new ArrayList<>();
+        List<String[]> breakfast = new ArrayList<>();
+        List<String[]> brunch = new ArrayList<>();
+        List<String[]> lunch = new ArrayList<>();
+        List<String[]> dinner = new ArrayList<>();
+
+        String str = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/dhMenuGet.php");
+        JSONArray menuArray = new JSONArray(str);
+        for (int i =0; i < menuArray.length(); i++) {
+            JSONObject menuObject = menuArray.getJSONObject(i);
+            if (menuObject.getString("meal").equals("Breakfast"))
+                breakfast.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
+            else if (menuObject.getString("meal").equals("Brunch"))
+                brunch.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
+            else if (menuObject.getString("meal").equals("Lunch"))
+                lunch.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
+            else if (menuObject.getString("meal").equals("Dinner"))
+                dinner.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
+        }
+
+        if (!breakfast.isEmpty()) {
+            list.add(new String[]{"----Breakfast----",""});
+            while (!breakfast.isEmpty())
+                list.add(breakfast.remove(0));
+        }
+        if (!brunch.isEmpty()) {
+            list.add(new String[]{"----Brunch----",""});
+            while (!brunch.isEmpty())
+                list.add(brunch.remove(0));
+        }
+        if (!lunch.isEmpty()) {
+            list.add(new String[]{"----Lunch----",""});
+            while (!lunch.isEmpty())
+                list.add(lunch.remove(0));
+        }
+        if (!dinner.isEmpty()) {
+            list.add(new String[]{"----Dinner----",""});
+            while (!dinner.isEmpty())
+                list.add(dinner.remove(0));
+        }
+        return list;
     }
 
 }

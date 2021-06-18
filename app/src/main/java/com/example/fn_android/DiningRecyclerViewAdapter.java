@@ -39,6 +39,9 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     private final List<String[]> ourList;
     private final int type;
 
+    int DINING = 0;
+    int DINING_DETAIL = 1;
+
     public DiningRecyclerViewAdapter(List<String[]> items, int fragType) {
         type = fragType;
         ourList = items;
@@ -48,13 +51,11 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewHolder viewHolder;
-        int DINING = 0;
-        int DINING_DETAIL = 1;
         if (type == DINING)  // Dining Fragment
             viewHolder = new ViewHolder(FragmentDiningBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         else if (type == DINING_DETAIL) // Dining detail fragment
             viewHolder = new ViewHolder(FragmentDiningDetailBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-        else { // Default itme fragment
+        else { // Default item fragment
             viewHolder = new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
@@ -68,15 +69,24 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
         holder.mIdView.setText(ourList.get(position)[1]);
         //holder.mProgText.setText("P");
 
-        holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
-            AppCompatActivity activity = (AppCompatActivity) v.getContext();
-            Bundle bundle = new Bundle();
-            bundle.putString("id",holder.mIdView.getText().toString());
-            bundle.putString("name",holder.mContentView.getText().toString());
-            DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
-            diningDetailFragment.setArguments(bundle);
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,diningDetailFragment).addToBackStack(null).commit();
-        });
+        if (type == DINING) {
+            holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", holder.mIdView.getText().toString());
+                bundle.putString("name", holder.mContentView.getText().toString());
+                DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
+                diningDetailFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, diningDetailFragment).addToBackStack(null).commit();
+            });
+        }
+
+        // Bold the meal names
+        /*String s = holder.mIdView.getText().toString();
+        if (s.equals("")) {
+            holder.mContentView.setAllCaps(true);
+            holder.mContentView.setTypeface(Typeface.DEFAULT_BOLD);
+        }*/ // TODO - items are getting bolded that shouldn't
 
         if (holder.mOpenCloseButton != null && holder.mProgressBar != null) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
