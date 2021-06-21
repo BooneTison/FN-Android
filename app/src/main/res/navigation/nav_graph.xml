@@ -35,8 +35,8 @@
             android:id="@+id/action_homeFragment_to_diningFragment"
             app:destination="@id/diningFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_EventsFragment"
-            app:destination="@id/EventsFragment" />
+            android:id="@+id/action_homeFragment_to_EventsSyncDinFragment"
+            app:destination="@id/EventsSyncDinFragment" />
         <action
             android:id="@+id/action_homeFragment_to_hoursFragment"
             app:destination="@id/hoursFragment" />
@@ -48,13 +48,16 @@
             app:destination="@id/mapFragment" />
     </fragment>
     <fragment
-        android:id="@+id/EventsFragment"
-        android:name="com.example.fn_android.EventsFragment"
+        android:id="@+id/EventsSyncDinFragment"
+        android:name="com.example.fn_android.EventsSyncDINFragment"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events" >
+        tools:layout="@layout/fragment_events_syncdin" >
         <action
-            android:id="@+id/action_EventsFragment_to_homeFragment"
+            android:id="@+id/action_EventsSyncDinFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_EventsSyncDinFragment_to_eventsCLPFragment"
+            app:destination="@id/eventsCLPFragment" />
     </fragment>
     <fragment
         android:id="@+id/diningFragment"
@@ -64,6 +67,9 @@
         <action
             android:id="@+id/action_diningFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_diningFragment_to_diningDetailFragment"
+            app:destination="@id/diningDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/healthSafetyFragment"
@@ -136,5 +142,23 @@
         <argument
             android:name="hours_name"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/diningDetailFragment"
+        android:name="com.example.fn_android.DiningDetailFragment"
+        android:label="fragment_dining_detail_list"
+        tools:layout="@layout/fragment_dining_detail_list" >
+        <action
+            android:id="@+id/action_diningDetailFragment_to_diningFragment"
+            app:destination="@id/diningFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventsCLPFragment"
+        android:name="com.example.fn_android.EventsCLPFragment"
+        android:label="fragment_events_clp_list"
+        tools:layout="@layout/fragment_events_clp_list" >
+        <action
+            android:id="@+id/action_eventsCLPFragment_to_EventsSyncDinFragment"
+            app:destination="@id/EventsSyncDinFragment" />
     </fragment>
 </navigation>

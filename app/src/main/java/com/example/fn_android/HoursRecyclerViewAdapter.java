@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fn_android.databinding.FragmentHoursBinding;
@@ -20,6 +21,9 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
     private final List<String[]> ourList;
     private final int type;
 
+    int HOURS = 0;
+    int HOURS_DETAIL = 1;
+
     public HoursRecyclerViewAdapter(List<String[]> items, int fragType) {
         type = fragType;
         ourList = items;
@@ -29,8 +33,6 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewHolder viewHolder;
-        int HOURS = 0;
-        int HOURS_DETAIL = 1;
         if (type == HOURS)  // Hours Fragment
             viewHolder = new ViewHolder(FragmentHoursBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         else if (type == HOURS_DETAIL) // Hours detail fragment
@@ -48,15 +50,17 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mIdView.setText(ourList.get(position)[1]);
 
-        holder.mContentView.setOnClickListener(v -> { // Navigate to hours detail page
-            AppCompatActivity activity = (AppCompatActivity) v.getContext();
-            Bundle bundle = new Bundle();
-            bundle.putString("id",holder.mIdView.getText().toString());
-            bundle.putString("name",holder.mContentView.getText().toString());
-            HoursDetailFragment hoursDetailFragment = new HoursDetailFragment();
-            hoursDetailFragment.setArguments(bundle);
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,hoursDetailFragment).addToBackStack(null).commit();
-        });
+        if (type == HOURS) {
+            holder.mContentView.setOnClickListener(v -> { // Navigate to hours detail page
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", holder.mIdView.getText().toString());
+                bundle.putString("name", holder.mContentView.getText().toString());
+                HoursDetailFragment hoursDetailFragment = new HoursDetailFragment();
+                hoursDetailFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, hoursDetailFragment).addToBackStack(null).commit();
+            });
+        }
     }
 
     @Override

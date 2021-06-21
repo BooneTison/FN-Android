@@ -51,6 +51,16 @@ public class HoursTime implements Comparable<HoursTime>{
         this.meal = meal;
     }
 
+    public HoursTime(String start, String end) {
+        this.startHour = Integer.parseInt(start.substring(0, 2));
+        this.startMin = Integer.parseInt(start.substring(3, 5));
+        this.endHour = Integer.parseInt(end.substring(0, 2));
+        this.endMin = Integer.parseInt(end.substring(3, 5));
+        this.dayOrder = 0;
+        this.day = "null";
+        this.meal = "null";
+    }
+
     public String startAMPM() {
         if (startHour < 12) return "am";
         return "pm";
@@ -82,6 +92,12 @@ public class HoursTime implements Comparable<HoursTime>{
                     + " to " + to12Hour(endHour) + ":" + minConvert(endMin) + endAMPM();
         }
         return "Closed " + day;
+    }
+
+    @NonNull
+    public String toStringHoursOnly() {
+        return to12Hour(startHour) + ":" + minConvert(startMin) + startAMPM() + " - " +
+                to12Hour(endHour) + ":" + minConvert(endMin) + endAMPM();
     }
 
     @Override

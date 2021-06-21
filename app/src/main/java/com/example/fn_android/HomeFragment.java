@@ -37,9 +37,9 @@ public class HomeFragment extends Fragment {
                 .navigate(R.id.action_homeFragment_to_athleticsFragment));
 
         view.findViewById(R.id.events_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_EventsFragment));
+                .navigate(R.id.action_homeFragment_to_EventsSyncDinFragment));
         view.findViewById(R.id.events_button_text).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(R.id.action_homeFragment_to_EventsFragment));
+                .navigate(R.id.action_homeFragment_to_EventsSyncDinFragment));
 
         view.findViewById(R.id.dining_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
                 .navigate(R.id.action_homeFragment_to_diningFragment));

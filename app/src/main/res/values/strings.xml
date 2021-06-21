@@ -17,5 +17,12 @@
     <string name="menu_text">Menu:</string>
     <string name="hours_dining_text">Hours:</string>
     <string name="earle_special_text">For your very first appointment, you must call to schedule. After that, you can use MyChart.</string>
+    <string name="syncdin_text">SyncDin</string>
+    <string name="clps_text">CLPs</string>
+    <string name="today_text">Today</string>
+    <string name="tomorrow_text">Tomorrow</string>
+    <string name="this_week_text">This Week</string>
+    <string name="syncdin_link_text">Click here to see full list of syncDin Events</string>
+    <string name="clp_link_text">Click here to see full list of CLP Events</string>
 
 </resources>
