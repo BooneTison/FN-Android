@@ -24,5 +24,6 @@
     <string name="this_week_text">This Week</string>
     <string name="syncdin_link_text">Click here to see full list of syncDin Events</string>
     <string name="clp_link_text">Click here to see full list of CLP Events</string>
+    <string name="calendar_text">Add to Calendar</string>
 
 </resources>

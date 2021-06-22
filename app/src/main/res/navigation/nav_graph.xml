@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_EventsSyncDinFragment_to_eventsCLPFragment"
             app:destination="@id/eventsCLPFragment" />
+        <action
+            android:id="@+id/action_EventsSyncDinFragment_to_eventsDetailFragment"
+            app:destination="@id/eventsDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/diningFragment"
@@ -159,6 +162,21 @@
         tools:layout="@layout/fragment_events_clp_list" >
         <action
             android:id="@+id/action_eventsCLPFragment_to_EventsSyncDinFragment"
+            app:destination="@id/EventsSyncDinFragment" />
+        <action
+            android:id="@+id/action_eventsCLPFragment_to_eventsDetailFragment"
+            app:destination="@id/eventsDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventsDetailFragment"
+        android:name="com.example.fn_android.EventsDetailFragment"
+        android:label="fragment_events_detail"
+        tools:layout="@layout/fragment_events_detail" >
+        <action
+            android:id="@+id/action_eventsDetailFragment_to_eventsCLPFragment"
+            app:destination="@id/eventsCLPFragment" />
+        <action
+            android:id="@+id/action_eventsDetailFragment_to_EventsSyncDinFragment"
             app:destination="@id/EventsSyncDinFragment" />
     </fragment>
 </navigation>

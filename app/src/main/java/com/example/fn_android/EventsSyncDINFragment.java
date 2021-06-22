@@ -123,7 +123,6 @@ public class EventsSyncDINFragment extends Fragment {
                         if (check == 0) todayList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
                         else if (check == 1) tomList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
                         else if (check == 2) weekList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
-                        else todayList.add(new String[]{jsonObject.getString("title"),String.valueOf(check)});
                     }
                 }
 
