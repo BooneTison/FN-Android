@@ -25,5 +25,6 @@
     <string name="syncdin_link_text">Click here to see full list of syncDin Events</string>
     <string name="clp_link_text">Click here to see full list of CLP Events</string>
     <string name="calendar_text">Add to Calendar</string>
+    <string name="results_text">Results</string>
 
 </resources>
