@@ -26,5 +26,7 @@
     <string name="clp_link_text">Click here to see full list of CLP Events</string>
     <string name="calendar_text">Add to Calendar</string>
     <string name="results_text">Results</string>
+    <string name="search_text">Search</string>
+    <string name="no_data_search_text">No Data Found…</string>
 
 </resources>
