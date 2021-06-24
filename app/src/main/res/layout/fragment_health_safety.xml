@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".HealthSafetyFragment">
+    android:layout_height="wrap_content"
+    android:divider="@android:drawable/bottom_bar"
+    android:orientation="horizontal">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/health_safety_text" />
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/furman_purple"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:focusable="true" />
 
-</FrameLayout>
+    <ImageButton
+        android:id="@+id/phoneLinkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@color/transparent"
+        android:contentDescription="@string/phone_text"
+        app:srcCompat="@drawable/ic_baseline_local_phone_24"
+        app:tint="@color/furman_purple" />
+
+</LinearLayout>

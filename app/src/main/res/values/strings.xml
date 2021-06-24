@@ -40,5 +40,6 @@
     <string name="housing_residence_text_off"><![CDATA[Housing & Residence Life: off]]></string>
     <string name="dining_services_text_off">Dining Services: off</string>
     <string name="parent_engagement_text_off">Furman Parent Engagement: off</string>
+    <string name="emergency_text">If you are in an emergency, dial 911!</string>
 
 </resources>

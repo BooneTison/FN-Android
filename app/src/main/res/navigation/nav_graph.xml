@@ -51,7 +51,7 @@
         android:id="@+id/EventsSyncDinFragment"
         android:name="com.example.fn_android.EventsSyncDINFragment"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events_syncdin" >
+        tools:layout="@layout/fragment_events_syncdin_list">
         <action
             android:id="@+id/action_EventsSyncDinFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -66,7 +66,7 @@
         android:id="@+id/diningFragment"
         android:name="com.example.fn_android.DiningFragment"
         android:label="fragment_dining"
-        tools:layout="@layout/fragment_dining" >
+        tools:layout="@layout/fragment_dining_list">
         <action
             android:id="@+id/action_diningFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -116,8 +116,7 @@
     <fragment
         android:id="@+id/datesFragment"
         android:name="com.example.fn_android.DatesFragment"
-        android:label="fragment_dates"
-        tools:layout="@layout/fragment_dates" >
+        android:label="fragment_dates">
         <action
             android:id="@+id/action_datesFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
