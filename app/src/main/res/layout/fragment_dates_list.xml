@@ -33,5 +33,108 @@
         tools:context=".DatesFragment"
         tools:listitem="@layout/fragment_dates" />
 
+    <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/search_text"
+        app:layout_constraintEnd_toEndOf="@+id/resultsText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_filter_list_24"
+        app:tint="@color/furman_purple" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/FilterLayout"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/furman_light_gray"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterButton">
+
+        <TextView
+            android:id="@+id/studentLifeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/student_life_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/registrarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/registrar_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/studentLifeText" />
+
+        <TextView
+            android:id="@+id/graduateStudiesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/graduate_studies_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registrarText" />
+
+        <TextView
+            android:id="@+id/housingResidenceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/housing_residence_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/graduateStudiesText" />
+
+        <TextView
+            android:id="@+id/diningServicesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/dining_services_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/housingResidenceText" />
+
+        <TextView
+            android:id="@+id/parentEngagementText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/parent_engagement_text_on"
+            android:textColor="@color/furman_purple"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/diningServicesText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

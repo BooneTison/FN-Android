@@ -28,5 +28,17 @@
     <string name="results_text">Results</string>
     <string name="search_text">Search</string>
     <string name="no_data_search_text">No Data Found…</string>
+    <string name="student_life_text_on">Student Life: on</string>
+    <string name="registrar_text_on">Registrar: on</string>
+    <string name="graduate_studies_text_on">Graduate Studies: on</string>
+    <string name="housing_residence_text_on"><![CDATA[Housing & Residence Life: on]]></string>
+    <string name="dining_services_text_on">Dining Services: on</string>
+    <string name="parent_engagement_text_on">Furman Parent Engagement: on</string>
+    <string name="student_life_text_off">Student Life: off</string>
+    <string name="registrar_text_off">Registrar: off</string>
+    <string name="graduate_studies_text_off">Graduate Studies: off</string>
+    <string name="housing_residence_text_off"><![CDATA[Housing & Residence Life: off]]></string>
+    <string name="dining_services_text_off">Dining Services: off</string>
+    <string name="parent_engagement_text_off">Furman Parent Engagement: off</string>
 
 </resources>

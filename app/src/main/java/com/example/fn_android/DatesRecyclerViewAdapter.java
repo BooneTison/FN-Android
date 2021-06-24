@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fn_android.databinding.FragmentDatesBinding;
 import com.example.fn_android.databinding.FragmentItemBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecyclerViewAdapter.ViewHolder> {
@@ -50,7 +51,7 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mDateView.setText(ourList.get(position)[1]);
-
+        holder.mCategory = ourList.get(position)[2];
     }
 
     @Override
@@ -61,6 +62,7 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView mDateView;
         public final TextView mContentView;
+        public String mCategory;
         public String mItem;
 
         // Basic Item Fragment
@@ -68,6 +70,7 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
             super(binding.getRoot());
             mDateView = binding.itemNumber;
             mContentView = binding.content;
+            mCategory = "";
         }
 
         // Dates Fragment
@@ -75,6 +78,7 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
             super(binding.getRoot());
             mDateView = binding.dateText;
             mContentView = binding.content;
+            mCategory = "";
         }
 
         @NonNull

@@ -8,13 +8,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SearchEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ public class DatesFragment extends Fragment {
     private int mColumnCount = 1;
     List<String[]> datesList;
     DatesRecyclerViewAdapter adapter;
+    List<String> categoriesFiltered;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -73,7 +75,6 @@ public class DatesFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater = requireActivity().getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.actionSearch);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -99,9 +100,17 @@ public class DatesFragment extends Fragment {
                 filteredlist.add(arr);
             }
         }
-        if (!filteredlist.isEmpty()) {
-            adapter.filterList(filteredlist);
+        adapter.filterList(filteredlist);
+    }
+
+    private void filterByCategory(List<String> list) {
+        List<String[]> filteredlist = new ArrayList<>();
+        for (String[] arr : datesList) {
+            if (!list.contains(arr[2])) {
+                filteredlist.add(arr);
+            }
         }
+        adapter.filterList(filteredlist);
     }
 
     @Override
@@ -112,6 +121,7 @@ public class DatesFragment extends Fragment {
         // Set the adapter
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.datesList);
+
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -129,7 +139,8 @@ public class DatesFragment extends Fragment {
                     JSONArray jsonArray = new JSONArray(service);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        datesList.add(new String[]{jsonObject.getString("title"),convertDate(jsonObject.getString("date"))});
+                        datesList.add(new String[]{jsonObject.getString("title"),convertDate(jsonObject.getString("date"))
+                                ,jsonObject.getString("category")});
                     }
                 }
 
@@ -180,7 +191,146 @@ public class DatesFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        // Open the filter page
+        ImageButton filterButton = view.findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            Boolean open = false;
+            final ConstraintLayout filterView = view.findViewById(R.id.FilterLayout);
+            @Override
+            public void onClick(View v) {
+                if (!open) {
+                    open = true;
+                    filterView.setVisibility(View.VISIBLE);
+                }
+                else {
+                    open = false;
+                    filterView.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
+        // Filters
+        categoriesFiltered = new ArrayList<>();
+
+        TextView studentLifeText = view.findViewById(R.id.studentLifeText);
+        studentLifeText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    studentLifeText.setText(R.string.student_life_text_off);
+                    categoriesFiltered.add("Student Life");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    studentLifeText.setText(R.string.student_life_text_on);
+                    categoriesFiltered.remove("Student Life");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
+
+        TextView registrarText = view.findViewById(R.id.registrarText);
+        registrarText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    registrarText.setText(R.string.registrar_text_off);
+                    categoriesFiltered.add("Registrar");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    registrarText.setText(R.string.registrar_text_on);
+                    categoriesFiltered.remove("Registrar");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
+
+        TextView graduateStudiesText = view.findViewById(R.id.graduateStudiesText);
+        graduateStudiesText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    graduateStudiesText.setText(R.string.graduate_studies_text_off);
+                    categoriesFiltered.add("Graduate Studies");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    graduateStudiesText.setText(R.string.graduate_studies_text_on);
+                    categoriesFiltered.remove("Graduate Studies");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
+
+        TextView housingResidenceText = view.findViewById(R.id.housingResidenceText);
+        housingResidenceText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    housingResidenceText.setText(R.string.housing_residence_text_off);
+                    categoriesFiltered.add("Housing & Residence Life");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    housingResidenceText.setText(R.string.housing_residence_text_on);
+                    categoriesFiltered.remove("Housing & Residence Life");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
+
+        TextView diningServicesText = view.findViewById(R.id.diningServicesText);
+        diningServicesText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    diningServicesText.setText(R.string.dining_services_text_off);
+                    categoriesFiltered.add("Dining Services");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    diningServicesText.setText(R.string.dining_services_text_on);
+                    categoriesFiltered.remove("Dining Services");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
+
+        TextView parentEngagementText = view.findViewById(R.id.parentEngagementText);
+        parentEngagementText.setOnClickListener(new View.OnClickListener() {
+            boolean on = true;
+            @Override
+            public void onClick(View v) {
+                if (on) {
+                    parentEngagementText.setText(R.string.parent_engagement_text_off);
+                    categoriesFiltered.add("Furman Parent Engagement");
+                    filterByCategory(categoriesFiltered);
+                    on = false;
+                }
+                else {
+                    parentEngagementText.setText(R.string.parent_engagement_text_on);
+                    categoriesFiltered.remove("Furman Parent Engagement");
+                    filterByCategory(categoriesFiltered);
+                    on = true;
+                }
+            }
+        });
     }
 
     private String convertDate(String input) {
