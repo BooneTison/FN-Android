@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -79,14 +80,18 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                 diningDetailFragment.setArguments(bundle);
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, diningDetailFragment).addToBackStack(null).commit();
             });
+
+            holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", holder.mIdView.getText().toString());
+                bundle.putString("name", holder.mContentView.getText().toString());
+                DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
+                diningDetailFragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, diningDetailFragment).addToBackStack(null).commit();
+            });
         }
 
-        // Bold the meal names
-        /*String s = holder.mIdView.getText().toString();
-        if (s.equals("")) {
-            holder.mContentView.setAllCaps(true);
-            holder.mContentView.setTypeface(Typeface.DEFAULT_BOLD);
-        }*/ // TODO - items are getting bolded that shouldn't
 
         if (holder.mOpenCloseButton != null && holder.mProgressBar != null) {
             ExecutorService executor = Executors.newSingleThreadExecutor();

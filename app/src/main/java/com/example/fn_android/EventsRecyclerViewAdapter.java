@@ -56,6 +56,15 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
             eventsDetailFragment.setArguments(bundle);
             activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,eventsDetailFragment).addToBackStack(null).commit();
         });
+
+        holder.mHoursView.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) v.getContext();
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName",holder.mContentView.getText().toString());
+            EventsDetailFragment eventsDetailFragment = new EventsDetailFragment();
+            eventsDetailFragment.setArguments(bundle);
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main,eventsDetailFragment).addToBackStack(null).commit();
+        });
     }
 
     @Override

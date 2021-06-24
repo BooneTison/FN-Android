@@ -34,14 +34,16 @@
     <ProgressBar
         android:id="@+id/progressBar"
         style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
-        android:theme="@style/Theme.FNAndroid.PurpleProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:background="@color/transparent"
+        android:clickable="true"
         android:max="60"
         android:progress="30"
-        android:rotation="270" />
+        android:rotation="270"
+        android:theme="@style/Theme.FNAndroid.PurpleProgressBar"
+        android:focusable="true" />
 
     <ImageButton
         android:id="@+id/openclosedButton"
