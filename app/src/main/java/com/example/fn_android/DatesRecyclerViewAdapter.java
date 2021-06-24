@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fn_android.databinding.FragmentDatesBinding;
 import com.example.fn_android.databinding.FragmentItemBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecyclerViewAdapter.ViewHolder> {

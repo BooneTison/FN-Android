@@ -30,8 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -139,8 +142,9 @@ public class DatesFragment extends Fragment {
                     JSONArray jsonArray = new JSONArray(service);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        datesList.add(new String[]{jsonObject.getString("title"),convertDate(jsonObject.getString("date"))
-                                ,jsonObject.getString("category")});
+                        if (!pastDate(jsonObject.getString("date")))
+                            datesList.add(new String[]{jsonObject.getString("title"),convertDate(jsonObject.getString("date"))
+                                    ,jsonObject.getString("category")});
                     }
                 }
 
@@ -339,6 +343,26 @@ public class DatesFragment extends Fragment {
         String day = input.substring(8);
         String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
         return months[Integer.parseInt(month)-1] + " " + day + ", " + year;
+    }
+
+    private boolean pastDate(String date) {
+        int iYear = Integer.parseInt(date.substring(0,4));
+        int iMonth = Integer.parseInt(date.substring(5,7));
+        int iDay = Integer.parseInt(date.substring(8));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String todayDate = sdf.format(Calendar.getInstance().getTime());
+        int cYear = Integer.parseInt(todayDate.substring(0,4));
+        int cMonth = Integer.parseInt(todayDate.substring(5,7));
+        int cDay = Integer.parseInt(todayDate.substring(8));
+
+        if (iYear < cYear) return true; // Past input's year
+        if (iYear > cYear) return false; // Before input's year
+        // Working within same year now
+        if (iMonth < cMonth) return true;  // Past input's month
+        if (iMonth > cMonth) return false; // Before input's month
+        // Working within same month
+        return iDay < cDay; // Past input's day or same day or before input's day
     }
 
 }
