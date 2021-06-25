@@ -78,7 +78,7 @@
         android:id="@+id/healthSafetyFragment"
         android:name="com.example.fn_android.HealthSafetyFragment"
         android:label="fragment_health_safety"
-        tools:layout="@layout/fragment_health_safety" >
+        tools:layout="@layout/fragment_health_safety_list">
         <action
             android:id="@+id/action_healthSafetyFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
