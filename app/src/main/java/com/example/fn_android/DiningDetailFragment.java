@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -83,8 +82,8 @@ public class DiningDetailFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView hoursRecyclerView = (RecyclerView) view.findViewById(R.id.hoursList);
-        RecyclerView menuRecyclerView = (RecyclerView) view.findViewById(R.id.dailyHoursList);
+        RecyclerView hoursRecyclerView = view.findViewById(R.id.hoursList);
+        RecyclerView menuRecyclerView = view.findViewById(R.id.dailyHoursList);
         if (mColumnCount <= 1) {
             hoursRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             menuRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -135,54 +134,10 @@ public class DiningDetailFragment extends Fragment {
                         hoursList.add(new String[]{list.remove(0).toString(), buildingID});
 
                     // Create the menu
-                    switch (buildingName) {
-                        case "Daniel Dining Hall":
-                            menuList = getDHMenu();
-                            break;
-                        case "Bread and Bowl":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Snacks", buildingID}, new String[]{"Misc. Sandwiches", buildingID},
-                                    new String[]{"Drinks", buildingID}, new String[]{"...and more", buildingID});
-                            break;
-                        case "The Library Cafe":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Snacks", buildingID},new String[]{"Smoothies", buildingID},
-                                    new String[]{"Coffee Drinks", buildingID}, new String[]{"Muffins", buildingID}, new String[]{"Drinks", buildingID},
-                                    new String[]{"...and more", buildingID});
-                            break;
-                        case "Sweet and Savory":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Snacks", buildingID}, new String[]{"Sandwiches", buildingID},
-                                    new String[]{"Cookies", buildingID}, new String[]{"Muffins", buildingID}, new String[]{"...and more", buildingID});
-                            break;
-                        case "Chick-Fil-A":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Chicken Sandwiches", buildingID}, new String[]{"Nuggets", buildingID},
-                                    new String[]{"Waffle Fries", buildingID}, new String[]{"...and more", buildingID});
-                            break;
-                        case "Moe's":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Burritos", buildingID}, new String[]{"Chips & Salsa", buildingID},
-                                    new String[]{"Quesadillas", buildingID}, new String[]{"Tacos", buildingID}, new String[]{"Nachos", buildingID},
-                                    new String[]{"...and more", buildingID});
-                            break;
-                        case "Sushi with Gusto":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Sushi", buildingID}, new String[]{"...and more", buildingID});
-                            break;
-                        case "The Paddock":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Specialty Sandwiches", buildingID}, new String[]{"Grilled Items", buildingID},
-                                    new String[]{"Salads", buildingID}, new String[]{"Drinks", buildingID}, new String[]{"Beer and Wine", buildingID},
-                                    new String[]{"...and more", buildingID});
-                            break;
-                        case "Barnes & Noble Cafe":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Starbucks Coffee", buildingID}, new String[]{"Snacks", buildingID},
-                                    new String[]{"Hot Chocolate", buildingID}, new String[]{"...and more", buildingID});
-                            break;
-                        case "Traditions Grille":
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Sandwiches", buildingID}, new String[]{"Grilled Items", buildingID},
-                                    new String[]{"Snacks", buildingID}, new String[]{"Drinks", buildingID}, new String[]{"Beer and Wine", buildingID},
-                                    new String[]{"...and more", buildingID});
-                            break;
-                        default:
-                            menuList = (List<String[]>) Arrays.asList(new String[]{"Food", buildingID},new String[]{"Drinks", buildingID},
-                                    new String[]{"...and more", buildingID});
-                    }
-
+                    if (buildingName.equals("Daniel Dining Hall"))
+                        menuList = getDHMenu();
+                    else
+                        menuList = getRestaurantMenu(buildingName);
                 }
 
             } catch (Exception e) {
@@ -309,6 +264,22 @@ public class DiningDetailFragment extends Fragment {
             list.add(new String[]{"----Dinner----",""});
             while (!dinner.isEmpty())
                 list.add(dinner.remove(0));
+        }
+        return list;
+    }
+
+    private List<String[]> getRestaurantMenu(String name) throws JSONException {
+        List<String[]> list = new ArrayList<>();
+
+        String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php");
+        if (!service.equals("]")) {
+            JSONArray menuArray = new JSONArray(service);
+            for (int i = 0; i < menuArray.length(); i++) {
+                JSONObject menuObject = menuArray.getJSONObject(i);
+                if (menuObject.getString("restaurant").equals(name)) {
+                    list.add(new String[]{menuObject.getString("item"),buildingID});
+                }
+            }
         }
         return list;
     }

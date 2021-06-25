@@ -23,7 +23,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
 
     private final List<String[]> ourList;
     private final int type;
-    private Context context;
+    private final Context context;
 
     int HEALTH_SAFETY = 0;
 
