@@ -21,7 +21,7 @@ import java.util.List;
 
 public class PhoneRecyclerViewAdapter extends RecyclerView.Adapter<PhoneRecyclerViewAdapter.ViewHolder> {
 
-    private final List<String[]> ourList;
+    private List<String[]> ourList;
     private final int type;
     private final Context context;
 
@@ -44,6 +44,16 @@ public class PhoneRecyclerViewAdapter extends RecyclerView.Adapter<PhoneRecycler
         }
 
         return viewHolder;
+    }
+
+    // method for filtering our recyclerview items.
+    public void filterList(List<String[]> filterllist) {
+        // below line is to add our filtered
+        // list in our course array list.
+        ourList = filterllist;
+        // below line is to notify our adapter
+        // as change in recycler view data.
+        notifyDataSetChanged();
     }
 
     @Override

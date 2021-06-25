@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +40,8 @@ public class PhoneFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
+    List<String[]> phoneList;
+    PhoneRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,6 +66,37 @@ public class PhoneFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        setHasOptionsMenu(true); // IMPORTANT
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.actionSearch);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return false;
+            }
+        });
+    }
+
+    private void filter(String text) {
+        List<String[]> filteredlist = new ArrayList<>();
+        for (String[] arr : phoneList) {
+            if (arr[0].toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(arr);
+            }
+        }
+        adapter.filterList(filteredlist);
     }
 
     @Override
@@ -78,7 +116,7 @@ public class PhoneFragment extends Fragment {
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             // Get the list of contacts
-            List<String[]> s = new ArrayList<>();
+            phoneList = new ArrayList<>();
             try {
                 String service = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/contactsGet.php");
                 if (!service.equals("]")) {
@@ -87,7 +125,7 @@ public class PhoneFragment extends Fragment {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         String num = jsonObject.getString("number");
                         num = num.substring(0,3) + "." + num.substring(3,6) + "." + num.substring(6);
-                        s.add(new String[]{jsonObject.getString("name"),num});
+                        phoneList.add(new String[]{jsonObject.getString("name"),num});
                     }
                 }
             } catch (JSONException e) {
@@ -96,7 +134,8 @@ public class PhoneFragment extends Fragment {
 
             handler.post(() -> { // Update UI
                 recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                recyclerMenuView.setAdapter(new PhoneRecyclerViewAdapter(s,0, this.getContext()));
+                adapter = new PhoneRecyclerViewAdapter(phoneList, 0, this.getContext());
+                recyclerMenuView.setAdapter(adapter);
             });
         });
 

@@ -87,7 +87,7 @@
         android:id="@+id/phoneFragment"
         android:name="com.example.fn_android.PhoneFragment"
         android:label="fragment_phone"
-        tools:layout="@layout/fragment_phone" >
+        tools:layout="@layout/fragment_phone_list">
         <action
             android:id="@+id/action_phoneFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
