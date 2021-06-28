@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/athleticsFragment"
-        android:name="com.example.fn_android.AthleticsFragment"
+        android:name="com.myapp.fn_android.AthleticsFragment"
         android:label="fragment_athletics"
         tools:layout="@layout/fragment_athletics" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.fn_android.HomeFragment"
+        android:name="com.myapp.fn_android.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/EventsSyncDinFragment"
-        android:name="com.example.fn_android.EventsSyncDINFragment"
+        android:name="com.myapp.fn_android.EventsSyncDINFragment"
         android:label="fragment_events"
         tools:layout="@layout/fragment_events_syncdin_list">
         <action
@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/diningFragment"
-        android:name="com.example.fn_android.DiningFragment"
+        android:name="com.myapp.fn_android.DiningFragment"
         android:label="fragment_dining"
         tools:layout="@layout/fragment_dining_list">
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/healthSafetyFragment"
-        android:name="com.example.fn_android.HealthSafetyFragment"
+        android:name="com.myapp.fn_android.HealthSafetyFragment"
         android:label="fragment_health_safety"
         tools:layout="@layout/fragment_health_safety_list">
         <action
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/phoneFragment"
-        android:name="com.example.fn_android.PhoneFragment"
+        android:name="com.myapp.fn_android.PhoneFragment"
         android:label="fragment_phone"
         tools:layout="@layout/fragment_phone_list">
         <action
@@ -94,7 +94,7 @@
     </fragment>
     <fragment
         android:id="@+id/transportationFragment"
-        android:name="com.example.fn_android.TransportationFragment"
+        android:name="com.myapp.fn_android.TransportationFragment"
         android:label="fragment_transportation"
         tools:layout="@layout/fragment_transportation" >
         <action
@@ -103,7 +103,7 @@
     </fragment>
     <fragment
         android:id="@+id/hoursFragment"
-        android:name="com.example.fn_android.HoursFragment"
+        android:name="com.myapp.fn_android.HoursFragment"
         android:label="fragment_hours"
         tools:layout="@layout/fragment_hours_list" >
         <action
@@ -115,7 +115,7 @@
     </fragment>
     <fragment
         android:id="@+id/datesFragment"
-        android:name="com.example.fn_android.DatesFragment"
+        android:name="com.myapp.fn_android.DatesFragment"
         android:label="fragment_dates">
         <action
             android:id="@+id/action_datesFragment_to_homeFragment"
@@ -123,7 +123,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.fn_android.MapFragment"
+        android:name="com.myapp.fn_android.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
         <action
@@ -132,7 +132,7 @@
     </fragment>
     <fragment
         android:id="@+id/hoursDetailFragment"
-        android:name="com.example.fn_android.HoursDetailFragment"
+        android:name="com.myapp.fn_android.HoursDetailFragment"
         android:label="fragment_hours_detail_list"
         tools:layout="@layout/fragment_hours_detail_list" >
         <action
@@ -147,7 +147,7 @@
     </fragment>
     <fragment
         android:id="@+id/diningDetailFragment"
-        android:name="com.example.fn_android.DiningDetailFragment"
+        android:name="com.myapp.fn_android.DiningDetailFragment"
         android:label="fragment_dining_detail_list"
         tools:layout="@layout/fragment_dining_detail_list" >
         <action
@@ -156,7 +156,7 @@
     </fragment>
     <fragment
         android:id="@+id/eventsCLPFragment"
-        android:name="com.example.fn_android.EventsCLPFragment"
+        android:name="com.myapp.fn_android.EventsCLPFragment"
         android:label="fragment_events_clp_list"
         tools:layout="@layout/fragment_events_clp_list" >
         <action
@@ -168,7 +168,7 @@
     </fragment>
     <fragment
         android:id="@+id/eventsDetailFragment"
-        android:name="com.example.fn_android.EventsDetailFragment"
+        android:name="com.myapp.fn_android.EventsDetailFragment"
         android:label="fragment_events_detail"
         tools:layout="@layout/fragment_events_detail" >
         <action
