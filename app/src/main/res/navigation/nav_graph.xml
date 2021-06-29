@@ -138,12 +138,6 @@
         <action
             android:id="@+id/action_hoursDetailFragment_to_hoursFragment"
             app:destination="@id/hoursFragment" />
-        <argument
-            android:name="hours_buildingID"
-            app:argType="string" />
-        <argument
-            android:name="hours_name"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/diningDetailFragment"

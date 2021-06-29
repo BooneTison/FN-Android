@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.fn_android.databinding.FragmentHoursBinding;
@@ -51,13 +51,10 @@ public class HoursRecyclerViewAdapter extends RecyclerView.Adapter<HoursRecycler
 
         if (type == HOURS) {
             holder.mContentView.setOnClickListener(v -> { // Navigate to hours detail page
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Bundle bundle = new Bundle();
                 bundle.putString("id", holder.mIdView.getText().toString());
                 bundle.putString("name", holder.mContentView.getText().toString());
-                HoursDetailFragment hoursDetailFragment = new HoursDetailFragment();
-                hoursDetailFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, hoursDetailFragment).addToBackStack(null).commit();
+                Navigation.findNavController(v).navigate(R.id.hoursDetailFragment,bundle);
             });
         }
     }

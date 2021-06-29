@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.fn_android.databinding.FragmentDiningBinding;
@@ -71,23 +72,17 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
 
         if (type == DINING) {
             holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Bundle bundle = new Bundle();
                 bundle.putString("id", holder.mIdView.getText().toString());
                 bundle.putString("name", holder.mContentView.getText().toString());
-                DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
-                diningDetailFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, diningDetailFragment).addToBackStack(null).commit();
+                Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
 
             holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Bundle bundle = new Bundle();
                 bundle.putString("id", holder.mIdView.getText().toString());
                 bundle.putString("name", holder.mContentView.getText().toString());
-                DiningDetailFragment diningDetailFragment = new DiningDetailFragment();
-                diningDetailFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, diningDetailFragment).addToBackStack(null).commit();
+                Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
         }
 
