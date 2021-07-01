@@ -1,9 +1,7 @@
 package com.myapp.fn_android;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.fn_android.databinding.FragmentHealthSafetyBinding;
@@ -55,15 +52,19 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
         if (holder.mType.equals("phone")) {
             holder.mImageButton.setImageResource(R.drawable.ic_baseline_local_phone_24_purple);
 
-            holder.mImageButton.setOnClickListener(v -> { // Phone call TODO - Check if this is working
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
+            holder.mImageButton.setOnClickListener(v -> { // Phone call
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 String s = holder.mNumberLink;
                 s = "tel:" + s;
                 callIntent.setData(Uri.parse(s));
+                context.startActivity(callIntent);
+            });
 
-                if(ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
+            holder.mContentView.setOnClickListener(v -> { // Phone call
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                String s = holder.mNumberLink;
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
                 context.startActivity(callIntent);
             });
         }
@@ -72,6 +73,13 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
 
             // Navigate to website when clicked
             holder.mImageButton.setOnClickListener(v -> {
+                String url = holder.mNumberLink;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                context.startActivity(i);
+            });
+
+            holder.mContentView.setOnClickListener(v -> {
                 String url = holder.mNumberLink;
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));

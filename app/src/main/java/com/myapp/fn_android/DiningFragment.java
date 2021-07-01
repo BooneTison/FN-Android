@@ -4,11 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,41 +70,40 @@ public class DiningFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dining_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerMenuView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerMenuView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerMenuView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler handler = new Handler(Looper.getMainLooper());
-            executor.execute(() -> {
-                // Get the list of restaurants
-                List<String[]> s = new ArrayList<>();
-                try {
-                    String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantGet.php");
-                    if (!service.equals("]")) {
-                        JSONArray jsonArray = new JSONArray(service);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            s.add(new String[]{jsonObject.getString("fullname"),jsonObject.getString("id")});
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                handler.post(() -> { // Update UI
-                    recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                    recyclerMenuView.setAdapter(new DiningRecyclerViewAdapter(s,0));
-                });
-            });
-
-
-
+        Context context = view.getContext();
+        RecyclerView recyclerMenuView = view.findViewById(R.id.diningList);
+        if (mColumnCount <= 1) {
+            recyclerMenuView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerMenuView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            // Get the list of restaurants
+            List<String[]> s = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantGet.php");
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        s.add(new String[]{jsonObject.getString("fullname"),jsonObject.getString("id")});
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(() -> { // Update UI
+                recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                recyclerMenuView.setAdapter(new DiningRecyclerViewAdapter(s,0));
+            });
+        });
+
+
+
+
         return view;
     }
 

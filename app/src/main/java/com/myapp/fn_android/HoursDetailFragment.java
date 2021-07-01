@@ -1,9 +1,7 @@
 package com.myapp.fn_android;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -92,7 +89,7 @@ public class HoursDetailFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dailyHoursList);
+        RecyclerView recyclerView = view.findViewById(R.id.dailyHoursList);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -205,23 +202,29 @@ public class HoursDetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        ImageButton button = (ImageButton) view.findViewById(R.id.phoneButton);
-        button.setOnClickListener(v -> { // Phone call TODO - Check if this is working
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            TextView textView = (TextView) requireView().findViewById(R.id.phonenumber);
+        ImageButton button = view.findViewById(R.id.phoneButton);
+        button.setOnClickListener(v -> { // Phone call
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            TextView textView = requireView().findViewById(R.id.phonenumber);
             String s = textView.getText().toString();
             s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
             s = "tel:" + s;
             callIntent.setData(Uri.parse(s));
+            startActivity(callIntent);
+        });
 
-            if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
+        TextView phoneText = view.findViewById(R.id.phonenumber);
+        phoneText.setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            String s = phoneText.getText().toString();
+            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
+            s = "tel:" + s;
+            callIntent.setData(Uri.parse(s));
             startActivity(callIntent);
         });
 
         // Navigate to website when clicked
-        TextView specialText = (TextView) view.findViewById(R.id.specialText);
+        TextView specialText = view.findViewById(R.id.specialText);
         specialText.setOnClickListener(v -> {
             if (buildingName.equals("Earle Student Health Center")) {
                 String url = "https://mychart.ghs.org/mychart/Authentication/Login?";

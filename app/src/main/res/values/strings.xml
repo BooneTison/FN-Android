@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Furman Now!</string>
+    <string name="home_text">Home</string>
     <string name="athletics_text">Athletics</string>
     <string name="transportation_text">Transport</string>
     <string name="dining_text">Dining</string>
@@ -41,5 +42,6 @@
     <string name="dining_services_text_off">Dining Services: off</string>
     <string name="parent_engagement_text_off">Furman Parent Engagement: off</string>
     <string name="emergency_text">If you are in an emergency, dial 911!</string>
+    <string name="back_text">Back</string>
 
 </resources>

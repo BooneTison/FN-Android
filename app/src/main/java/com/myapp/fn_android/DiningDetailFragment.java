@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,6 +82,7 @@ public class DiningDetailFragment extends Fragment {
 
         // Set non-list content
         TextView location = view.getRootView().findViewById(R.id.location);
+        //TextView title = view.getRootView().findViewById(R.id.fragmentTitle);
 
         // Set the adapter
         Context context = view.getContext();
@@ -152,6 +156,7 @@ public class DiningDetailFragment extends Fragment {
                 menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1));
                 menuRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 location.setText(finalLocString);
+                //title.setText(buildingName);
             });
         });
 

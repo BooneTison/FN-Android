@@ -91,9 +91,9 @@ public class EventsCLPFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView todayRecyclerView = (RecyclerView) view.findViewById(R.id.todayList);
-        RecyclerView tomRecyclerView = (RecyclerView) view.findViewById(R.id.tomorrowList);
-        RecyclerView weekRecyclerView = (RecyclerView) view.findViewById(R.id.thisweekList);
+        RecyclerView todayRecyclerView = view.findViewById(R.id.todayList);
+        RecyclerView tomRecyclerView = view.findViewById(R.id.tomorrowList);
+        RecyclerView weekRecyclerView = view.findViewById(R.id.thisweekList);
         if (mColumnCount <= 1) {
             todayRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             tomRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -182,7 +182,7 @@ public class EventsCLPFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Navigate to website when clicked
-        Button link = (Button) view.findViewById(R.id.linkButton);
+        Button link = view.findViewById(R.id.linkButton);
         link.setOnClickListener(v -> {
             String url = "https://www.furman.edu/academics/cultural-life-program/upcoming-clp-events";
             Intent i = new Intent(Intent.ACTION_VIEW);

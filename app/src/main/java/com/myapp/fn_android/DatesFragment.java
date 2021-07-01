@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,7 +104,7 @@ public class DatesFragment extends Fragment {
                 filteredlist.add(arr);
             }
         }
-        adapter.filterList(filteredlist);
+        adapter.filterList(filteredlist); // Change list to new filtered list
     }
 
     private void filterByCategory(List<String> list) {
@@ -113,7 +114,7 @@ public class DatesFragment extends Fragment {
                 filteredlist.add(arr);
             }
         }
-        adapter.filterList(filteredlist);
+        adapter.filterList(filteredlist); // Change list to new filtered list
     }
 
     @Override
@@ -134,7 +135,7 @@ public class DatesFragment extends Fragment {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            // Use this to change content
+            // Setting the date list
             datesList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/importantDateGet.php");
@@ -335,6 +336,11 @@ public class DatesFragment extends Fragment {
                 }
             }
         });
+
+//        view.findViewById(R.id.backButton).setOnClickListener(v -> NavHostFragment.findNavController(DatesFragment.this)
+//                .navigate(R.id.action_datesFragment_to_homeFragment));
+//        view.findViewById(R.id.backText).setOnClickListener(v -> NavHostFragment.findNavController(DatesFragment.this)
+//                .navigate(R.id.action_datesFragment_to_homeFragment));
     }
 
     private String convertDate(String input) {

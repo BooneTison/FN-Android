@@ -1,9 +1,7 @@
 package com.myapp.fn_android;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.fn_android.databinding.FragmentItemBinding;
@@ -62,42 +59,30 @@ public class PhoneRecyclerViewAdapter extends RecyclerView.Adapter<PhoneRecycler
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mNumberView.setText(ourList.get(position)[1]);
 
-        holder.mContentView.setOnClickListener(v -> { // Phone call TODO - Check if this is working
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
+        holder.mContentView.setOnClickListener(v -> { // Phone call
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
             String s = holder.mNumberView.getText().toString();
             s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
             s = "tel:" + s;
             callIntent.setData(Uri.parse(s));
-
-            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
             context.startActivity(callIntent);
         });
 
         holder.mPhoneButton.setOnClickListener(v -> {
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
             String s = holder.mNumberView.getText().toString();
             s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
             s = "tel:" + s;
             callIntent.setData(Uri.parse(s));
-
-            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
             context.startActivity(callIntent);
         });
 
         holder.mNumberView.setOnClickListener(v -> {
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
             String s = holder.mNumberView.getText().toString();
             s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
             s = "tel:" + s;
             callIntent.setData(Uri.parse(s));
-
-            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
             context.startActivity(callIntent);
         });
 

@@ -175,8 +175,7 @@ public class HoursTime implements Comparable<HoursTime>{
         if (this.startHour > hour) return false; // Already open or closed now
         double currTime = this.startHour + (this.startMin/60.0);
         double otherTime = hour + (min/60.0);
-        if (otherTime - currTime > 1 || otherTime - currTime < 0) return false; // More than an hour
-        return true; // Less than an hour
+        return !(otherTime - currTime > 1) && !(otherTime - currTime < 0); // More than an hour or Less than an hour
     }
 
     private int calculateTimeLeft(int hour, int min) {

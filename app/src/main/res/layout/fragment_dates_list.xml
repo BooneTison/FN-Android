@@ -4,8 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".EventsSyncDINFragment">
+    android:background="@color/transparent"
+    tools:context=".DatesFragment">
+
+<!--    <TextView-->
+<!--        android:id="@+id/fragmentTitle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/furman_purple"-->
+<!--        android:gravity="center"-->
+<!--        android:text="@string/dates_text"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <ImageButton-->
+<!--        android:id="@+id/backButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:background="@color/transparent"-->
+<!--        android:contentDescription="@string/back_text"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/ic_baseline_arrow_back_24" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/backText"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginLeft="16dp"-->
+<!--        android:text="@string/app_name"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="14sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/fragmentTitle"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/backButton"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <TextView
         android:id="@+id/resultsText"
@@ -21,6 +60,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/search_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_filter_list_24"
+        app:tint="@color/furman_purple" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/datesList"
         android:layout_width="match_parent"
@@ -32,19 +84,6 @@
         app:layout_constraintTop_toBottomOf="@+id/resultsText"
         tools:context=".DatesFragment"
         tools:listitem="@layout/fragment_dates" />
-
-    <ImageButton
-        android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/search_text"
-        app:layout_constraintEnd_toEndOf="@+id/resultsText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_filter_list_24"
-        app:tint="@color/furman_purple" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/FilterLayout"
@@ -134,6 +173,7 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/diningServicesText" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
