@@ -11,10 +11,10 @@
     <string name="hours_text">Hours</string>
     <string name="dates_text">Academic Dates</string>
     <string name="map_text">Campus Map</string>
-    <string name="daily_hours_text">DAILY HOURS:</string>
+    <string name="daily_hours_text">&#160;&#160;Daily Hours:</string>
     <string name="map_view_text">Map view </string>
     <string name="action_settings">Settings</string>
-    <string name="regular_menu_text">REGULAR</string>
+    <string name="regular_menu_text">&#160;&#160;Regular</string>
     <string name="menu_text">Menu:</string>
     <string name="hours_dining_text">Hours:</string>
     <string name="earle_special_text">For your very first appointment, you must call to schedule. After that, you can use MyChart.</string>
@@ -26,7 +26,7 @@
     <string name="syncdin_link_text">Click here to see full list of syncDin Events</string>
     <string name="clp_link_text">Click here to see full list of CLP Events</string>
     <string name="calendar_text">Add to Calendar</string>
-    <string name="results_text">Results</string>
+    <string name="results_text">&#160;&#160;Results</string>
     <string name="search_text">Search</string>
     <string name="no_data_search_text">No Data Found…</string>
     <string name="student_life_text_on">Student Life: on</string>

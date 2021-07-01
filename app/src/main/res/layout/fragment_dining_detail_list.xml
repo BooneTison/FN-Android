@@ -46,6 +46,7 @@
         android:background="@color/furman_gray"
         android:fontFamily="sans-serif"
         android:text="@string/regular_menu_text"
+        android:textAllCaps="true"
         android:textColor="@color/furman_purple"
         android:textSize="20sp"
         android:textStyle="bold"

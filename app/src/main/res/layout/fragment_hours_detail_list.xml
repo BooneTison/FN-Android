@@ -34,6 +34,7 @@
         android:background="@color/furman_gray"
         android:fontFamily="sans-serif"
         android:text="@string/daily_hours_text"
+        android:textAllCaps="true"
         android:textColor="@color/furman_purple"
         android:textSize="28sp"
         android:textStyle="bold"
