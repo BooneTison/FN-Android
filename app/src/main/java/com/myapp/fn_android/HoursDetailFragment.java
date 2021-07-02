@@ -137,6 +137,10 @@ public class HoursDetailFragment extends Fragment {
                             list.add(new HoursTime("null","null", hoursObject.getString("dayorder"),
                                     hoursObject.getString("day")));
                         }
+                        else if (hoursObject.getString("Start").equals("00:00:00") || hoursObject.getString("End").equals("00:00:00")) { // Closed
+                            list.add(new HoursTime("null","null", hoursObject.getString("dayorder"),
+                                    hoursObject.getString("day")));
+                        }
                         else {
                             list.add(new HoursTime(hoursObject.getString("Start"), hoursObject.getString("End"),
                                     hoursObject.getString("dayorder"), hoursObject.getString("day")));

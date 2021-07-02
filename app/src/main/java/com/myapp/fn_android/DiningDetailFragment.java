@@ -124,6 +124,10 @@ public class DiningDetailFragment extends Fragment {
                             list.add(new HoursTime("null","null", hoursObject.getString("dayOrder"),
                                     hoursObject.getString("dayOfWeek")));
                         }
+                        else if (hoursObject.getString("Start").equals("00:00:00") || hoursObject.getString("End").equals("00:00:00")) { // Closed
+                            list.add(new HoursTime("null","null", hoursObject.getString("dayorder"),
+                                    hoursObject.getString("day")));
+                        }
                         else if (hoursObject.isNull("meal")) { // No meal, is by day of week
                             list.add(new HoursTime(hoursObject.getString("start"), hoursObject.getString("end"),
                                     hoursObject.getString("dayOrder"), hoursObject.getString("dayOfWeek"), "null"));
