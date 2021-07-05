@@ -14,12 +14,22 @@ import java.util.List;
 
 public class AthleticsRecyclerViewAdapter extends RecyclerView.Adapter<AthleticsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<String[]> ourList;
+    private List<String[]> ourList;
     private final int type;
 
     public AthleticsRecyclerViewAdapter(List<String[]> items, int fragType) {
         type = fragType;
         ourList = items;
+    }
+
+    // method for filtering our recyclerview items.
+    public void filterList(List<String[]> filterllist) {
+        // below line is to add our filtered
+        // list in our course array list.
+        ourList = filterllist;
+        // below line is to notify our adapter
+        // as change in recycler view data.
+        notifyDataSetChanged();
     }
 
     @NonNull

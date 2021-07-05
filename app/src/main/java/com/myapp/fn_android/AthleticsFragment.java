@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +48,13 @@ public class AthleticsFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
+    RecyclerView todayRecyclerView;
+    RecyclerView tomRecyclerView;
+    RecyclerView weekRecyclerView;
+    List<String[]> todayList;
+    List<String[]> tomList;
+    List<String[]> weekList;
+    AthleticsRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,7 +79,39 @@ public class AthleticsFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.actionSearch);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText,todayList);
+                filter(newText,tomList);
+                filter(newText,weekList);
+                return false;
+            }
+        });
+    }
+
+    private void filter(String text, List<String[]> list) {
+        List<String[]> filteredlist = new ArrayList<>();
+        for (String[] arr : list) {
+            if (arr[0].toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(arr);
+            }
+        }
+        adapter.filterList(filteredlist); // Change list to new filtered list
     }
 
     @Override
@@ -91,9 +133,9 @@ public class AthleticsFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView todayRecyclerView = view.findViewById(R.id.todayList);
-        RecyclerView tomRecyclerView = view.findViewById(R.id.tomorrowList);
-        RecyclerView weekRecyclerView = view.findViewById(R.id.thisweekList);
+        todayRecyclerView = view.findViewById(R.id.todayList);
+        tomRecyclerView = view.findViewById(R.id.tomorrowList);
+        weekRecyclerView = view.findViewById(R.id.thisweekList);
         if (mColumnCount <= 1) {
             todayRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             tomRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -107,9 +149,9 @@ public class AthleticsFragment extends Fragment {
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             // Use this to change content
-            List<String[]> todayList = new ArrayList<>();
-            List<String[]> tomList = new ArrayList<>();
-            List<String[]> weekList = new ArrayList<>();
+            todayList = new ArrayList<>();
+            tomList = new ArrayList<>();
+            weekList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/athleticsGet.php");
                 if (!service.equals("]")) {
@@ -142,11 +184,14 @@ public class AthleticsFragment extends Fragment {
 
             handler.post(() -> {
                 todayRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                todayRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(todayList,0));
+                adapter = new AthleticsRecyclerViewAdapter(todayList,0);
+                todayRecyclerView.setAdapter(adapter);
                 tomRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                tomRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(tomList,0));
+                adapter = new AthleticsRecyclerViewAdapter(tomList,0);
+                tomRecyclerView.setAdapter(adapter);
                 weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                weekRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(weekList,0));
+                adapter = new AthleticsRecyclerViewAdapter(weekList,0);
+                weekRecyclerView.setAdapter(adapter);
 
                 today.setText(todayDate);
                 tomorrow.setText(tomDate);
