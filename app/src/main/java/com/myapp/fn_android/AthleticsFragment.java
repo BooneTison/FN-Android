@@ -1,47 +1,63 @@
 package com.myapp.fn_android;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link AthleticsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment representing a list of Items.
  */
 public class AthleticsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AthleticsFragment() {
-        // Required empty public constructor
-    }
+    private static final String ARG_COLUMN_COUNT = "column-count";
+    private int mColumnCount = 1;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AthleticsFragment.
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
      */
-    // TODO: Rename and change types and number of parameters
-    public static AthleticsFragment newInstance(String param1, String param2) {
+    public AthleticsFragment() {
+    }
+
+    @SuppressWarnings("unused")
+    public static AthleticsFragment newInstance(int columnCount) {
         AthleticsFragment fragment = new AthleticsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,16 +65,165 @@ public class AthleticsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_athletics, container, false);
+        View view = inflater.inflate(R.layout.fragment_athletics_list, container, false);
+
+        // Get Dates
+        TextView today = view.findViewById(R.id.todayDateText);
+        TextView tomorrow = view.findViewById(R.id.tomorrowDateText);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM dd", Locale.US);
+        sdf.setTimeZone(TimeZone.getDefault());
+        String todayDate = sdf.format(Calendar.getInstance().getTime());
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR,1);
+        String tomDate = sdf.format(cal.getTime());
+
+        // Set the adapter
+        Context context = view.getContext();
+        RecyclerView todayRecyclerView = view.findViewById(R.id.todayList);
+        RecyclerView tomRecyclerView = view.findViewById(R.id.tomorrowList);
+        RecyclerView weekRecyclerView = view.findViewById(R.id.thisweekList);
+        if (mColumnCount <= 1) {
+            todayRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            tomRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            weekRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            todayRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            tomRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            weekRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            // Use this to change content
+            List<String[]> todayList = new ArrayList<>();
+            List<String[]> tomList = new ArrayList<>();
+            List<String[]> weekList = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/athleticsGet.php");
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        // Create the event name
+                        String name = jsonObject.getString("sportTitle") + " ";
+                        if (jsonObject.getString("location_indicator").equals("H"))
+                            name += "vs ";
+                        else
+                            name += "at ";
+                        name += jsonObject.getString("opponent");
+                        // Check the date
+                        // 0 is today, 1 is tomorrow, 2 is this week, -1 is in past or more than a week
+                        String date = jsonObject.getString("eventdate");
+                        date = date.substring(0,date.indexOf(" "));
+                        int check = checkDate(date);
+                        cal.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,7))-1,Integer.parseInt(date.substring(8)));
+                        date = sdf.format(cal.getTime());
+                        if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time")});
+                        else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time")});
+                        else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time")});
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            handler.post(() -> {
+                todayRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                todayRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(todayList,0));
+                tomRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                tomRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(tomList,0));
+                weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                weekRecyclerView.setAdapter(new AthleticsRecyclerViewAdapter(weekList,0));
+
+                today.setText(todayDate);
+                tomorrow.setText(tomDate);
+            });
+        });
+
+        return view;
     }
+
+    public static String makeServiceCall (String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        // Navigate to website when clicked
+        Button link = view.findViewById(R.id.linkButton);
+        link.setOnClickListener(v -> {
+            String url = "https://furmanpaladins.com/index.aspx";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+    }
+
+    private int checkDate(String date) {
+        // 0 is today, 1 is tomorrow, 2 is this week, -1 is past or more than a week
+        SimpleDateFormat sdf = new SimpleDateFormat("DDD yyyy", Locale.US);
+        sdf.setTimeZone(TimeZone.getDefault());
+        String todayDate = sdf.format(Calendar.getInstance().getTime());
+        int todayDay = Integer.parseInt(todayDate.substring(0,3));
+        int todayYear = Integer.parseInt(todayDate.substring(4));
+
+        Calendar calendar = new GregorianCalendar(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,7))-1,
+                Integer.parseInt(date.substring(8))); // Month starts at 0 for some reason?!
+        String checkDate = sdf.format(calendar.getTime());
+        int checkDay = Integer.parseInt(checkDate.substring(0,3));
+        int checkYear = Integer.parseInt(date.substring(0,4));
+
+        if (todayDay == checkDay && todayYear == checkYear) return 0; // Same day
+        if (todayDay <= 358) { // Edge cases where adding goes into next year
+            if (todayDay+1 == checkDay && todayYear == checkYear) return 1; // Tomorrow
+            if (checkDay-todayDay <= 7 && checkDay-todayDay > 0 && todayYear == checkYear) return 2; // Within week
+        }
+        else { // Will be comparing into next year
+            if (todayDay+1%365 == checkDay && (todayYear == checkYear || todayYear == checkYear+1)) return 1; // Tomorrow
+            if (checkDay+365-todayDay <= 7 && checkDay+365-todayDay > 0 && (todayYear == checkYear || todayYear == checkYear+1))
+                return 2; // Within week
+        }
+        return -1; // Not within the week
+    }
+
 }
