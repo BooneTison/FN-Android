@@ -3,6 +3,7 @@ package com.myapp.fn_android;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,9 +30,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -86,6 +91,7 @@ public class HoursDetailFragment extends Fragment {
         TextView location = view.getRootView().findViewById(R.id.location);
         ImageButton phoneButton = view.getRootView().findViewById(R.id.phoneButton);
         TextView specialText = view.getRootView().findViewById(R.id.specialText);
+        ImageView buildingPicture = view.getRootView().findViewById(R.id.buildingPicture);
 
         // Set the adapter
         Context context = view.getContext();
@@ -102,6 +108,7 @@ public class HoursDetailFragment extends Fragment {
             String phoneString = "";
             String locString = "";
             List<String[]> hoursList = new ArrayList<>();
+            Drawable image = null;
             try {
                 // Get the phone number
                 String service = makeServiceCallByID("http://cs.furman.edu/~csdaemon/FUNow/contactsGet.php",buildingID);
@@ -150,6 +157,11 @@ public class HoursDetailFragment extends Fragment {
                     for (int k = 0; k < hoursArray.length(); k++)
                         hoursList.add(new String[]{list.remove(0).toString(), buildingID});
 
+                    // Get the picture
+                    String imageUrl = "https://cs.furman.edu/~csdaemon/FUNow/appImages/";
+                    imageUrl += buildingName + ".png";
+                    InputStream URLcontent = (InputStream) new URL(imageUrl).getContent();
+                    image = Drawable.createFromStream(URLcontent,"building image");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -157,6 +169,7 @@ public class HoursDetailFragment extends Fragment {
 
             String finalPhoneString = phoneString;
             String finalLocString = locString;
+            Drawable finalImage = image;
             handler.post(() -> {
                 recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 recyclerView.setAdapter(new HoursRecyclerViewAdapter(hoursList,1));
@@ -165,6 +178,7 @@ public class HoursDetailFragment extends Fragment {
                 // Set the special text, only applies to Earle
                 if (buildingName.equals("Earle Student Health Center"))
                     specialText.setText(R.string.earle_special_text);
+                buildingPicture.setImageDrawable(finalImage);
             });
         });
 

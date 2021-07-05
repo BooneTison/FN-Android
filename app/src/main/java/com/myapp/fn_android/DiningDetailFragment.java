@@ -1,18 +1,17 @@
 package com.myapp.fn_android;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,6 +82,7 @@ public class DiningDetailFragment extends Fragment {
         // Set non-list content
         TextView location = view.getRootView().findViewById(R.id.location);
         //TextView title = view.getRootView().findViewById(R.id.fragmentTitle);
+        ImageView diningPicture = view.getRootView().findViewById(R.id.diningPicture);
 
         // Set the adapter
         Context context = view.getContext();
@@ -102,6 +102,7 @@ public class DiningDetailFragment extends Fragment {
             String locString = "";
             List<String[]> hoursList = new ArrayList<>();
             List<String[]> menuList = new ArrayList<>();
+            Drawable image = null;
             try {
 
                 // Get the location
@@ -124,7 +125,7 @@ public class DiningDetailFragment extends Fragment {
                             list.add(new HoursTime("null","null", hoursObject.getString("dayOrder"),
                                     hoursObject.getString("dayOfWeek")));
                         }
-                        else if (hoursObject.getString("Start").equals("00:00:00") || hoursObject.getString("End").equals("00:00:00")) { // Closed
+                        else if (hoursObject.getString("start").equals("00:00:00") || hoursObject.getString("end").equals("00:00:00")) { // Closed
                             list.add(new HoursTime("null","null", hoursObject.getString("dayorder"),
                                     hoursObject.getString("day")));
                         }
@@ -148,19 +149,26 @@ public class DiningDetailFragment extends Fragment {
                         menuList = getRestaurantMenu(buildingName);
                 }
 
+                // Get the dining picture
+                String imageUrl = "https://cs.furman.edu/~csdaemon/FUNow/appImages/";
+                imageUrl += buildingName + ".png";
+                InputStream URLcontent = (InputStream) new URL(imageUrl).getContent();
+                image = Drawable.createFromStream(URLcontent,"dining image");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             String finalLocString = locString;
             List<String[]> finalMenuList = menuList;
+            Drawable finalImage = image;
             handler.post(() -> { // UI updates
-                //recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1));
                 menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1));
                 menuRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 location.setText(finalLocString);
                 //title.setText(buildingName);
+                diningPicture.setImageDrawable(finalImage);
             });
         });
 
@@ -189,6 +197,40 @@ public class DiningDetailFragment extends Fragment {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (jsonObject.getString("id").equals(key)) {
+                    str.append(jsonObject.toString()).append(",");
+                }
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
+
+    public static String makeServiceCallByName (String reqUrl, String key) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.getString("restaurant").equals(key)) {
                     str.append(jsonObject.toString()).append(",");
                 }
             }
@@ -280,7 +322,7 @@ public class DiningDetailFragment extends Fragment {
     private List<String[]> getRestaurantMenu(String name) throws JSONException {
         List<String[]> list = new ArrayList<>();
 
-        String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php");
+        String service = makeServiceCallByName("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php",buildingName);
         if (!service.equals("]")) {
             JSONArray menuArray = new JSONArray(service);
             for (int i = 0; i < menuArray.length(); i++) {

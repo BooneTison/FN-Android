@@ -7,16 +7,12 @@
     android:divider="@android:drawable/bottom_bar"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/item_number"
+    <ImageView
+        android:id="@+id/diningIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:clickable="true"
-        android:focusable="true"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:contentDescription="@string/dining_text" />
 
     <TextView
         android:id="@+id/content"

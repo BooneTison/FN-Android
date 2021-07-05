@@ -1,16 +1,17 @@
 package com.myapp.fn_android;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,27 +68,27 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
-        holder.mIdView.setText(ourList.get(position)[1]);
+        holder.mIdView = ourList.get(position)[1];
         //holder.mProgText.setText("P");
 
         if (type == DINING) {
             holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
                 Bundle bundle = new Bundle();
-                bundle.putString("id", holder.mIdView.getText().toString());
+                bundle.putString("id", holder.mIdView);
                 bundle.putString("name", holder.mContentView.getText().toString());
                 Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
 
             holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
                 Bundle bundle = new Bundle();
-                bundle.putString("id", holder.mIdView.getText().toString());
+                bundle.putString("id", holder.mIdView);
                 bundle.putString("name", holder.mContentView.getText().toString());
                 Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
         }
 
 
-        if (holder.mOpenCloseButton != null && holder.mProgressBar != null) {
+        if (holder.mOpenCloseButton != null && holder.mProgressBar != null && holder.mImageView != null) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
@@ -95,6 +96,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                 boolean open = false; // Found an hour where the restaurant is open
                 boolean foundWithin = false; // Found an hour where the rest is 1 hr before open or close
                 int prog = 0; // Integer of progress bar
+                Drawable image = null;
                 try {
                     String service = makeServiceCallByID("https://cs.furman.edu/~csdaemon/FUNow/restaurantHoursGet.php",ourList.get(position)[1]);
                     if (!service.equals("]")) {
@@ -126,12 +128,19 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                             }
                         }
                     }
+
+                    // Get the image
+                    String imageUrl = "https://cs.furman.edu/~csdaemon/FUNow/appIcons/";
+                    imageUrl += ourList.get(position)[0] + " Icon.png";
+                    InputStream URLcontent = (InputStream) new URL(imageUrl).getContent();
+                    image = Drawable.createFromStream(URLcontent,"dining image");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 boolean finalOpen = open;
                 int finalProg = prog;
+                Drawable finalImage = image;
                 handler.post(() -> {
                     if (finalOpen)
                         holder.mOpenCloseButton.setImageResource(R.drawable.ic_baseline_check_circle_24);
@@ -140,6 +149,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                     holder.mProgressBar.setProgress(finalProg);
                     holder.mProgressBar.setMax(60);
                     //holder.mProgText.setText(Integer.toString(finalProg));
+                    holder.mImageView.setImageDrawable(finalImage);
                 });
             });
         }
@@ -151,41 +161,45 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
+        public String mIdView;
         public final TextView mContentView;
         public String mItem;
         public ImageButton mOpenCloseButton;
         public ProgressBar mProgressBar;
         //public TextView mProgText;
+        public ImageView mImageView;
 
         // Basic Item Fragment
         public ViewHolder(FragmentItemBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
+            mIdView = null;
             mContentView = binding.content;
             mOpenCloseButton = null;
             mProgressBar = null;
             //mProgText = null;
+            mImageView = null;
         }
 
         // Dining Fragment
         public ViewHolder(FragmentDiningBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
+            mIdView = null;
             mContentView = binding.content;
             mOpenCloseButton = binding.openclosedButton;
             mProgressBar = binding.progressBar;
             //mProgText = binding.progText;
+            mImageView = binding.diningIcon;
         }
 
         // Hours Detail Fragment
         public ViewHolder(FragmentDiningDetailBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
+            mIdView = null;
             mContentView = binding.content;
             mOpenCloseButton = null;
             mProgressBar = null;
             //mProgText = null;
+            mImageView = null;
         }
 
         @NonNull
