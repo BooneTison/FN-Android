@@ -120,9 +120,12 @@ public class EventsSyncDINFragment extends Fragment {
                         // Check the date
                         // 0 is today, 1 is tomorrow, 2 is this week, -1 is in past or more than a week
                         int check = checkDate(jsonObject.getString("date"));
+                        String date = jsonObject.getString("date");
+                        cal.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,7))-1,Integer.parseInt(date.substring(8)));
+                        date = sdf.format(cal.getTime());
                         if (check == 0) todayList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
                         else if (check == 1) tomList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
-                        else if (check == 2) weekList.add(new String[]{jsonObject.getString("title"),hoursTime.toStringHoursOnly()});
+                        else if (check == 2) weekList.add(new String[]{jsonObject.getString("title"),date + " " + hoursTime.toStringHoursOnly()});
                     }
                 }
 
