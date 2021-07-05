@@ -283,8 +283,8 @@
 
     <ImageView
         android:id="@+id/homeImage"
-        android:layout_width="451dp"
-        android:layout_height="447dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/dining_button"
@@ -292,7 +292,6 @@
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="@+id/transportation_button"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.57"
-        app:srcCompat="@mipmap/ic_belltower" />
+        app:layout_constraintVertical_bias="0.57" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

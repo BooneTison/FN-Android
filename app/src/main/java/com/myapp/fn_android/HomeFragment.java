@@ -1,14 +1,25 @@
 package com.myapp.fn_android;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.io.InputStream;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
 
@@ -76,5 +87,25 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.map_button_text).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
                 .navigate(R.id.action_homeFragment_to_mapFragment));
 
+
+        // Handle home image
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            ImageView imageView = view.findViewById(R.id.homeImage);
+            Drawable image = null;
+            try {
+                String imageUrl = "https://cs.furman.edu/~csdaemon/FUNow/monthImages/";
+                SimpleDateFormat sdf = new SimpleDateFormat("MM", Locale.US);
+                String month = sdf.format(Calendar.getInstance().getTime()); // Get the month for the url
+                imageUrl += Integer.parseInt(month) + ".jpg"; // Remove leading zero if necessary
+                InputStream URLcontent = (InputStream) new URL(imageUrl).getContent();
+                image = Drawable.createFromStream(URLcontent,"month image");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Drawable finalImage = image;
+            handler.post(() -> imageView.setImageDrawable(finalImage));
+        });
     }
 }
