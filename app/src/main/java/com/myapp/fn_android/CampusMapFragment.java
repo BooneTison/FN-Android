@@ -1,20 +1,19 @@
 package com.myapp.fn_android;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CampusMapFragment extends Fragment {
 
@@ -32,7 +31,8 @@ public class CampusMapFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             LatLng furman = new LatLng(34.9246422, -82.4390771);
-            //googleMap.addMarker(new MarkerOptions().position(furman).title("Marker in Sydney"));
+            //Marker marker = googleMap.addMarker(new MarkerOptions().position(furman).title("AAA").icon(BitmapDescriptorFactory.defaultMarker(
+            //       BitmapDescriptorFactory.HUE_BLUE)));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
         }
