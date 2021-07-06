@@ -54,7 +54,9 @@ public class AthleticsFragment extends Fragment {
     List<String[]> todayList;
     List<String[]> tomList;
     List<String[]> weekList;
-    AthleticsRecyclerViewAdapter adapter;
+    AthleticsRecyclerViewAdapter todAdapter;
+    AthleticsRecyclerViewAdapter tomAdapter;
+    AthleticsRecyclerViewAdapter weekAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -96,22 +98,27 @@ public class AthleticsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText,todayList);
-                filter(newText,tomList);
-                filter(newText,weekList);
+                filter(newText,todayList, 0);
+                filter(newText,tomList, 1);
+                filter(newText,weekList, 2);
                 return false;
             }
         });
     }
 
-    private void filter(String text, List<String[]> list) {
+    private void filter(String text, List<String[]> list, int type) {
         List<String[]> filteredlist = new ArrayList<>();
         for (String[] arr : list) {
             if (arr[0].toLowerCase().contains(text.toLowerCase())) {
                 filteredlist.add(arr);
             }
         }
-        adapter.filterList(filteredlist); // Change list to new filtered list
+        if (type == 0)
+            todAdapter.filterList(filteredlist); // Change list to new filtered list
+        else if (type == 1)
+            tomAdapter.filterList(filteredlist);
+        else
+            weekAdapter.filterList(filteredlist);
     }
 
     @Override
@@ -184,14 +191,14 @@ public class AthleticsFragment extends Fragment {
 
             handler.post(() -> {
                 todayRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                adapter = new AthleticsRecyclerViewAdapter(todayList,0);
-                todayRecyclerView.setAdapter(adapter);
+                todAdapter = new AthleticsRecyclerViewAdapter(todayList,0);
+                todayRecyclerView.setAdapter(todAdapter);
                 tomRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                adapter = new AthleticsRecyclerViewAdapter(tomList,0);
-                tomRecyclerView.setAdapter(adapter);
+                tomAdapter = new AthleticsRecyclerViewAdapter(tomList,0);
+                tomRecyclerView.setAdapter(tomAdapter);
                 weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                adapter = new AthleticsRecyclerViewAdapter(weekList,0);
-                weekRecyclerView.setAdapter(adapter);
+                weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0);
+                weekRecyclerView.setAdapter(weekAdapter);
 
                 today.setText(todayDate);
                 tomorrow.setText(tomDate);

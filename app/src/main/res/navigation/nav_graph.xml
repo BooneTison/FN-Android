@@ -9,7 +9,7 @@
         android:id="@+id/athleticsFragment"
         android:name="com.myapp.fn_android.AthleticsFragment"
         android:label="fragment_athletics"
-        tools:layout="@layout/fragment_athletics" >
+        tools:layout="@layout/fragment_athletics_list">
         <action
             android:id="@+id/action_athleticsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
