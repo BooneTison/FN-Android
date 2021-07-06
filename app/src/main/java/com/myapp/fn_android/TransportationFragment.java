@@ -1,23 +1,39 @@
 package com.myapp.fn_android;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class TransportationFragment extends Fragment {
+    private static final int REQUEST_LOCATION = 1;
+    LocationManager locationManager;
+    double latitude = 34.9246422; // Default lat, Library
+    double longitude = -82.4390771; // Default long, Library
 
-    private OnMapReadyCallback callback = new OnMapReadyCallback() {
+    private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         /**
          * Manipulates the map once available.
@@ -29,10 +45,17 @@ public class TransportationFragment extends Fragment {
          * user has installed Google Play services and returned to the app.
          */
         @Override
-        public void onMapReady(GoogleMap googleMap) {
-            LatLng furman = new LatLng(34.9246422, -82.4390771);
-            //Marker marker = googleMap.addMarker(new MarkerOptions().position(furman).title("AAA").icon(BitmapDescriptorFactory.defaultMarker(
-            //       BitmapDescriptorFactory.HUE_BLUE)));
+        public void onMapReady(@NonNull GoogleMap googleMap) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+            locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                OnGPS();
+            } else {
+                getLocation();
+            }
+
+            LatLng furman = new LatLng(latitude, longitude);
+            googleMap.addMarker(new MarkerOptions().position(furman).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
         }
@@ -53,6 +76,30 @@ public class TransportationFragment extends Fragment {
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
+        }
+    }
+
+    private void OnGPS() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton("No", (dialog, which) -> dialog.cancel());
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (locationGPS != null) {
+                latitude = locationGPS.getLatitude();
+                longitude = locationGPS.getLongitude();
+                //String text = "Lat: " + latitude + " Long: " + longitude;
+                //Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(requireContext(), "Unable to find location.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
