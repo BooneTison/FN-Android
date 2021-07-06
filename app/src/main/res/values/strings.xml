@@ -44,5 +44,7 @@
     <string name="emergency_text">If you are in an emergency, dial 911!</string>
     <string name="back_text">Back</string>
     <string name="link_athletics_text">Click here to see full list of Athletic Events</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_map_fragment2">Map</string>
 
 </resources>
