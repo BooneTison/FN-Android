@@ -1,5 +1,13 @@
 package com.myapp.fn_android;
 
+
+import android.location.Address;
+import android.location.Geocoder;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentActivity;
+import java.io.IOException;
+import java.util.List;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +22,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CampusMapFragment extends Fragment {
+    private GoogleMap mMap;
+
+    // creating a variable
+    // for search view.
+    SearchView searchView;
+
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -44,6 +59,7 @@ public class CampusMapFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_campus_map, container, false);
+
     }
 
     @Override
@@ -56,3 +72,6 @@ public class CampusMapFragment extends Fragment {
         }
     }
 }
+
+
+
