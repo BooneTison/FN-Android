@@ -48,15 +48,14 @@ public class AthleticsFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
-    RecyclerView todayRecyclerView;
-    RecyclerView tomRecyclerView;
-    RecyclerView weekRecyclerView;
     List<String[]> todayList;
     List<String[]> tomList;
     List<String[]> weekList;
+    List<String[]> resList;
     AthleticsRecyclerViewAdapter todAdapter;
     AthleticsRecyclerViewAdapter tomAdapter;
     AthleticsRecyclerViewAdapter weekAdapter;
+    AthleticsRecyclerViewAdapter resAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -101,6 +100,7 @@ public class AthleticsFragment extends Fragment {
                 filter(newText,todayList, 0);
                 filter(newText,tomList, 1);
                 filter(newText,weekList, 2);
+                filter(newText,resList,3);
                 return false;
             }
         });
@@ -117,8 +117,10 @@ public class AthleticsFragment extends Fragment {
             todAdapter.filterList(filteredlist); // Change list to new filtered list
         else if (type == 1)
             tomAdapter.filterList(filteredlist);
-        else
+        else if (type == 2)
             weekAdapter.filterList(filteredlist);
+        else
+            resAdapter.filterList(filteredlist);
     }
 
     @Override
@@ -140,17 +142,20 @@ public class AthleticsFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        todayRecyclerView = view.findViewById(R.id.todayList);
-        tomRecyclerView = view.findViewById(R.id.tomorrowList);
-        weekRecyclerView = view.findViewById(R.id.thisweekList);
+        RecyclerView todayRecyclerView = view.findViewById(R.id.todayList);
+        RecyclerView tomRecyclerView = view.findViewById(R.id.tomorrowList);
+        RecyclerView weekRecyclerView = view.findViewById(R.id.thisweekList);
+        RecyclerView resRecyclerView = view.findViewById(R.id.resultsList);
         if (mColumnCount <= 1) {
             todayRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             tomRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             weekRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            resRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
             todayRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             tomRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             weekRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            resRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -159,6 +164,7 @@ public class AthleticsFragment extends Fragment {
             todayList = new ArrayList<>();
             tomList = new ArrayList<>();
             weekList = new ArrayList<>();
+            resList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/athleticsGet.php");
                 if (!service.equals("]")) {
@@ -172,6 +178,10 @@ public class AthleticsFragment extends Fragment {
                         else
                             name += "at ";
                         name += jsonObject.getString("opponent");
+                        if (!jsonObject.isNull("noplayText")) { // Check if the game is cancelled
+                            String can = jsonObject.getString("noplayText");
+                            name += " " + can.toUpperCase();
+                        }
                         // Check the date
                         // 0 is today, 1 is tomorrow, 2 is this week, -1 is in past or more than a week
                         String date = jsonObject.getString("eventdate");
@@ -182,6 +192,16 @@ public class AthleticsFragment extends Fragment {
                         if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time")});
                         else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time")});
                         else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time")});
+                        else if (check == -2) {
+                            String result = "";
+                            if (!jsonObject.isNull("resultStatus")) {
+                                result = jsonObject.getString("resultStatus") + " " + jsonObject.getString("resultUs") +
+                                        "-" + jsonObject.getString("resultThem");
+                                if (!jsonObject.isNull("postscore_info"))
+                                    result += " " + jsonObject.getString("postscore_info");
+                            }
+                            resList.add(new String[]{name,result});
+                        }
                     }
                 }
 
@@ -199,6 +219,9 @@ public class AthleticsFragment extends Fragment {
                 weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0);
                 weekRecyclerView.setAdapter(weekAdapter);
+                resRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                resAdapter = new AthleticsRecyclerViewAdapter(resList,0);
+                resRecyclerView.setAdapter(resAdapter);
 
                 today.setText(todayDate);
                 tomorrow.setText(tomDate);
@@ -252,7 +275,7 @@ public class AthleticsFragment extends Fragment {
     }
 
     private int checkDate(String date) {
-        // 0 is today, 1 is tomorrow, 2 is this week, -1 is past or more than a week
+        // 0 is today, 1 is tomorrow, 2 is this week, -1 is past or more than a week, -2 is past two days
         SimpleDateFormat sdf = new SimpleDateFormat("DDD yyyy", Locale.US);
         sdf.setTimeZone(TimeZone.getDefault());
         String todayDate = sdf.format(Calendar.getInstance().getTime());
@@ -275,6 +298,12 @@ public class AthleticsFragment extends Fragment {
             if (checkDay+365-todayDay <= 7 && checkDay+365-todayDay > 0 && (todayYear == checkYear || todayYear == checkYear+1))
                 return 2; // Within week
         }
+        // Check if in past two days
+        if (checkDay <= 363) // Edge cases where adding goes into next year
+            if (todayDay-checkDay <= 2 && todayDay-checkDay > 0 && todayYear == checkYear) return -2; // Past two days
+        else // Will be comparing into next year
+            if (todayDay+365-checkDay <= 2 && todayDay+365-checkDay > 0 && (todayYear == checkYear || todayYear == checkYear+1))
+                return -2; // Past two days
         return -1; // Not within the week
     }
 

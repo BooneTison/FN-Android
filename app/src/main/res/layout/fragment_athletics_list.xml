@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".6" />
+        app:layout_constraintGuide_percent=".45" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/todayList"
@@ -116,11 +116,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/linkButton"
+        app:layout_constraintBottom_toTopOf="@+id/resultsText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/thisweekText"
-        tools:listitem="@layout/fragment_events_clp" />
+        tools:listitem="@layout/fragment_events_clp" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:id="@+id/linkButton"
@@ -131,6 +133,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/resultsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="@string/results_text2"
+        android:textAllCaps="true"
+        android:textColor="@color/furman_purple"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linkButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thisweekText" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/resultsList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@+id/linkButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resultsText"
+        tools:listitem="@layout/fragment_events_clp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
