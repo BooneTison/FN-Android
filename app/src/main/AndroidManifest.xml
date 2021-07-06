@@ -38,7 +38,7 @@
         -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="AIzaSyB9THJchYCio9FGcs80KPE3dTpp-cfiJzE" />
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/network_security_config" />
