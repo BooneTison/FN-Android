@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +36,9 @@ public class HealthSafetyFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
+
+
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -86,7 +90,7 @@ public class HealthSafetyFragment extends Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         contactList.add(new String[]{jsonObject.getString("name"),jsonObject.getString("content"),
-                                jsonObject.getString("type")});
+                                jsonObject.getString("type"),jsonObject.getString("icon")});
                     }
                 }
             } catch (JSONException e) {

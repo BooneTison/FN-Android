@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.myapp.fn_android.databinding.FragmentHealthSafetyBinding;
 import com.myapp.fn_android.databinding.FragmentItemBinding;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<HealthSafetyRecyclerViewAdapter.ViewHolder> {
@@ -21,6 +23,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
     private final List<String[]> ourList;
     private final int type;
     private final Context context;
+    HashMap<String, Integer> images = new HashMap<>();
 
     int HEALTH_SAFETY = 0;
 
@@ -28,6 +31,12 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
         type = fragType;
         ourList = items;
         this.context = context;
+        images.put("shield",R.drawable.hs_shield);
+        images.put("car",R.drawable.hs_car);
+        images.put("bandage.fill",R.drawable.hs_bandage);
+        images.put("person.circle",R.drawable.hs_person);
+        images.put("heart.circle",R.drawable.hs_error);
+        images.put("staroflife",R.drawable.hs_star);
     }
 
     @NonNull
@@ -48,6 +57,12 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mNumberLink = ourList.get(position)[1];
         holder.mType = ourList.get(position)[2];
+        String icon = ourList.get(position)[3];
+
+        if (images.containsKey(icon))
+            holder.mIconView.setImageResource(images.get(icon));
+        else
+            holder.mIconView.setImageResource(R.drawable.baseline_health_and_safety_24);
 
         if (holder.mType.equals("phone")) {
             holder.mImageButton.setImageResource(R.drawable.ic_baseline_local_phone_24_purple);
@@ -99,6 +114,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
         public String mItem;
         public ImageButton mImageButton;
         public String mType;
+        public ImageView mIconView;
 
         // Basic Item Fragment
         public ViewHolder(FragmentItemBinding binding) {
@@ -107,6 +123,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
             mContentView = binding.content;
             mImageButton = null;
             mType = "";
+            mIconView = null;
         }
 
         // Health and Safety Fragment
@@ -116,6 +133,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
             mContentView = binding.content;
             mImageButton = binding.phoneLinkButton;
             mType = "";
+            mIconView = binding.iconImage;
         }
 
         @NonNull
