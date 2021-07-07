@@ -1,13 +1,6 @@
 package com.myapp.fn_android;
 
 
-import android.location.Address;
-import android.location.Geocoder;
-import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.FragmentActivity;
-import java.io.IOException;
-import java.util.List;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +8,22 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CampusMapFragment extends Fragment {
+    double latitude = 34.9246422; // Default lat, Library
+    double longitude = -82.4390771; // Default long, Library
+    String buildingName = ""; // Default name
+
     private GoogleMap mMap;
 
     // creating a variable
@@ -32,7 +31,7 @@ public class CampusMapFragment extends Fragment {
     SearchView searchView;
 
 
-    private OnMapReadyCallback callback = new OnMapReadyCallback() {
+    private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         /**
          * Manipulates the map once available.
@@ -44,10 +43,12 @@ public class CampusMapFragment extends Fragment {
          * user has installed Google Play services and returned to the app.
          */
         @Override
-        public void onMapReady(GoogleMap googleMap) {
-            LatLng furman = new LatLng(34.9246422, -82.4390771);
-            //Marker marker = googleMap.addMarker(new MarkerOptions().position(furman).title("AAA").icon(BitmapDescriptorFactory.defaultMarker(
-            //       BitmapDescriptorFactory.HUE_BLUE)));
+        public void onMapReady(@NonNull GoogleMap googleMap) {
+            LatLng furman = new LatLng(latitude, longitude);
+            if (!buildingName.equals("")) {
+                googleMap.addMarker(new MarkerOptions().position(furman).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_BLUE)));
+            }
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
         }
@@ -58,8 +59,15 @@ public class CampusMapFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campus_map, container, false);
+        View view = inflater.inflate(R.layout.fragment_campus_map, container, false);
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            latitude = bundle.getDouble("latitude");
+            longitude = bundle.getDouble("longitude");
+            buildingName = bundle.getString("name");
+        }
+        return view;
     }
 
     @Override
