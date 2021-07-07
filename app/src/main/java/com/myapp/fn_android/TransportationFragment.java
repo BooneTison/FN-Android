@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,20 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TransportationFragment extends Fragment {
     private static final int REQUEST_LOCATION = 1;
@@ -62,6 +78,8 @@ public class TransportationFragment extends Fragment {
             Bitmap sb = Bitmap.createScaledBitmap(b,75,75,false);
             BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
             googleMap.addMarker(new MarkerOptions().position(currentPos).title("Current Position").icon(icon));
+
+            addStops(googleMap);
 
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentPos));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 16));
@@ -106,6 +124,83 @@ public class TransportationFragment extends Fragment {
             } else {
                 Toast.makeText(requireContext(), "Unable to find location.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private void addStops(@NonNull GoogleMap googleMap) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<MarkerOptions> list = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/503Get.php");
+                if (!service.equals("]")) {
+                    JSONArray stopArray = new JSONArray(service);
+                    for (int i = 0; i < stopArray.length(); i++) {
+                        JSONObject stopObject = stopArray.getJSONObject(i);
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+                        String name = stopObject.getString("stop");
+                        String route = stopObject.getString("route");
+                        BitmapDescriptor icon;
+                        switch (route) {
+                            case "503 Bus":
+                            case "Bus 503":
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                                break;
+                            case "Daily Shuttle":
+                            case "Daily Shuttle ":
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+                                break;
+                            case "Walmart Shuttle":
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+                                break;
+                            default:
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                                break;
+                        }
+                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(route));
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                while (!list.isEmpty())
+                    googleMap.addMarker(list.remove(0));
+            });
+        });
+    }
+
+    public static String makeServiceCall (String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
         }
     }
 }

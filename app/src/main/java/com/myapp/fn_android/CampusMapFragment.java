@@ -71,7 +71,7 @@ public class CampusMapFragment extends Fragment {
             LatLng furman = new LatLng(latitude, longitude);
             if (!buildingName.equals("")) {
                 googleMap.addMarker(new MarkerOptions().position(furman).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_BLUE)));
+                        BitmapDescriptorFactory.HUE_VIOLET)));
             }
 
             LatLng curPos = new LatLng(userLatitude, userLongitude);
