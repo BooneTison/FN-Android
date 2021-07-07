@@ -11,12 +11,14 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,12 +32,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -250,6 +249,29 @@ public class HoursDetailFragment extends Fragment {
                 i.setData(Uri.parse(url));
                 startActivity(i);
             }
+        });
+
+        Button mapButton = view.findViewById(R.id.mapviewButton);
+        Bundle bundle = new Bundle();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            try {
+                String service = makeServiceCallByID("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php",buildingID);
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    double lat = jsonObject.getDouble("latitude");
+                    double lon = jsonObject.getDouble("longitude");
+                    bundle.putString("name",buildingName);
+                    bundle.putDouble("latitude",lat);
+                    bundle.putDouble("longitude",lon);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> mapButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.mapFragment,bundle)));
         });
     }
 

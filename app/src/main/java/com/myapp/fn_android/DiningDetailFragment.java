@@ -8,10 +8,13 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -209,7 +212,7 @@ public class DiningDetailFragment extends Fragment {
         }
     }
 
-    public static String makeServiceCallByName (String reqUrl, String key) {
+    public static String makeServiceCallByRestaurant(String reqUrl, String key) {
         String line;
         try {
             URL url = new URL(reqUrl);
@@ -231,6 +234,38 @@ public class DiningDetailFragment extends Fragment {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 if (jsonObject.getString("restaurant").equals(key)) {
+                    str.append(jsonObject.toString()).append(",");
+                }
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
+
+    public static String makeServiceCallFoodServices(String reqUrl, String key) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.getString("fullname").equals(key)) {
                     str.append(jsonObject.toString()).append(",");
                 }
             }
@@ -322,7 +357,7 @@ public class DiningDetailFragment extends Fragment {
     private List<String[]> getRestaurantMenu(String name) throws JSONException {
         List<String[]> list = new ArrayList<>();
 
-        String service = makeServiceCallByName("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php",buildingName);
+        String service = makeServiceCallByRestaurant("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php",buildingName);
         if (!service.equals("]")) {
             JSONArray menuArray = new JSONArray(service);
             for (int i = 0; i < menuArray.length(); i++) {
@@ -333,6 +368,31 @@ public class DiningDetailFragment extends Fragment {
             }
         }
         return list;
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        Button mapButton = view.findViewById(R.id.mapviewButton);
+        Bundle bundle = new Bundle();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            try {
+                String service = makeServiceCallFoodServices("https://cs.furman.edu/~csdaemon/FUNow/foodservicesGet.php",buildingName);
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    double lat = jsonObject.getDouble("latitude");
+                    double lon = jsonObject.getDouble("longitude");
+                    bundle.putString("name",buildingName);
+                    bundle.putDouble("latitude",lat);
+                    bundle.putDouble("longitude",lon);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> mapButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.mapFragment,bundle)));
+        });
     }
 
 }

@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -54,26 +57,27 @@ public class TransportationFragment extends Fragment {
                 getLocation();
             }
 
-            LatLng furman = new LatLng(latitude, longitude);
-            googleMap.addMarker(new MarkerOptions().position(furman).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
+            LatLng currentPos = new LatLng(latitude, longitude);
+            Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.paladinx3);
+            Bitmap sb = Bitmap.createScaledBitmap(b,75,75,false);
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
+            googleMap.addMarker(new MarkerOptions().position(currentPos).title("Current Position").icon(icon));
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentPos));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 16));
         }
     };
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_transportation, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
@@ -81,7 +85,9 @@ public class TransportationFragment extends Fragment {
 
     private void OnGPS() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
-        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", (dialog, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton("No", (dialog, which) -> dialog.cancel());
+        builder.setMessage("Enable GPS").setCancelable(false).setPositiveButton("Yes", (dialog, which) ->
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setNegativeButton("No", (dialog, which) ->
+                dialog.cancel());
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
