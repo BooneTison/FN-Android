@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -53,6 +53,10 @@ public class TransportationFragment extends Fragment {
     LocationManager locationManager;
     double latitude = 34.9246422; // Default lat, Library
     double longitude = -82.4390771; // Default long, Library
+    final int userIconWidth = 75;
+    final int userIconHeight = 75;
+    final int shuttleIconWidth = 100;
+    final int shuttleIconHeight = 100;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -67,8 +71,7 @@ public class TransportationFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
-                    .getString(R.string.style_json))); // Remove built-in points of interest
+            googleMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.style_json))); // Remove built-in points of interest
 
             ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -80,7 +83,7 @@ public class TransportationFragment extends Fragment {
 
             LatLng currentPos = new LatLng(latitude, longitude);
             Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.paladinx3);
-            Bitmap sb = Bitmap.createScaledBitmap(b,75,75,false);
+            Bitmap sb = Bitmap.createScaledBitmap(b,userIconWidth,userIconHeight,false);
             BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
             googleMap.addMarker(new MarkerOptions().position(currentPos).title("Current Position").icon(icon));
 
@@ -88,6 +91,17 @@ public class TransportationFragment extends Fragment {
 
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentPos));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 16));
+
+            final Handler handler = new Handler();
+            final int delay = 10000; // 1000 milliseconds == 1 second
+            handler.postDelayed(new Runnable() { // Runs every interval according to delay
+                @Override
+                public void run() {
+                    addShuttles(googleMap);
+                    Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
+                    handler.postDelayed(this, delay);
+                }
+            }, delay);
         }
     };
 
@@ -177,6 +191,61 @@ public class TransportationFragment extends Fragment {
         });
     }
 
+    private void addShuttles(@NonNull GoogleMap googleMap) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<MarkerOptions> list = new ArrayList<>();
+            List<Marker> placedMarkers = new ArrayList<>();
+            try {
+                // Returns most recent location for each shuttle
+                String service = makeServiceCallByVehicle("https://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php");
+                if (!service.equals("]")) {
+                    JSONArray stopArray = new JSONArray(service);
+                    for (int i = 0; i < stopArray.length(); i++) {
+                        JSONObject stopObject = stopArray.getJSONObject(i);
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+                        String name = stopObject.getString("vehicle").toUpperCase();
+                        String time = stopObject.getString("updated");
+                        BitmapDescriptor icon;
+                        switch (name) {
+                            case "TROLLEY":
+                                Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
+                                Bitmap sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            case "SAFERIDE":
+                                b = BitmapFactory.decodeResource(getResources(),R.drawable.furmandiamond);
+                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            case "WALMART":
+                                b = BitmapFactory.decodeResource(getResources(),R.drawable.walmart);
+                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            default:
+                                b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
+                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                        }
+                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(time));
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                while (!placedMarkers.isEmpty())
+                    placedMarkers.remove(0).remove();
+                while (!list.isEmpty())
+                    placedMarkers.add(googleMap.addMarker(list.remove(0)));
+            });
+        });
+    }
+
     public static String makeServiceCall (String reqUrl) {
         String line;
         try {
@@ -199,6 +268,54 @@ public class TransportationFragment extends Fragment {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
+
+    public static String makeServiceCallByVehicle (String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            boolean foundSR = false;
+            boolean foundTR = false;
+            boolean foundWM = false;
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.getString("vehicle").equals("saferide") && !foundSR) {
+                    str.append(jsonObject.toString()).append(",");
+                    foundSR = true;
+                }
+                else if (jsonObject.getString("vehicle").equals("trolley") && !foundTR) {
+                    str.append(jsonObject.toString()).append(",");
+                    foundTR = true;
+                }
+                else if (jsonObject.getString("vehicle").equals("walmart") && !foundWM) {
+                    str.append(jsonObject.toString()).append(",");
+                    foundWM = true;
+                }
+                if (foundSR && foundTR && foundWM)
+                    break;
             }
             str = new StringBuilder(str.substring(0, str.length() - 1));
             str.append("]");
