@@ -56,6 +56,12 @@
     ]
   }
 ]
-  </string>
+    </string>
+    <string name="saferide_running_text">Saferide: Running</string>
+    <string name="saferide_not_running_text">Saferide: Inactive</string>
+    <string name="walmart_running_text">Walmart: Running</string>
+    <string name="walmart_not_running_text">Walmart: Inactive</string>
+    <string name="trolley_running_text">Trolley: Running</string>
+    <string name="trolley_not_running_text">Trolley: Inactive</string>
 
 </resources>

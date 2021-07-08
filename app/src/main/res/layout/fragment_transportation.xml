@@ -1,8 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CampusMapFragment" />
+    android:background="@color/transparent"
+    tools:context=".TransportationFragment">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".CampusMapFragment" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/LegendLayout"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:background="@color/furman_light_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/halfScreenGuideline">
+
+        <TextView
+            android:id="@+id/saferideText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/saferide_running_text"
+            android:textColor="@color/furman_purple"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/walmartText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/walmart_running_text"
+            android:textColor="@color/furman_purple"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/saferideText" />
+
+        <TextView
+            android:id="@+id/trolleyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/trolley_running_text"
+            android:textColor="@color/furman_purple"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/walmartText" />
+
+        <ImageView
+            android:id="@+id/saferideImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/furmandiamond"
+            app:layout_constraintBottom_toBottomOf="@+id/saferideText"
+            app:layout_constraintEnd_toStartOf="@+id/saferideText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/saferide_running_text" />
+
+        <ImageView
+            android:id="@+id/walmartImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/walmart"
+            app:layout_constraintBottom_toBottomOf="@+id/walmartText"
+            app:layout_constraintEnd_toStartOf="@+id/walmartText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/walmartText"
+            android:contentDescription="@string/walmart_running_text" />
+
+        <ImageView
+            android:id="@+id/trolleyImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/appicon512"
+            app:layout_constraintBottom_toBottomOf="@+id/trolleyText"
+            app:layout_constraintEnd_toStartOf="@+id/trolleyText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/trolleyText"
+            android:contentDescription="@string/trolley_running_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/halfScreenGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".85" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

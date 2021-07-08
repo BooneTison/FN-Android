@@ -95,8 +95,7 @@
     <fragment
         android:id="@+id/transportationFragment"
         android:name="com.myapp.fn_android.TransportationFragment"
-        android:label="fragment_transportation"
-        tools:layout="@layout/fragment_transportation" >
+        android:label="fragment_transportation">
         <action
             android:id="@+id/action_transportationFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -125,7 +124,7 @@
         android:id="@+id/mapFragment"
         android:name="com.myapp.fn_android.CampusMapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_campus_map" >
+        tools:layout="@layout/fragment_transportation">
         <action
             android:id="@+id/action_mapFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

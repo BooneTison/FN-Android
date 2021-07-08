@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,8 +44,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,6 +61,10 @@ public class TransportationFragment extends Fragment {
     final int userIconHeight = 75;
     final int shuttleIconWidth = 100;
     final int shuttleIconHeight = 100;
+
+    TextView saferideText;
+    TextView trolleyText;
+    TextView walmartText;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -98,7 +106,7 @@ public class TransportationFragment extends Fragment {
                 @Override
                 public void run() {
                     addShuttles(googleMap);
-                    Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
                     handler.postDelayed(this, delay);
                 }
             }, delay);
@@ -118,6 +126,9 @@ public class TransportationFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+        saferideText = view.findViewById(R.id.saferideText);
+        walmartText = view.findViewById(R.id.walmartText);
+        trolleyText = view.findViewById(R.id.trolleyText);
     }
 
     private void OnGPS() {
@@ -199,7 +210,7 @@ public class TransportationFragment extends Fragment {
             List<Marker> placedMarkers = new ArrayList<>();
             try {
                 // Returns most recent location for each shuttle
-                String service = makeServiceCallByVehicle("https://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php");
+                String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
                 if (!service.equals("]")) {
                     JSONArray stopArray = new JSONArray(service);
                     for (int i = 0; i < stopArray.length(); i++) {
@@ -230,9 +241,38 @@ public class TransportationFragment extends Fragment {
                                 icon = BitmapDescriptorFactory.fromBitmap(sb);
                                 break;
                         }
-                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(time));
+                        if (updatedRecently(time)) {
+                            list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(time));
+                            switch (name) {
+                                case "SAFERIDE":
+                                    saferideText.setText(R.string.saferide_running_text);
+                                    break;
+                                case "TROLLEY":
+                                    trolleyText.setText(R.string.trolley_running_text);
+                                    break;
+                                case "WALMART":
+                                    walmartText.setText(R.string.walmart_running_text);
+                                    break;
+                            }
+                        }
+                        else {
+                            switch (name) {
+                                case "SAFERIDE":
+                                    saferideText.setText(R.string.saferide_not_running_text);
+                                    break;
+                                case "TROLLEY":
+                                    trolleyText.setText(R.string.trolley_not_running_text);
+                                    break;
+                                case "WALMART":
+                                    walmartText.setText(R.string.walmart_not_running_text);
+                                    break;
+                            }
+                        }
                     }
                 }
+//                else { // No data found
+//
+//                }
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -324,5 +364,29 @@ public class TransportationFragment extends Fragment {
             e.printStackTrace();
             return "I died";
         }
+    }
+
+    private boolean updatedRecently(String inputDate) {
+        final int TIME_FRAME = 20;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss", Locale.US);
+        String todayDate = sdf.format(Calendar.getInstance().getTime());
+        int tYear = Integer.parseInt(todayDate.substring(0,4));
+        int tMonth = Integer.parseInt(todayDate.substring(5,7));
+        int tDay = Integer.parseInt(todayDate.substring(8,10));
+        int tHour = Integer.parseInt(todayDate.substring(11,13));
+        int tMin = Integer.parseInt(todayDate.substring(14,16));
+        int tSec = Integer.parseInt(todayDate.substring(17));
+        int secondsToday = (tHour * 60 * 60) + (tMin * 60) + tSec;
+
+        int iYear = Integer.parseInt(inputDate.substring(0,4));
+        int iMonth = Integer.parseInt(inputDate.substring(5,7));
+        int iDay = Integer.parseInt(inputDate.substring(8,10));
+        int iHour = Integer.parseInt(inputDate.substring(11,13));
+        int iMin = Integer.parseInt(inputDate.substring(14,16));
+        int iSec = Integer.parseInt(inputDate.substring(17));
+        int secondsInput = (iHour * 60 * 60) + (iMin * 60) + iSec;
+
+        if (tYear != iYear || tMonth != iMonth || tDay != iDay) return false; // not same day
+        return secondsToday - secondsInput <= TIME_FRAME; // return if within time frame
     }
 }
