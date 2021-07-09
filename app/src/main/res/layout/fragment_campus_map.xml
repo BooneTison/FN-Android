@@ -15,14 +15,31 @@
     tools:context=".CampusMapFragment" />
 
     <!--search view to search our location-->
-<androidx.appcompat.widget.SearchView
-android:id="@+id/idSearchView"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_margin="10dp"
-android:background="#BFBFBF"
-android:elevation="5dp"
-app:iconifiedByDefault="false"
-app:queryHint="Search Here" />
+<!--<SearchView-->
+<!--android:id="@+id/idSearchView"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:layout_margin="10dp"-->
+<!--android:background="#BFBFBF"-->
+<!--android:elevation="5dp"-->
+<!--app:iconifiedByDefault="false"-->
+<!--app:queryHint="Search Here"-->
+<!-- />-->
 
-    </RelativeLayout>
+    <fragment
+        android:id="@+id/autocomplete_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name= "com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/halfScreenGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".45" />
+
+
+
+</RelativeLayout>

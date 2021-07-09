@@ -11,11 +11,18 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,20 +37,42 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CampusMapFragment extends Fragment {
     double latitude = 34.9246422; // Default lat, Library
     double longitude = -82.4390771; // Default long, Library
     String buildingName = ""; // Default name
     LocationManager locationManager;
-    double userLatitude = 34.9246422; // Default user lat, Library
-    double userLongitude = -82.4390771; // Default user long, Library
-
     private GoogleMap mMap;
 
-    // creating a variable
-    // for search view.
+    private static final String ARG_COLUMN_COUNT = "column-count";
+    private int mColumnCount = 1;
+    double userLatitude;
+    double userLongitude;
+    List<String[]> searchBarList;
+    LatLng furman = new LatLng(latitude, longitude);
+
+
+
+    AthleticsRecyclerViewAdapter buildAdapter;
+    AthleticsRecyclerViewAdapter dinAdapter;
     SearchView searchView;
 
 
@@ -60,7 +89,10 @@ public class CampusMapFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+            .getString(R.string.style_json))); // Remove built-in points of interest
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
             locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 OnGPS();
@@ -68,22 +100,71 @@ public class CampusMapFragment extends Fragment {
                 getLocation();
             }
 
-            LatLng furman = new LatLng(latitude, longitude);
+           //LatLng furman = new LatLng(latitude, longitude);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
+
             if (!buildingName.equals("")) {
                 googleMap.addMarker(new MarkerOptions().position(furman).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_VIOLET)));
+                        BitmapDescriptorFactory.HUE_BLUE)));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
+            } else {
+
+                addBuildings(googleMap);
+                addFood(googleMap);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
+
             }
 
             LatLng curPos = new LatLng(userLatitude, userLongitude);
-            Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.paladinx3);
-            Bitmap sb = Bitmap.createScaledBitmap(b,75,75,false);
+            Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.paladinx3);
+            Bitmap sb = Bitmap.createScaledBitmap(b, 75, 75, false);
             BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
             googleMap.addMarker(new MarkerOptions().position(curPos).title("Current Position").icon(icon));
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
+
+
+
+
         }
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        if (getArguments() != null) {
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+        }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.actionSearch);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText,searchBarList, 0);
+                return false;
+            }
+        });
+    }
+    private void filter(String text, List<String[]> list, int type) {
+        List<String[]> filteredlist = new ArrayList<>();
+        for (String[] arr : list) {
+            if (arr[0].toLowerCase().contains(text.toLowerCase())) {
+                filteredlist.add(arr);
+            }    }
+    }
 
     @Nullable
     @Override
@@ -91,7 +172,6 @@ public class CampusMapFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_campus_map, container, false);
-
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             latitude = bundle.getDouble("latitude");
@@ -101,14 +181,19 @@ public class CampusMapFragment extends Fragment {
         return view;
     }
 
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
+
     }
 
     private void OnGPS() {
@@ -119,6 +204,7 @@ public class CampusMapFragment extends Fragment {
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
     private void getLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -136,7 +222,198 @@ public class CampusMapFragment extends Fragment {
             }
         }
     }
+
+    private void searchBAR(@NonNull GoogleMap googleMap) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<MarkerOptions> list = new ArrayList<>();
+            List<Marker> placedMarkers = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                if (!service.equals("]")) {
+                    JSONArray stopArray = new JSONArray(service);
+                    for (int i = 0; i < stopArray.length(); i++) {
+                        JSONObject stopObject = stopArray.getJSONObject(i);
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+                        String name = stopObject.getString("fullname");
+                        String nickname = stopObject.getString("name");
+                        if (nickname.equals("null")){
+                            nickname="";
+                        }
+                        BitmapDescriptor icon;
+                        switch (nickname) {
+                            default:
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                                break;
+                        }
+                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                while (!list.isEmpty())
+                    googleMap.addMarker(list.remove(0));
+                while (!list.isEmpty())
+                    placedMarkers.add(googleMap.addMarker(list.remove(0)));
+
+            });
+        });
+    }
+
+
+private void addBuildings(@NonNull GoogleMap googleMap) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<MarkerOptions> list = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                if (!service.equals("]")) {
+                    JSONArray stopArray = new JSONArray(service);
+                    for (int i = 0; i < stopArray.length(); i++) {
+                        JSONObject stopObject = stopArray.getJSONObject(i);
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+
+                        //String hours= stopObject.getString("hasHours");
+                       // if(hours.equals("0")){
+                            String name = stopObject.getString("name");
+                            String nickname = stopObject.getString("nickname");
+                            String category=  stopObject.getString("category");
+                            if (nickname.equals("null")){
+                                nickname="";
+                            }
+                            BitmapDescriptor icon;
+                            switch (category) {
+                                case "academic":
+                                   icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                                   // academics=icon;
+                                    break;
+                                case "auxiliary":
+                                    icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                    //auxiliary=icon;
+                                    break;
+                                case "athletics":
+                                    icon=BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+                                    //athletics=icon;
+                                    break;
+                                case "housing":
+                                  icon=BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                    //housing=icon;
+                                    break;
+                                default:
+                                  icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                                    break;
+                            }
+
+                            list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+
+                            }
+                        //}
+                      /*  else {
+                            String name = stopObject.getString("name");
+                            String nickname = stopObject.getString("nickname");
+                            if (nickname.equals("null")) {
+                                nickname = "";
+                            }
+                            BitmapDescriptor icon;
+                            switch (nickname) {
+                                default:
+                                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+                                    break;
+                            }
+                            list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                        }*/
+                    }
+                }
+
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                while (!list.isEmpty())
+                    googleMap.addMarker(list.remove(0));
+            });
+        });
+    }
+
+
+    private void addFood(@NonNull GoogleMap googleMap) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            List<MarkerOptions> list = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantGet.php");
+                if (!service.equals("]")) {
+                    JSONArray stopArray = new JSONArray(service);
+                    for (int i = 0; i < stopArray.length(); i++) {
+                        JSONObject stopObject = stopArray.getJSONObject(i);
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+                        String name = stopObject.getString("fullname");
+                        String nickname = stopObject.getString("name");
+                        if (nickname.equals("null")){
+                            nickname="";
+                        }
+                        BitmapDescriptor icon;
+                        switch (nickname) {
+                            default:
+                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                                break;
+                        }
+                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                while (!list.isEmpty())
+                    googleMap.addMarker(list.remove(0));
+            });
+        });
+    }
+
+
+    public static String makeServiceCall (String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
+    }
 }
+
 
 
 

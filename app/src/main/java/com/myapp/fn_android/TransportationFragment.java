@@ -80,7 +80,9 @@ public class TransportationFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            googleMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.style_json))); // Remove built-in points of interest
+            boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+                    .getString(R.string.style_json))); // Remove built-in points of interest
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
             ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -140,6 +142,8 @@ public class TransportationFragment extends Fragment {
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+
     private void getLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireActivity(),Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -174,8 +178,8 @@ public class TransportationFragment extends Fragment {
                         String route = stopObject.getString("route");
                         BitmapDescriptor icon;
                         switch (route) {
-                            case "503 Bus":
                             case "Bus 503":
+                            case "503 Bus":
                                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                                 break;
                             case "Daily Shuttle":
@@ -196,6 +200,7 @@ public class TransportationFragment extends Fragment {
             catch (Exception e) {
                 e.printStackTrace();
             }
+
             handler.post(() -> {
                 while (!list.isEmpty())
                     googleMap.addMarker(list.remove(0));

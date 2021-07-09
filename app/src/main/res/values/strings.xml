@@ -48,6 +48,7 @@
     <string name="title_activity_map_fragment2">Map</string>
     <string name="results_text2">Results</string>
     <string name="style_json">
+
 [
   {
     "featureType": "poi",
