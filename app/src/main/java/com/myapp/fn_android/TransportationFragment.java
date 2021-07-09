@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -203,6 +204,7 @@ public class TransportationFragment extends Fragment {
     }
 
     private void addShuttles(@NonNull GoogleMap googleMap) {
+        ConstraintLayout noDataLayout = requireView().findViewById(R.id.NoDataLayout);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
@@ -212,6 +214,7 @@ public class TransportationFragment extends Fragment {
                 // Returns most recent location for each shuttle
                 String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
                 if (!service.equals("]")) {
+                    noDataLayout.setVisibility(View.INVISIBLE);
                     JSONArray stopArray = new JSONArray(service);
                     for (int i = 0; i < stopArray.length(); i++) {
                         JSONObject stopObject = stopArray.getJSONObject(i);
@@ -270,9 +273,9 @@ public class TransportationFragment extends Fragment {
                         }
                     }
                 }
-//                else { // No data found
-//
-//                }
+                else { // No data found, put up the splash screen
+                    noDataLayout.setVisibility(View.VISIBLE);
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
