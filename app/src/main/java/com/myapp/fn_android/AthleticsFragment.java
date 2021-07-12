@@ -1,5 +1,6 @@
 package com.myapp.fn_android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -217,9 +218,9 @@ public class AthleticsFragment extends Fragment {
                         int check = checkDate(date);
                         cal.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,7))-1,Integer.parseInt(date.substring(8)));
                         date = sdf.format(cal.getTime());
-                        if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle")});
-                        else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle")});
-                        else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time"),jsonObject.getString("sportTitle")});
+                        if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle"),""});
+                        else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle"),""});
+                        else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time"),jsonObject.getString("sportTitle"),""});
                         else if (check == -2) {
                             String result = "";
                             if (!jsonObject.isNull("resultStatus")) {
@@ -228,7 +229,10 @@ public class AthleticsFragment extends Fragment {
                                 if (!jsonObject.isNull("postscore_info"))
                                     result += " " + jsonObject.getString("postscore_info");
                             }
-                            resList.add(new String[]{name,result,jsonObject.getString("sportTitle")});
+                            if (!jsonObject.getString("url").equals("null"))
+                                resList.add(new String[]{name,result,jsonObject.getString("sportTitle"),jsonObject.getString("url")});
+                            else
+                                resList.add(new String[]{name,result,jsonObject.getString("sportTitle"),""});
                         }
 
                         // Create the list of sports
@@ -243,23 +247,23 @@ public class AthleticsFragment extends Fragment {
 
             handler.post(() -> {
                 todayRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                todAdapter = new AthleticsRecyclerViewAdapter(todayList,0,this);
+                todAdapter = new AthleticsRecyclerViewAdapter(todayList,0,this, this.getContext());
                 todayRecyclerView.setAdapter(todAdapter);
                 tomRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                tomAdapter = new AthleticsRecyclerViewAdapter(tomList,0, this);
+                tomAdapter = new AthleticsRecyclerViewAdapter(tomList,0, this, this.getContext());
                 tomRecyclerView.setAdapter(tomAdapter);
                 weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0, this);
+                weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0, this, this.getContext());
                 weekRecyclerView.setAdapter(weekAdapter);
                 resRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                resAdapter = new AthleticsRecyclerViewAdapter(resList,0, this);
+                resAdapter = new AthleticsRecyclerViewAdapter(resList,0, this, this.getContext());
                 resRecyclerView.setAdapter(resAdapter);
 
                 List<String[]> list = new ArrayList<>();
                 while (!sportList.isEmpty())
-                    list.add(new String[] {sportList.remove(0),"on",""});
+                    list.add(new String[] {sportList.remove(0),"on","",""});
                 sportRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                sportAdapter = new AthleticsRecyclerViewAdapter(list,0, this);
+                sportAdapter = new AthleticsRecyclerViewAdapter(list,0, this, this.getContext());
                 sportRecyclerView.setAdapter(sportAdapter);
 
                 today.setText(todayDate);
