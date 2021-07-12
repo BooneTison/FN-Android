@@ -1,6 +1,5 @@
 package com.myapp.fn_android;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;

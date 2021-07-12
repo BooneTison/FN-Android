@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -46,8 +45,10 @@ public class DatesFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     List<String[]> datesList;
-    DatesRecyclerViewAdapter adapter;
-    List<String> categoriesFiltered;
+    DatesRecyclerViewAdapter datesAdapter;
+    List<String> categoryList;
+    DatesRecyclerViewAdapter categoryAdapter;
+    List<String> categoriesFiltered = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -103,17 +104,17 @@ public class DatesFragment extends Fragment {
                 filteredlist.add(arr);
             }
         }
-        adapter.filterList(filteredlist); // Change list to new filtered list
+        datesAdapter.filterList(filteredlist); // Change list to new filtered list
     }
 
-    private void filterByCategory(List<String> list) {
+    private void filterByCategory() {
         List<String[]> filteredlist = new ArrayList<>();
         for (String[] arr : datesList) {
-            if (!list.contains(arr[2])) {
+            if (!categoriesFiltered.contains(arr[2])) {
                 filteredlist.add(arr);
             }
         }
-        adapter.filterList(filteredlist); // Change list to new filtered list
+        datesAdapter.filterList(filteredlist); // Change list to new filtered list
     }
 
     @Override
@@ -123,12 +124,15 @@ public class DatesFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.datesList);
+        RecyclerView datesRecyclerView = view.findViewById(R.id.datesList);
+        RecyclerView catRecyclerView = view.findViewById(R.id.categoriesList);
 
         if (mColumnCount <= 1) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            datesRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            catRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            datesRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            catRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -136,15 +140,21 @@ public class DatesFragment extends Fragment {
         executor.execute(() -> {
             // Setting the date list
             datesList = new ArrayList<>();
+            categoryList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/importantDateGet.php");
                 if (!service.equals("]")) {
                     JSONArray jsonArray = new JSONArray(service);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        if (!pastDate(jsonObject.getString("date")))
-                            datesList.add(new String[]{jsonObject.getString("title"),convertDate(jsonObject.getString("date"))
-                                    ,jsonObject.getString("category")});
+                        if (!pastDate(jsonObject.getString("date"))) {
+                            datesList.add(new String[]{jsonObject.getString("title"), convertDate(jsonObject.getString("date"))
+                                    , jsonObject.getString("category")});
+
+                            // Setting the category list
+                            if (!categoryList.contains(jsonObject.getString("category")))
+                                categoryList.add(jsonObject.getString("category"));
+                        }
                     }
                 }
 
@@ -153,9 +163,17 @@ public class DatesFragment extends Fragment {
             }
 
             handler.post(() -> {
-                recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                adapter = new DatesRecyclerViewAdapter(datesList,0);
-                recyclerView.setAdapter(adapter);
+                datesRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                datesAdapter = new DatesRecyclerViewAdapter(datesList,0, this);
+                datesRecyclerView.setAdapter(datesAdapter);
+
+                List<String[]> list = new ArrayList<>();
+                while (!categoryList.isEmpty()) {
+                    list.add(new String[]{categoryList.remove(0),"on",""});
+                }
+                catRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                categoryAdapter = new DatesRecyclerViewAdapter(list,0,this);
+                catRecyclerView.setAdapter(categoryAdapter);
             });
         });
 
@@ -213,128 +231,6 @@ public class DatesFragment extends Fragment {
             }
         });
 
-        // Filters
-        categoriesFiltered = new ArrayList<>();
-
-        TextView studentLifeText = view.findViewById(R.id.studentLifeText);
-        studentLifeText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    studentLifeText.setText(R.string.student_life_text_off);
-                    categoriesFiltered.add("Student Life");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    studentLifeText.setText(R.string.student_life_text_on);
-                    categoriesFiltered.remove("Student Life");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
-
-        TextView registrarText = view.findViewById(R.id.registrarText);
-        registrarText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    registrarText.setText(R.string.registrar_text_off);
-                    categoriesFiltered.add("Registrar");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    registrarText.setText(R.string.registrar_text_on);
-                    categoriesFiltered.remove("Registrar");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
-
-        TextView graduateStudiesText = view.findViewById(R.id.graduateStudiesText);
-        graduateStudiesText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    graduateStudiesText.setText(R.string.graduate_studies_text_off);
-                    categoriesFiltered.add("Graduate Studies");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    graduateStudiesText.setText(R.string.graduate_studies_text_on);
-                    categoriesFiltered.remove("Graduate Studies");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
-
-        TextView housingResidenceText = view.findViewById(R.id.housingResidenceText);
-        housingResidenceText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    housingResidenceText.setText(R.string.housing_residence_text_off);
-                    categoriesFiltered.add("Housing & Residence Life");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    housingResidenceText.setText(R.string.housing_residence_text_on);
-                    categoriesFiltered.remove("Housing & Residence Life");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
-
-        TextView diningServicesText = view.findViewById(R.id.diningServicesText);
-        diningServicesText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    diningServicesText.setText(R.string.dining_services_text_off);
-                    categoriesFiltered.add("Dining Services");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    diningServicesText.setText(R.string.dining_services_text_on);
-                    categoriesFiltered.remove("Dining Services");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
-
-        TextView parentEngagementText = view.findViewById(R.id.parentEngagementText);
-        parentEngagementText.setOnClickListener(new View.OnClickListener() {
-            boolean on = true;
-            @Override
-            public void onClick(View v) {
-                if (on) {
-                    parentEngagementText.setText(R.string.parent_engagement_text_off);
-                    categoriesFiltered.add("Furman Parent Engagement");
-                    filterByCategory(categoriesFiltered);
-                    on = false;
-                }
-                else {
-                    parentEngagementText.setText(R.string.parent_engagement_text_on);
-                    categoriesFiltered.remove("Furman Parent Engagement");
-                    filterByCategory(categoriesFiltered);
-                    on = true;
-                }
-            }
-        });
 
 //        view.findViewById(R.id.backButton).setOnClickListener(v -> NavHostFragment.findNavController(DatesFragment.this)
 //                .navigate(R.id.action_datesFragment_to_homeFragment));
@@ -368,6 +264,14 @@ public class DatesFragment extends Fragment {
         if (iMonth > cMonth) return false; // Before input's month
         // Working within same month
         return iDay < cDay; // Past input's day or same day or before input's day
+    }
+
+    public void filterFromAdapter(String category) {
+        if (categoriesFiltered.contains(category))
+            categoriesFiltered.remove(category);
+        else
+            categoriesFiltered.add(category);
+        filterByCategory();
     }
 
 }

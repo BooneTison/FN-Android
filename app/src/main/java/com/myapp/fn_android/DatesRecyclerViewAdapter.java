@@ -1,5 +1,6 @@
 package com.myapp.fn_android;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,10 +17,12 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
 
     private List<String[]> ourList;
     private final int type;
+    private final DatesFragment fragment;
 
-    public DatesRecyclerViewAdapter(List<String[]> items, int fragType) {
+    public DatesRecyclerViewAdapter(List<String[]> items, int fragType, DatesFragment fragment) {
         type = fragType;
         ourList = items;
+        this.fragment = fragment;
     }
 
     // method for filtering our recyclerview items.
@@ -45,12 +48,28 @@ public class DatesRecyclerViewAdapter extends RecyclerView.Adapter<DatesRecycler
         return viewHolder;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mDateView.setText(ourList.get(position)[1]);
         holder.mCategory = ourList.get(position)[2];
+
+        // Filter by category
+        if (holder.mCategory.equals("")) {
+            holder.mContentView.setOnClickListener(v -> {
+                fragment.filterFromAdapter(holder.mContentView.getText().toString());
+                if (holder.mDateView.getText().toString().equals("on")) holder.mDateView.setText("off");
+                else holder.mDateView.setText("on");
+            });
+
+            holder.mDateView.setOnClickListener(v -> {
+                fragment.filterFromAdapter(holder.mContentView.getText().toString());
+                if (holder.mDateView.getText().toString().equals("on")) holder.mDateView.setText("off");
+                else holder.mDateView.setText("on");
+            });
+        }
     }
 
     @Override
