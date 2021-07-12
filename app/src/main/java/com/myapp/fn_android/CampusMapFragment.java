@@ -68,6 +68,8 @@ public class CampusMapFragment extends Fragment {
     double userLongitude;
     List<String[]> searchBarList;
     LatLng furman = new LatLng(latitude, longitude);
+    final int shuttleIconWidth = 100;
+    final int shuttleIconHeight = 100;
 
 
 
@@ -289,23 +291,33 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                             BitmapDescriptor icon;
                             switch (category) {
                                 case "academic":
-                                   icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                                    Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.green_dot);
+                                    Bitmap sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
                                    // academics=icon;
                                     break;
                                 case "auxiliary":
-                                    icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                  b = BitmapFactory.decodeResource(getResources(),R.drawable.blue_dot);
+                                    sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
                                     //auxiliary=icon;
                                     break;
                                 case "athletics":
-                                    icon=BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET);
+                                    b = BitmapFactory.decodeResource(getResources(),R.drawable.purple_dot);
+                                    sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
                                     //athletics=icon;
                                     break;
                                 case "housing":
-                                  icon=BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                    b = BitmapFactory.decodeResource(getResources(),R.drawable.yellow_dot);
+                                    sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
                                     //housing=icon;
                                     break;
                                 default:
-                                  icon= BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                                     b = BitmapFactory.decodeResource(getResources(),R.drawable.orange_dot);
+                                     sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
                                     break;
                             }
 
@@ -355,13 +367,21 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                         LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
                         String name = stopObject.getString("fullname");
                         String nickname = stopObject.getString("name");
+                        String location=stopObject.getString("location");
                         if (nickname.equals("null")){
                             nickname="";
                         }
                         BitmapDescriptor icon;
                         switch (nickname) {
+                            case "in the PalaDen, lower level of Trone":
+                                Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.red_dot);
+                                Bitmap sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+
                             default:
-                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                                 b = BitmapFactory.decodeResource(getResources(),R.drawable.red_dot);
+                                 sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
                                 break;
                         }
                         list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
