@@ -66,6 +66,7 @@ public class TransportationFragment extends Fragment {
     TextView saferideText;
     TextView trolleyText;
     TextView walmartText;
+    List<Marker> placedMarkers = new ArrayList<>();
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -104,7 +105,7 @@ public class TransportationFragment extends Fragment {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 16));
 
             final Handler handler = new Handler();
-            final int delay = 10000; // 1000 milliseconds == 1 second
+            final int delay = 5000; // 1000 milliseconds == 1 second
             handler.postDelayed(new Runnable() { // Runs every interval according to delay
                 @Override
                 public void run() {
@@ -214,7 +215,6 @@ public class TransportationFragment extends Fragment {
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             List<MarkerOptions> list = new ArrayList<>();
-            List<Marker> placedMarkers = new ArrayList<>();
             try {
                 // Returns most recent location for each shuttle
                 String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
