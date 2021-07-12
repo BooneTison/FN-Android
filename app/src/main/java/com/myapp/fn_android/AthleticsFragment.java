@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,10 +54,14 @@ public class AthleticsFragment extends Fragment {
     List<String[]> tomList;
     List<String[]> weekList;
     List<String[]> resList;
+    List<String> sportList;
     AthleticsRecyclerViewAdapter todAdapter;
     AthleticsRecyclerViewAdapter tomAdapter;
     AthleticsRecyclerViewAdapter weekAdapter;
     AthleticsRecyclerViewAdapter resAdapter;
+    AthleticsRecyclerViewAdapter sportAdapter;
+
+    List<String> sportsFiltered = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -124,6 +130,23 @@ public class AthleticsFragment extends Fragment {
             resAdapter.filterList(filteredlist);
     }
 
+    private void filterBySport(List<String[]> list, int type) {
+        List<String[]> filteredlist = new ArrayList<>();
+        for (String[] arr : list) {
+            if (!sportsFiltered.contains(arr[2])) {
+                filteredlist.add(arr);
+            }
+        }
+        if (type == 0)
+            todAdapter.filterList(filteredlist); // Change list to new filtered list
+        else if (type == 1)
+            tomAdapter.filterList(filteredlist);
+        else if (type == 2)
+            weekAdapter.filterList(filteredlist);
+        else
+            resAdapter.filterList(filteredlist);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -147,16 +170,19 @@ public class AthleticsFragment extends Fragment {
         RecyclerView tomRecyclerView = view.findViewById(R.id.tomorrowList);
         RecyclerView weekRecyclerView = view.findViewById(R.id.thisweekList);
         RecyclerView resRecyclerView = view.findViewById(R.id.resultsList);
+        RecyclerView sportRecyclerView = view.findViewById(R.id.sportsList);
         if (mColumnCount <= 1) {
             todayRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             tomRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             weekRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             resRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            sportRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
             todayRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             tomRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             weekRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             resRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            sportRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -166,6 +192,7 @@ public class AthleticsFragment extends Fragment {
             tomList = new ArrayList<>();
             weekList = new ArrayList<>();
             resList = new ArrayList<>();
+            sportList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/athleticsGet.php");
                 if (!service.equals("]")) {
@@ -190,9 +217,9 @@ public class AthleticsFragment extends Fragment {
                         int check = checkDate(date);
                         cal.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,7))-1,Integer.parseInt(date.substring(8)));
                         date = sdf.format(cal.getTime());
-                        if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time")});
-                        else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time")});
-                        else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time")});
+                        if (check == 0) todayList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle")});
+                        else if (check == 1) tomList.add(new String[]{name,jsonObject.getString("time"),jsonObject.getString("sportTitle")});
+                        else if (check == 2) weekList.add(new String[]{name,date + " " + jsonObject.getString("time"),jsonObject.getString("sportTitle")});
                         else if (check == -2) {
                             String result = "";
                             if (!jsonObject.isNull("resultStatus")) {
@@ -201,8 +228,12 @@ public class AthleticsFragment extends Fragment {
                                 if (!jsonObject.isNull("postscore_info"))
                                     result += " " + jsonObject.getString("postscore_info");
                             }
-                            resList.add(new String[]{name,result});
+                            resList.add(new String[]{name,result,jsonObject.getString("sportTitle")});
                         }
+
+                        // Create the list of sports
+                        if (!sportList.contains(jsonObject.getString("sportTitle")))
+                            sportList.add(jsonObject.getString("sportTitle"));
                     }
                 }
 
@@ -212,17 +243,24 @@ public class AthleticsFragment extends Fragment {
 
             handler.post(() -> {
                 todayRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                todAdapter = new AthleticsRecyclerViewAdapter(todayList,0);
+                todAdapter = new AthleticsRecyclerViewAdapter(todayList,0,this);
                 todayRecyclerView.setAdapter(todAdapter);
                 tomRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                tomAdapter = new AthleticsRecyclerViewAdapter(tomList,0);
+                tomAdapter = new AthleticsRecyclerViewAdapter(tomList,0, this);
                 tomRecyclerView.setAdapter(tomAdapter);
                 weekRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0);
+                weekAdapter = new AthleticsRecyclerViewAdapter(weekList,0, this);
                 weekRecyclerView.setAdapter(weekAdapter);
                 resRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                resAdapter = new AthleticsRecyclerViewAdapter(resList,0);
+                resAdapter = new AthleticsRecyclerViewAdapter(resList,0, this);
                 resRecyclerView.setAdapter(resAdapter);
+
+                List<String[]> list = new ArrayList<>();
+                while (!sportList.isEmpty())
+                    list.add(new String[] {sportList.remove(0),"on",""});
+                sportRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                sportAdapter = new AthleticsRecyclerViewAdapter(list,0, this);
+                sportRecyclerView.setAdapter(sportAdapter);
 
                 today.setText(todayDate);
                 tomorrow.setText(tomDate);
@@ -273,6 +311,24 @@ public class AthleticsFragment extends Fragment {
             i.setData(Uri.parse(url));
             startActivity(i);
         });
+
+        // Open the filter page
+        ImageButton filterButton = view.findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            Boolean open = false;
+            final ConstraintLayout filterView = view.findViewById(R.id.FilterLayout);
+
+            @Override
+            public void onClick(View v) {
+                if (!open) {
+                    open = true;
+                    filterView.setVisibility(View.VISIBLE);
+                } else {
+                    open = false;
+                    filterView.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private int checkDate(String date) {
@@ -306,6 +362,17 @@ public class AthleticsFragment extends Fragment {
             if (todayDay+365-checkDay <= 2 && todayDay+365-checkDay > 0 && (todayYear == checkYear || todayYear == checkYear+1))
                 return -2; // Past two days
         return -1; // Not within the week
+    }
+
+    public void filterFromAdapter(String sport) {
+        if (sportsFiltered.contains(sport))
+            sportsFiltered.remove(sport);
+        else
+            sportsFiltered.add(sport);
+        filterBySport(todayList,0);
+        filterBySport(tomList,1);
+        filterBySport(weekList,2);
+        filterBySport(resList,3);
     }
 
 }

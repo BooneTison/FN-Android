@@ -1,10 +1,13 @@
 package com.myapp.fn_android;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myapp.fn_android.databinding.FragmentAthleticsBinding;
@@ -16,10 +19,12 @@ public class AthleticsRecyclerViewAdapter extends RecyclerView.Adapter<Athletics
 
     private List<String[]> ourList;
     private final int type;
+    private final AthleticsFragment fragment;
 
-    public AthleticsRecyclerViewAdapter(List<String[]> items, int fragType) {
+    public AthleticsRecyclerViewAdapter(List<String[]> items, int fragType, AthleticsFragment fragment) {
         type = fragType;
         ourList = items;
+        this.fragment =fragment;
     }
 
     // method for filtering our recyclerview items.
@@ -45,12 +50,30 @@ public class AthleticsRecyclerViewAdapter extends RecyclerView.Adapter<Athletics
         return viewHolder;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
         holder.mHoursView.setText(ourList.get(position)[1]);
+        holder.mSport = ourList.get(position)[2];
+
+        // Filter by sport
+        if (holder.mSport.equals("")) {
+            holder.mContentView.setOnClickListener(v -> {
+                fragment.filterFromAdapter(holder.mContentView.getText().toString());
+                if (holder.mHoursView.getText().toString().equals("on")) holder.mHoursView.setText("off");
+                else holder.mHoursView.setText("on");
+            });
+
+            holder.mHoursView.setOnClickListener(v -> {
+                fragment.filterFromAdapter(holder.mContentView.getText().toString());
+                if (holder.mHoursView.getText().toString().equals("on")) holder.mHoursView.setText("off");
+                else holder.mHoursView.setText("on");
+            });
+        }
     }
+
 
     @Override
     public int getItemCount() {
@@ -61,12 +84,14 @@ public class AthleticsRecyclerViewAdapter extends RecyclerView.Adapter<Athletics
         public final TextView mHoursView;
         public final TextView mContentView;
         public String mItem;
+        public String mSport;
 
         // Basic Item Fragment
         public ViewHolder(FragmentItemBinding binding) {
             super(binding.getRoot());
             mHoursView = binding.itemNumber;
             mContentView = binding.content;
+            mSport = "";
         }
 
         // Athletics Fragment
@@ -74,6 +99,7 @@ public class AthleticsRecyclerViewAdapter extends RecyclerView.Adapter<Athletics
             super(binding.getRoot());
             mHoursView = binding.timeText;
             mContentView = binding.content;
+            mSport = "";
         }
 
         @NonNull
