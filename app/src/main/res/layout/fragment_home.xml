@@ -237,7 +237,7 @@
     <TextView
         android:id="@+id/health_safety_button_text"
         android:layout_width="133dp"
-        android:layout_height="51dp"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="sans-serif"
@@ -253,7 +253,7 @@
     <TextView
         android:id="@+id/map_button_text"
         android:layout_width="95dp"
-        android:layout_height="51dp"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="sans-serif"
