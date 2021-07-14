@@ -206,7 +206,7 @@ public class AthleticsFragment extends Fragment {
                         else
                             name += "at ";
                         name += jsonObject.getString("opponent");
-                        if (!jsonObject.isNull("noplayText")) { // Check if the game is cancelled
+                        if (!jsonObject.getString("noplayText").equals("")) { // Check if the game is cancelled
                             String can = jsonObject.getString("noplayText");
                             name += " " + can.toUpperCase();
                         }

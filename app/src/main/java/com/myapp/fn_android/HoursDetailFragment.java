@@ -176,6 +176,7 @@ public class HoursDetailFragment extends Fragment {
                 location.setText(finalLocString);
                 // Set the special text, only applies to Earle
                 if (buildingName.equals("Earle Student Health Center"))
+                    specialText.setVisibility(View.VISIBLE);
                     specialText.setText(R.string.earle_special_text);
                 buildingPicture.setImageDrawable(finalImage);
             });

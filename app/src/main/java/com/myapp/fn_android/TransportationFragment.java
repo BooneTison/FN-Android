@@ -67,6 +67,7 @@ public class TransportationFragment extends Fragment {
     TextView trolleyText;
     TextView walmartText;
     List<Marker> placedMarkers = new ArrayList<>();
+    ConstraintLayout noDataLayout;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -81,7 +82,7 @@ public class TransportationFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+            googleMap.setMapStyle(new MapStyleOptions(getResources()
                     .getString(R.string.style_json))); // Remove built-in points of interest
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
@@ -133,6 +134,7 @@ public class TransportationFragment extends Fragment {
         saferideText = view.findViewById(R.id.saferideText);
         walmartText = view.findViewById(R.id.walmartText);
         trolleyText = view.findViewById(R.id.trolleyText);
+        noDataLayout = view.findViewById(R.id.NoDataLayout);
     }
 
     private void OnGPS() {
@@ -182,6 +184,7 @@ public class TransportationFragment extends Fragment {
                             case "Bus 503":
                             case "503 Bus":
                                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                                route = stopObject.getString("eta");
                                 break;
                             case "Daily Shuttle":
                             case "Daily Shuttle ":
@@ -210,16 +213,15 @@ public class TransportationFragment extends Fragment {
     }
 
     private void addShuttles(@NonNull GoogleMap googleMap) {
-        ConstraintLayout noDataLayout = requireView().findViewById(R.id.NoDataLayout);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             List<MarkerOptions> list = new ArrayList<>();
+            boolean noData = false;
             try {
                 // Returns most recent location for each shuttle
                 String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
                 if (!service.equals("]")) {
-                    noDataLayout.setVisibility(View.INVISIBLE);
                     JSONArray stopArray = new JSONArray(service);
                     for (int i = 0; i < stopArray.length(); i++) {
                         JSONObject stopObject = stopArray.getJSONObject(i);
@@ -279,13 +281,16 @@ public class TransportationFragment extends Fragment {
                     }
                 }
                 else { // No data found, put up the splash screen
-                    noDataLayout.setVisibility(View.VISIBLE);
+                    noData = true;
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
+            boolean finalNoData = noData;
             handler.post(() -> {
+                if (finalNoData) noDataLayout.setVisibility(View.VISIBLE);
+                else noDataLayout.setVisibility(View.INVISIBLE);
                 while (!placedMarkers.isEmpty())
                     placedMarkers.remove(0).remove();
                 while (!list.isEmpty())
@@ -340,6 +345,9 @@ public class TransportationFragment extends Fragment {
             line = sb.toString();
             connection.disconnect();
             in.close();
+
+            if (line.equals("{\"format\":\"shuttles\",\"results\":null,\"error\":\"ok\"}"))
+                return "]";
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");

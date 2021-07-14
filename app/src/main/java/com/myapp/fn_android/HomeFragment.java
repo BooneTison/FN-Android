@@ -8,12 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,10 +42,54 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            // Get the weather
+            TextView tempText = view.findViewById(R.id.temperature);
+            String low = "";
+            String high = "";
+            String emoji = "";
+            TextView emojiText = view.findViewById(R.id.emoji);
+            String precipitationPercent = "";
+            TextView chanceText = view.findViewById(R.id.precipitationPercent);
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/weatherGet.php");
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    // Get the low and high
+                    low = jsonObject.getString("tempLo");
+                    high = jsonObject.getString("tempHi");
+                    low += "\u00B0";
+                    high += "\u00B0";
+                    // Get the emoji
+                    emoji = jsonObject.getString("emoji");
+                    emoji = emoji.replace("0x","");
+                    // Get the rain chance
+                    precipitationPercent = jsonObject.getString("precipitationPercent");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String finalLow = low;
+            String finalHigh = high;
+            String finalTemp = finalHigh + " / " + finalLow;
+            int finalEmoji = Integer.parseInt(emoji,16);
+            String finalChance = precipitationPercent;
+            int chance = Integer.parseInt(finalChance.substring(0,finalChance.indexOf("%")));
+            handler.post(() -> {
+                tempText.setText(finalTemp);
+                emojiText.setText(new String(Character.toChars(finalEmoji)));
+                if (chance > 0) chanceText.setText(finalChance);
+            });
+        });
+
+        return view;
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -107,5 +160,37 @@ public class HomeFragment extends Fragment {
             Drawable finalImage = image;
             handler.post(() -> imageView.setImageDrawable(finalImage));
         });
+    }
+
+    public static String makeServiceCall(String reqUrl) {
+        String line;
+        try {
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(connection.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            line = sb.toString();
+            connection.disconnect();
+            in.close();
+
+            StringBuilder str = new StringBuilder("[");
+            int brack = line.indexOf("[");
+            line = line.substring(brack,line.length()-1);
+            JSONArray jsonArray = new JSONArray(line);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                str.append(jsonObject.toString()).append(",");
+            }
+            str = new StringBuilder(str.substring(0, str.length() - 1));
+            str.append("]");
+            return str.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "I died";
+        }
     }
 }
