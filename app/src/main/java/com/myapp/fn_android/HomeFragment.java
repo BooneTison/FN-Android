@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,42 +51,52 @@ public class HomeFragment extends Fragment {
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
             // Get the weather
-            TextView tempText = view.findViewById(R.id.temperature);
+            TextView highText = view.findViewById(R.id.highTemp);
+            TextView lowText = view.findViewById(R.id.lowTemp);
             String low = "";
             String high = "";
             String emoji = "";
             TextView emojiText = view.findViewById(R.id.emoji);
             String precipitationPercent = "";
             TextView chanceText = view.findViewById(R.id.precipitationPercent);
+            TextView alertText = view.findViewById(R.id.alertText);
+            String alert = "";
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/weatherGet.php");
                 if (!service.equals("]")) {
                     JSONArray jsonArray = new JSONArray(service);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    // Get the low and high
-                    low = jsonObject.getString("tempLo");
-                    high = jsonObject.getString("tempHi");
-                    low += "\u00B0";
-                    high += "\u00B0";
-                    // Get the emoji
-                    emoji = jsonObject.getString("emoji");
-                    emoji = emoji.replace("0x","");
-                    // Get the rain chance
-                    precipitationPercent = jsonObject.getString("precipitationPercent");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (withinDateRange(jsonObject.getString("start"),jsonObject.getString("end"))) {
+                            // Get the low and high
+                            low = jsonObject.getString("tempLo");
+                            high = jsonObject.getString("tempHi");
+                            low += "\u00B0";
+                            high += "\u00B0" + " / ";
+                            // Get the emoji
+                            emoji = jsonObject.getString("emoji");
+                            emoji = emoji.replace("0x", "");
+                            // Get the rain chance
+                            precipitationPercent = jsonObject.getString("precipitationPercent");
+                            // Get the alert
+                            alert = jsonObject.getString("alert");
+                        }
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             String finalLow = low;
             String finalHigh = high;
-            String finalTemp = finalHigh + " / " + finalLow;
             int finalEmoji = Integer.parseInt(emoji,16);
             String finalChance = precipitationPercent;
-            int chance = Integer.parseInt(finalChance.substring(0,finalChance.indexOf("%")));
+            String finalAlert = alert;
             handler.post(() -> {
-                tempText.setText(finalTemp);
+                highText.setText(finalHigh);
+                lowText.setText(finalLow);
                 emojiText.setText(new String(Character.toChars(finalEmoji)));
-                if (chance > 0) chanceText.setText(finalChance);
+                chanceText.setText(finalChance);
+                alertText.setText(finalAlert);
             });
         });
 
@@ -192,5 +203,30 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
             return "I died";
         }
+    }
+
+    private boolean withinDateRange(String start, String end) {
+        Date current = Calendar.getInstance().getTime();
+
+        Calendar calendar = Calendar.getInstance();
+        int year = Integer.parseInt(start.substring(0,4));
+        int month = Integer.parseInt(start.substring(5,7));
+        int day = Integer.parseInt(start.substring(8,10));
+        int hr = Integer.parseInt(start.substring(11,13));
+        int min = Integer.parseInt(start.substring(14,16));
+        int sec = Integer.parseInt(start.substring(17));
+        calendar.set(year,month-1,day,hr,min,sec);
+        Date startDate = calendar.getTime();
+
+        year = Integer.parseInt(end.substring(0,4));
+        month = Integer.parseInt(end.substring(5,7));
+        day = Integer.parseInt(end.substring(8,10));
+        hr = Integer.parseInt(end.substring(11,13));
+        min = Integer.parseInt(end.substring(14,16));
+        sec = Integer.parseInt(end.substring(17));
+        calendar.set(year,month-1,day,hr,min,sec);
+        Date endDate = calendar.getTime();
+
+        return current.after(startDate) && current.before(endDate);
     }
 }
