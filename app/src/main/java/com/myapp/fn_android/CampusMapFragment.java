@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.internal.IGoogleMapDelegate;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -99,6 +103,7 @@ public class CampusMapFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
+            mMap=googleMap;
             boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
             .getString(R.string.style_json))); // Remove built-in points of interest
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -115,25 +120,28 @@ public class CampusMapFragment extends Fragment {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
 
             if (!buildingName.equals("")) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
                 googleMap.addMarker(new MarkerOptions().position(furman).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_BLUE)));
 
-            } else {
+            }
+            else {
 
-                final Handler handler = new Handler();
+                /*final Handler handler = new Handler();
                 final int delay = 1000; // 1000 milliseconds == 1 second
                 handler.postDelayed(new Runnable() { // Runs every interval according to delay
                     @Override
                     public void run() {
                         addBuildings(googleMap);
                         addFood(googleMap);
-                        //Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
                         handler.postDelayed(this, delay);
                     }
-                }, delay);
+                }
+                    , delay);*/
 
-
-
+                //addBuildings(googleMap);
+                addFood(googleMap);
             }
 
             LatLng curPos = new LatLng(userLatitude, userLongitude);
@@ -142,9 +150,10 @@ public class CampusMapFragment extends Fragment {
             BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
             googleMap.addMarker(new MarkerOptions().position(curPos).title("Current Position").icon(icon));
 
-
-
-
+            googleMap.setOnCameraIdleListener(() -> {
+                addBuildings(googleMap);
+                addFood(googleMap);
+            });
 
         }
     };
@@ -204,7 +213,7 @@ public class CampusMapFragment extends Fragment {
 
 
 
-    @Override
+@Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -213,8 +222,6 @@ public class CampusMapFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
-
-
     }
 
     private void OnGPS() {
@@ -297,95 +304,91 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                     JSONArray stopArray = new JSONArray(service);
                     for (int i = 0; i < stopArray.length(); i++) {
                         JSONObject stopObject = stopArray.getJSONObject(i);
-                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
+                        LatLng loc = new LatLng(stopObject.getDouble("latitude"), stopObject.getDouble("longitude"));
 
                         //String hours= stopObject.getString("hasHours");
-                       // if(hours.equals("0")){
-                            String name = stopObject.getString("name");
-                            String nickname = stopObject.getString("nickname");
-                            String category=  stopObject.getString("category");
-                            String location= stopObject.getString("location");
-                            String frequency= stopObject.getString("frequency");
+                        // if(hours.equals("0")){
+                        String name = stopObject.getString("name");
+                        String nickname = stopObject.getString("nickname");
+                        String category = stopObject.getString("category");
+                        String location = stopObject.getString("location");
+                        String frequency = stopObject.getString("frequency");
 
-                            if (nickname.equals("null")){
-                                nickname="";
-                            }
-                            BitmapDescriptor icon;
-                            switch (category) {
-                                case "housing":
-                                    Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.housing);
-                                        Bitmap sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    break;
-                                case "academic":
-                                   b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
-                                    if (frequency.equals("10")) {
-                                        sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                        if (nickname.equals("null")) {
+                            nickname = "";
+                        }
+                        BitmapDescriptor icon;
+                        switch (category) {
+                            case "housing":
+                                Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.housing);
+                                Bitmap sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            case "academic":
+                                b = BitmapFactory.decodeResource(getResources(), R.drawable.appicon512);
+                                if (frequency.equals("10")) {
+                                    sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
 
-                                    }
-                                    if(frequency.equals("5")){
+                                }
+                                if (frequency.equals("5")) {
+                                    sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
+
+                                } else {
+                                    sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+
+                                }
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            case "auxiliary":
+                                b = BitmapFactory.decodeResource(getResources(), R.drawable.star);
+                                if (frequency.equals("10")) {
+
+                                    sb = Bitmap.createScaledBitmap(b, 120, 120, false);
+
+                                }
+                                if (frequency.equals("5")) {
+                                    if (name.equals("Barnes & Noble")) {
+                                        sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+
+
+                                    } else {
                                         sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
 
                                     }
-                                    else{
-                                        sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
 
-                                    }
+                                } else {
+                                    sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+
+                                }
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+                            case "athletics":
+                                b = BitmapFactory.decodeResource(getResources(), R.drawable.furmandiamond);
+                                sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
+
+                            default:
+                                b = BitmapFactory.decodeResource(getResources(), R.drawable.purple_dot);
+                                if (frequency.equals("10")) {
+                                    sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
                                     icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    break;
-                                case "auxiliary":
-                                  b = BitmapFactory.decodeResource(getResources(),R.drawable.star);
-                                    if (frequency.equals("10")) {
-
-                                        sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
-
-                                    }
-                                    if(frequency.equals("5")){
-                                        if(name.equals("Barnes & Noble")){
-                                            sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
-
-
-                                        }
-                                        else {
-                                            sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
-
-                                        }
-
-                                    }
-                                    else{
-                                       sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
-
-                                    }
+                                }
+                                if (frequency.equals("5")) {
+                                    sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
                                     icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    break;
-                                case "athletics":
-                                    b = BitmapFactory.decodeResource(getResources(),R.drawable.furmandiamond);
-                                       sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    break;
+                                } else {
+                                    sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                }
+                                break;
+                        }
 
-                                default:
-                                     b = BitmapFactory.decodeResource(getResources(),R.drawable.purple_dot);
-                                    if (frequency.equals("10")) {
-                                        sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    }
-                                    if(frequency.equals("5")){
-                                        sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    }
-                                    else{
-                                        sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    }
-                                    break;
-                            }
-
-                            list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
-
-                            }
+                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
 
                     }
+                }
+
                 }
 
             catch (Exception e) {
@@ -400,6 +403,7 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
 
 
     private void addFood(@NonNull GoogleMap googleMap) {
+        int boo = getZoom(googleMap);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
@@ -415,46 +419,79 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                         String name = stopObject.getString("fullname");
                         String nickname = stopObject.getString("name");
                         String location = stopObject.getString("location");
-                        String frequency= stopObject.getString("frequency");
+                        String frequency = stopObject.getString("frequency");
                         if (nickname.equals("null")) {
                             nickname = "";
                         }
                         BitmapDescriptor icon;
+                            if (boo == -1) {
+                                switch (frequency) {
 
-                            switch (frequency) {
+                                    case "10":
+                                        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
+                                        Bitmap sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        break;
 
-                                case "10":
-                                   Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
-                                   Bitmap sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
-                                   icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                   break;
-
-                                case "5":
-                                    b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
-                                    sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
-                                    icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    break;
-
-                                default:
-                                    b = BitmapFactory.decodeResource(getResources(), R.drawable.green_dining);
-                                    if(name.equals("Bread and Bowl")){
+                                    case "5":
+                                        b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
                                         sb = Bitmap.createScaledBitmap(b, medWidth, medHeight, false);
                                         icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        break;
 
-                                    }
-                                    else {
-                                        sb = Bitmap.createScaledBitmap(b, tinyWidth, tinyHeight, false);
-                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
-                                    }
-                                    break;
+                                    default:
+                                        b = BitmapFactory.decodeResource(getResources(), R.drawable.green_dining);
+                                        if (name.equals("Bread and Bowl")) {
+                                            sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                                            icon = BitmapDescriptorFactory.fromBitmap(sb);
 
+                                        } else {
+                                            sb = Bitmap.createScaledBitmap(b, 1, 1, false);
+                                            icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        }
+                                        break;
+
+                                }
+                                list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                                if (location.equals("in the PalaDen, lower level of Trone")|| location.equals("next to PalaDen, lower level of Trone")){
+                                    //not working as of 7/15
+                                    list.remove(location.equals("in the PalaDen, lower level of Trone"));
+                                    list.remove(location.equals("next to PalaDen, lower level of Trone"));
+                                }
                             }
-                            list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                            else {
+                                switch (frequency) {
 
+                                    case "10":
+                                        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
+                                        Bitmap sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        break;
 
+                                    case "5":
+                                        b = BitmapFactory.decodeResource(getResources(), R.drawable.dining);
+                                        sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                                        icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        break;
 
+                                    default:
+                                        b = BitmapFactory.decodeResource(getResources(), R.drawable.green_dining);
+                                        if (name.equals("Bread and Bowl")) {
+                                            sb = Bitmap.createScaledBitmap(b, BigWidth, BigHeight, false);
+                                            icon = BitmapDescriptorFactory.fromBitmap(sb);
+
+                                        } else {
+                                            sb = Bitmap.createScaledBitmap(b, smallWidth, smallHeight, false);
+                                            icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                        }
+                                        break;
+
+                                }
+                                list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                            }
 
                     }
+
                 }
             }
             catch (Exception e) {
@@ -463,28 +500,33 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
             handler.post(() -> {
                 while (!list.isEmpty())
                     googleMap.addMarker(list.remove(0));
+                while (!placedMarkers.isEmpty())
+                    placedMarkers.remove(0).remove();
             });
         });
     }
 
 
-    /*public boolean isZoomSupported(){
-
+    public boolean isZoomSupported(){
         return true;
     }
 
 
-    public boolean getZoom(@NonNull GoogleMap googleMap){
+    public int getZoom(@NonNull GoogleMap googleMap){
 
         if (isZoomSupported()) {
             zoom = googleMap.getCameraPosition().zoom;
             if (zoom <= 16) {
-                return true;
+                return -1;
             }
+            else if (zoom > 16)
+                return 1;
+            Toast.makeText(requireContext(), String.valueOf(zoom), Toast.LENGTH_SHORT).show();
         }
-        return false;
+        return 0;
     }
-*/
+
+
 
     public static String makeServiceCall (String reqUrl) {
         String line;
@@ -518,76 +560,7 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
             return "I died";
         }
     }
-   /* public static class MyItem implements ClusterItem {
-        private final LatLng position;
-        private final String title;
-        private final String snippet;
 
-
-
-        public MyItem(double lat, double lng, String title, String snippet) {
-            position = new LatLng(lat, lng);
-            this.title = title;
-            this.snippet = snippet;
-        }
-
-        @Override
-        public LatLng getPosition() {
-            return position;
-        }
-
-        @Override
-        public String getTitle() {
-            return title;
-        }
-
-        @Override
-        public String getSnippet() {
-            return snippet;
-        }
-    }*/
-
-    /*private void setUpClusterer(@NonNull GoogleMap googleMap) {
-        // Position the map.
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
-        LatLng sydney = new LatLng(34.9245, -82.4405);
-        googleMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-
-        /*// Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
-        clusterManager = new ClusterManager<MyItem>(requireActivity(), googleMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        googleMap.setOnCameraIdleListener(clusterManager);
-        googleMap.setOnMarkerClickListener(clusterManager);
-        //clusterManager.setAnimation(false);
-
-        // Add cluster items (markers) to the cluster manager.
-        addItems();
-    }
-
-    private void addItems() {
-        double lat=34.9245;
-        double lng=-82.4405;
-        // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            // Set the title and snippet strings.
-            String title = "This is the title";
-            String snippet = "and this is the snippet.";
-            // Create a cluster item for the marker and set the title and snippet using the constructor.
-            MyItem infoWindowItem = new MyItem(lat, lng, title, snippet);
-            MyItem offsetItem = new MyItem(lat, lng, title, snippet);
-            clusterManager.addItem(offsetItem);
-            // Add the cluster item (marker) to the cluster manager.
-            clusterManager.addItem(infoWindowItem);
-        }*/
     }
 
 
