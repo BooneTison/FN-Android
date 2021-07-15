@@ -1,5 +1,6 @@
 package com.myapp.fn_android;
 
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -68,20 +69,22 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = ourList.get(position)[0];
         holder.mContentView.setText(ourList.get(position)[0]);
-        holder.mIdView = ourList.get(position)[1];
+        if (holder.mIdView != null)
+            holder.mIdView.setText(ourList.get(position)[1]);
+        String id = ourList.get(position)[1];
         //holder.mProgText.setText("P");
 
         if (type == DINING) {
             holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
                 Bundle bundle = new Bundle();
-                bundle.putString("id", holder.mIdView);
+                bundle.putString("id", id);
                 bundle.putString("name", holder.mContentView.getText().toString());
                 Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
 
             holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
                 Bundle bundle = new Bundle();
-                bundle.putString("id", holder.mIdView);
+                bundle.putString("id", id);
                 bundle.putString("name", holder.mContentView.getText().toString());
                 Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
@@ -161,7 +164,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public String mIdView;
+        public final TextView mIdView;
         public final TextView mContentView;
         public String mItem;
         public ImageButton mOpenCloseButton;
@@ -194,7 +197,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
         // Hours Detail Fragment
         public ViewHolder(FragmentDiningDetailBinding binding) {
             super(binding.getRoot());
-            mIdView = null;
+            mIdView = binding.itemNumber;
             mContentView = binding.content;
             mOpenCloseButton = null;
             mProgressBar = null;
