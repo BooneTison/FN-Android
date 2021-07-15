@@ -143,7 +143,7 @@ public class DiningDetailFragment extends Fragment {
                     }
                     Collections.sort(list);
                     for (int k = 0; k < hoursArray.length(); k++)
-                        hoursList.add(new String[]{list.remove(0).toString(), buildingID});
+                        hoursList.add(new String[]{list.remove(0).toString(), ""});
 
                     // Create the menu
                     if (buildingName.equals("Daniel Dining Hall"))
@@ -363,7 +363,7 @@ public class DiningDetailFragment extends Fragment {
             for (int i = 0; i < menuArray.length(); i++) {
                 JSONObject menuObject = menuArray.getJSONObject(i);
                 if (menuObject.getString("restaurant").equals(name)) {
-                    list.add(new String[]{menuObject.getString("item"),buildingID});
+                    list.add(new String[]{menuObject.getString("item"),""});
                 }
             }
         }
