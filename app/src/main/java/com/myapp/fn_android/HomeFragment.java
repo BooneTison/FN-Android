@@ -82,6 +82,13 @@ public class HomeFragment extends Fragment {
                             alert = jsonObject.getString("alert");
                         }
                     }
+                    if (emoji.equals("")) { // No data within database within date
+                        low = "0" + "\u00B0";
+                        high = "0" + "\u00B0" + " / ";
+                        emoji = "1F31E";
+                        precipitationPercent = "";
+                        alert = "";
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
