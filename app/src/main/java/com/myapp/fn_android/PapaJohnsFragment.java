@@ -1,7 +1,9 @@
 package com.myapp.fn_android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -38,7 +39,7 @@ import java.util.concurrent.Executors;
 /**
  * A fragment representing a list of Items.
  */
-public class DiningDetailFragment extends Fragment {
+public class PapaJohnsFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
@@ -49,12 +50,12 @@ public class DiningDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public DiningDetailFragment() {
+    public PapaJohnsFragment() {
     }
 
     @SuppressWarnings("unused")
-    public static DiningDetailFragment newInstance(int columnCount) {
-        DiningDetailFragment fragment = new DiningDetailFragment();
+    public static PapaJohnsFragment newInstance(int columnCount) {
+        PapaJohnsFragment fragment = new PapaJohnsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -74,7 +75,7 @@ public class DiningDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_dining_detail_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_papa_johns, container, false);
 
         Bundle bundle = this.getArguments();
         if(bundle != null) {
@@ -84,27 +85,22 @@ public class DiningDetailFragment extends Fragment {
 
         // Set non-list content
         TextView location = view.getRootView().findViewById(R.id.location);
-        //TextView title = view.getRootView().findViewById(R.id.fragmentTitle);
         ImageView diningPicture = view.getRootView().findViewById(R.id.diningPicture);
 
         // Set the adapter
         Context context = view.getContext();
         RecyclerView hoursRecyclerView = view.findViewById(R.id.hoursList);
-        RecyclerView menuRecyclerView = view.findViewById(R.id.dailyHoursList);
         if (mColumnCount <= 1) {
             hoursRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            menuRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
             hoursRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            menuRecyclerView.setLayoutManager(new GridLayoutManager(context,mColumnCount));
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            // Get the menu list and hours list
+            // Get the hours list
             String locString = "";
             List<String[]> hoursList = new ArrayList<>();
-            List<String[]> menuList = new ArrayList<>();
             Drawable image = null;
             try {
 
@@ -114,7 +110,6 @@ public class DiningDetailFragment extends Fragment {
                     JSONArray locArray = new JSONArray(service);
                     JSONObject locObject = locArray.getJSONObject(0);
                     locString = locObject.getString("location");
-                    locString = "Located " + locString;
                 }
 
                 // Get the hours
@@ -144,12 +139,6 @@ public class DiningDetailFragment extends Fragment {
                     Collections.sort(list);
                     for (int k = 0; k < hoursArray.length(); k++)
                         hoursList.add(new String[]{list.remove(0).toString(), ""});
-
-                    // Create the menu
-                    if (buildingName.equals("Daniel Dining Hall"))
-                        menuList = getDHMenu();
-                    else
-                        menuList = getRestaurantMenu(buildingName);
                 }
 
                 // Get the dining picture
@@ -163,14 +152,10 @@ public class DiningDetailFragment extends Fragment {
             }
 
             String finalLocString = locString;
-            List<String[]> finalMenuList = menuList;
             Drawable finalImage = image;
             handler.post(() -> { // UI updates
                 hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1));
-                menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1));
-                menuRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 location.setText(finalLocString);
-                //title.setText(buildingName);
                 diningPicture.setImageDrawable(finalImage);
             });
         });
@@ -310,66 +295,6 @@ public class DiningDetailFragment extends Fragment {
         }
     }
 
-    private List<String[]> getDHMenu() throws JSONException {
-        List<String[]> list = new ArrayList<>();
-        List<String[]> breakfast = new ArrayList<>();
-        List<String[]> brunch = new ArrayList<>();
-        List<String[]> lunch = new ArrayList<>();
-        List<String[]> dinner = new ArrayList<>();
-
-        String str = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/dhMenuGet.php");
-        JSONArray menuArray = new JSONArray(str);
-        for (int i =0; i < menuArray.length(); i++) {
-            JSONObject menuObject = menuArray.getJSONObject(i);
-            if (menuObject.getString("meal").equals("Breakfast"))
-                breakfast.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
-            else if (menuObject.getString("meal").equals("Brunch"))
-                brunch.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
-            else if (menuObject.getString("meal").equals("Lunch"))
-                lunch.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
-            else if (menuObject.getString("meal").equals("Dinner"))
-                dinner.add(new String[]{menuObject.getString("itemName"),menuObject.getString("station")});
-        }
-
-        if (!breakfast.isEmpty()) {
-            list.add(new String[]{"----Breakfast----",""});
-            while (!breakfast.isEmpty())
-                list.add(breakfast.remove(0));
-        }
-        if (!brunch.isEmpty()) {
-            list.add(new String[]{"----Brunch----",""});
-            while (!brunch.isEmpty())
-                list.add(brunch.remove(0));
-        }
-        if (!lunch.isEmpty()) {
-            list.add(new String[]{"----Lunch----",""});
-            while (!lunch.isEmpty())
-                list.add(lunch.remove(0));
-        }
-        if (!dinner.isEmpty()) {
-            list.add(new String[]{"----Dinner----",""});
-            while (!dinner.isEmpty())
-                list.add(dinner.remove(0));
-        }
-        return list;
-    }
-
-    private List<String[]> getRestaurantMenu(String name) throws JSONException {
-        List<String[]> list = new ArrayList<>();
-
-        String service = makeServiceCallByRestaurant("https://cs.furman.edu/~csdaemon/FUNow/restaurantMenuGet.php",buildingName);
-        if (!service.equals("]")) {
-            JSONArray menuArray = new JSONArray(service);
-            for (int i = 0; i < menuArray.length(); i++) {
-                JSONObject menuObject = menuArray.getJSONObject(i);
-                if (menuObject.getString("restaurant").equals(name)) {
-                    list.add(new String[]{menuObject.getString("item"),""});
-                }
-            }
-        }
-        return list;
-    }
-
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Button mapButton = view.findViewById(R.id.mapviewButton);
         Bundle bundle = new Bundle();
@@ -392,6 +317,31 @@ public class DiningDetailFragment extends Fragment {
                 e.printStackTrace();
             }
             handler.post(() -> mapButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.mapFragment,bundle)));
+        });
+
+        view.findViewById(R.id.orderOnline).setOnClickListener(v -> {
+            String url = "https://www.papajohns.com/order/stores-near-me";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+        view.findViewById(R.id.onlineText).setOnClickListener(v -> {
+            String url = "https://www.papajohns.com/order/stores-near-me";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+        view.findViewById(R.id.orderPhone).setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            String s = "tel:8642332244";
+            callIntent.setData(Uri.parse(s));
+            startActivity(callIntent);
+        });
+        view.findViewById(R.id.phoneText).setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            String s = "tel:8642332244";
+            callIntent.setData(Uri.parse(s));
+            startActivity(callIntent);
         });
     }
 

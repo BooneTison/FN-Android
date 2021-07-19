@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".DiningDetailFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/halfScreenGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".7" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hoursList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/halfScreenGuideline"
+        tools:context=".DiningDetailFragment"
+        tools:listitem="@layout/fragment_dining_detail" />
+
+    <Button
+        android:id="@+id/mapviewButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/map_view_text"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/furman_purple"
+        app:layout_constraintBottom_toTopOf="@+id/location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textColor="@color/furman_purple"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/hoursText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/hoursText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hours_dining_text"
+        android:textColor="@color/furman_purple"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/halfScreenGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/diningPicture"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="@string/dining_text"
+        app:layout_constraintBottom_toTopOf="@+id/orderPhone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/orderOnline"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginBottom="100dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/dining_text"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/mapviewButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_link_24"
+        app:tint="@color/furman_purple" />
+
+    <ImageButton
+        android:id="@+id/orderPhone"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="65dp"
+        android:layout_marginRight="65dp"
+        android:layout_marginBottom="100dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/dining_text"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/mapviewButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_local_phone_24"
+        app:tint="@color/furman_purple" />
+
+    <TextView
+        android:id="@+id/onlineText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/order_online_text"
+        android:textAllCaps="true"
+        android:textColor="@color/furman_purple"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/orderOnline"
+        app:layout_constraintStart_toStartOf="@+id/orderOnline"
+        app:layout_constraintTop_toBottomOf="@+id/orderOnline" />
+
+    <TextView
+        android:id="@+id/phoneText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/order_phone_text"
+        android:textAllCaps="true"
+        android:textColor="@color/furman_purple"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/orderPhone"
+        app:layout_constraintStart_toStartOf="@+id/orderPhone"
+        app:layout_constraintTop_toBottomOf="@+id/orderOnline" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

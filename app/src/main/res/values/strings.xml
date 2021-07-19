@@ -70,5 +70,7 @@
     <string name="schedule_saferide_evening_text">Evening SafeRide: All Week from 7:00pm-1:00am</string>
     <string name="schedule_walmart_text">Walmart Shuttle: Tuesday from 6:00–9:00pm</string>
     <string name="schedule_trolley_text">Downtown Trolley: Friday &amp; Saturday from 10:00pm-2:00am</string>
+    <string name="order_online_text">Order Online</string>
+    <string name="order_phone_text">Order by Phone</string>
 
 </resources>

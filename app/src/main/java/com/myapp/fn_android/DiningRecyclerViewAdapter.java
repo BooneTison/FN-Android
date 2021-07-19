@@ -79,14 +79,16 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                 Bundle bundle = new Bundle();
                 bundle.putString("id", id);
                 bundle.putString("name", holder.mContentView.getText().toString());
-                Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                if (id.equals("50")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
 
             holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
                 Bundle bundle = new Bundle();
                 bundle.putString("id", id);
                 bundle.putString("name", holder.mContentView.getText().toString());
-                Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                if (id.equals("50")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
             });
         }
 

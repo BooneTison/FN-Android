@@ -73,6 +73,9 @@
         <action
             android:id="@+id/action_diningFragment_to_diningDetailFragment"
             app:destination="@id/diningDetailFragment" />
+        <action
+            android:id="@+id/action_diningFragment_to_papaJohnsFragment"
+            app:destination="@id/papaJohnsFragment" />
     </fragment>
     <fragment
         android:id="@+id/healthSafetyFragment"
@@ -170,5 +173,13 @@
         <action
             android:id="@+id/action_eventsDetailFragment_to_EventsSyncDinFragment"
             app:destination="@id/EventsSyncDinFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/papaJohnsFragment"
+        android:name="com.myapp.fn_android.PapaJohnsFragment"
+        android:label="PapaJohnsFragment" >
+        <action
+            android:id="@+id/action_papaJohnsFragment_to_diningFragment"
+            app:destination="@id/diningFragment" />
     </fragment>
 </navigation>

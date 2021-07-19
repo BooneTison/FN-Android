@@ -73,6 +73,7 @@ public class HoursTime implements Comparable<HoursTime>{
 
     public int to12Hour(int time) {
         if (time > 12) return time-12;
+        if (time == 0) return 12;
         return time;
     }
 
