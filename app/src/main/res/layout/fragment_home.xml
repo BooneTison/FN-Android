@@ -305,6 +305,18 @@
         app:layout_constraintTop_toTopOf="@+id/homeImage">
 
         <TextView
+            android:id="@+id/currentTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="67dp"
+            android:layout_marginLeft="67dp"
+            android:textColor="@color/white"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/lowTemp"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
             android:id="@+id/highTemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -365,7 +377,7 @@
             android:textColor="#FF0E0E"
             android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/currentTemp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

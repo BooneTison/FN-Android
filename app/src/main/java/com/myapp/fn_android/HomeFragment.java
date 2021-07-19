@@ -61,6 +61,8 @@ public class HomeFragment extends Fragment {
             TextView chanceText = view.findViewById(R.id.precipitationPercent);
             TextView alertText = view.findViewById(R.id.alertText);
             String alert = "";
+            TextView currentText = view.findViewById(R.id.currentTemp);
+            String current = "";
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/weatherGet.php");
                 if (!service.equals("]")) {
@@ -80,6 +82,9 @@ public class HomeFragment extends Fragment {
                             precipitationPercent = jsonObject.getString("precipitationPercent");
                             // Get the alert
                             alert = jsonObject.getString("alert");
+                            // Get the current temp
+                            current = jsonObject.getString("tempCurrent");
+                            if (!current.equals("")) current += "\u00B0";
                         }
                     }
                     if (emoji.equals("")) { // No data within database within date
@@ -98,12 +103,14 @@ public class HomeFragment extends Fragment {
             int finalEmoji = Integer.parseInt(emoji,16);
             String finalChance = precipitationPercent;
             String finalAlert = alert;
+            String finalCurrent = current;
             handler.post(() -> {
                 highText.setText(finalHigh);
                 lowText.setText(finalLow);
                 emojiText.setText(new String(Character.toChars(finalEmoji)));
                 chanceText.setText(finalChance);
                 alertText.setText(finalAlert);
+                currentText.setText(finalCurrent);
             });
         });
 
