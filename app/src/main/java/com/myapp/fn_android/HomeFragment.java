@@ -100,14 +100,17 @@ public class HomeFragment extends Fragment {
             }
             String finalLow = low;
             String finalHigh = high;
-            int finalEmoji = Integer.parseInt(emoji,16);
+            int finalEmoji = Integer.parseInt("1F31E",16);
+            if (!emoji.equals(""))
+                finalEmoji = Integer.parseInt(emoji,16);
             String finalChance = precipitationPercent;
             String finalAlert = alert;
             String finalCurrent = current;
+            int finalEmoji1 = finalEmoji;
             handler.post(() -> {
                 highText.setText(finalHigh);
                 lowText.setText(finalLow);
-                emojiText.setText(new String(Character.toChars(finalEmoji)));
+                emojiText.setText(new String(Character.toChars(finalEmoji1)));
                 chanceText.setText(finalChance);
                 alertText.setText(finalAlert);
                 currentText.setText(finalCurrent);

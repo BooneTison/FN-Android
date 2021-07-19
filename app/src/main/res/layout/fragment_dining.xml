@@ -35,11 +35,11 @@
         android:layout_weight="0"
         android:background="@color/transparent"
         android:clickable="true"
+        android:focusable="true"
         android:max="60"
         android:progress="30"
         android:rotation="270"
-        android:theme="@style/Theme.FNAndroid.PurpleProgressBar"
-        android:focusable="true" />
+        android:theme="@style/Theme.FNAndroid.PurpleProgressBar" />
 
     <ImageButton
         android:id="@+id/openclosedButton"

@@ -1,6 +1,5 @@
 package com.myapp.fn_android;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
