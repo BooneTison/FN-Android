@@ -88,11 +88,12 @@ public class HomeFragment extends Fragment {
                         }
                     }
                     if (emoji.equals("")) { // No data within database within date
-                        low = "0" + "\u00B0";
-                        high = "0" + "\u00B0" + " / ";
+                        low = "";
+                        high = "";
                         emoji = "1F31E";
                         precipitationPercent = "";
                         alert = "";
+                        current = "";
                     }
                 }
             } catch (JSONException e) {
