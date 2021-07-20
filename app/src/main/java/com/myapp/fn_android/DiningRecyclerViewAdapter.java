@@ -1,5 +1,8 @@
 package com.myapp.fn_android;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,13 +43,15 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
 
     private final List<String[]> ourList;
     private final int type;
+    private final Context context;
 
     int DINING = 0;
     int DINING_DETAIL = 1;
 
-    public DiningRecyclerViewAdapter(List<String[]> items, int fragType) {
+    public DiningRecyclerViewAdapter(List<String[]> items, int fragType, Context context) {
         type = fragType;
         ourList = items;
+        this.context = context;
     }
 
     @NonNull
@@ -164,7 +169,37 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                     holder.mProgressBar.setMax(60);
                     //holder.mProgText.setText(Integer.toString(finalProg));
                     holder.mImageView.setImageDrawable(finalImage);
-                    if (finalBusyness > 0) holder.mBusyView.setImageResource(R.drawable.ic_baseline_people_24);
+                    // Set the busyness image
+                    Bitmap b = null;
+                    switch (finalBusyness) {
+                        case 1:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness1);
+                            break;
+                        case 2:
+                        case 3:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness2);
+                            break;
+                        case 4:
+                        case 5:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness3);
+                            break;
+                        case 6:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness4);
+                            break;
+                        case 7:
+                        case 8:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness5);
+                            break;
+                        case 9:
+                        case 10:
+                            b = BitmapFactory.decodeResource(context.getResources(),R.drawable.busyness6);
+                            break;
+                    }
+                    if(finalBusyness != 0) {
+                        Bitmap sb = Bitmap.createScaledBitmap(b,100,75,false);
+                        holder.mBusyView.setImageBitmap(sb);
+                    }
+
                 });
             });
         }

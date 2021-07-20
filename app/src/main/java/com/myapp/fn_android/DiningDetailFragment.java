@@ -166,8 +166,8 @@ public class DiningDetailFragment extends Fragment {
             List<String[]> finalMenuList = menuList;
             Drawable finalImage = image;
             handler.post(() -> { // UI updates
-                hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1));
-                menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1));
+                hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1,this.getContext()));
+                menuRecyclerView.setAdapter(new DiningRecyclerViewAdapter(finalMenuList,1,this.getContext()));
                 menuRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
                 location.setText(finalLocString);
                 //title.setText(buildingName);

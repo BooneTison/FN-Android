@@ -94,7 +94,7 @@ public class DiningFragment extends Fragment {
 
             handler.post(() -> { // Update UI
                 recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-                recyclerMenuView.setAdapter(new DiningRecyclerViewAdapter(s,0));
+                recyclerMenuView.setAdapter(new DiningRecyclerViewAdapter(s,0,this.getContext()));
             });
         });
 
