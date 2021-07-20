@@ -75,8 +75,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/dining_text"
-        app:layout_constraintBottom_toTopOf="@+id/orderPhone"
+        app:layout_constraintBottom_toTopOf="@+id/orderOnline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -85,30 +86,14 @@
         android:id="@+id/orderOnline"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginLeft="65dp"
-        android:layout_marginBottom="100dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/dining_text"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/mapviewButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_baseline_link_24"
-        app:tint="@color/furman_purple" />
-
-    <ImageButton
-        android:id="@+id/orderPhone"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginRight="65dp"
         android:layout_marginBottom="100dp"
         android:background="@color/transparent"
         android:contentDescription="@string/dining_text"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/mapviewButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_baseline_local_phone_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_link_24"
         app:tint="@color/furman_purple" />
 
     <TextView
@@ -122,19 +107,6 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/orderOnline"
         app:layout_constraintStart_toStartOf="@+id/orderOnline"
-        app:layout_constraintTop_toBottomOf="@+id/orderOnline" />
-
-    <TextView
-        android:id="@+id/phoneText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/order_phone_text"
-        android:textAllCaps="true"
-        android:textColor="@color/furman_purple"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/orderPhone"
-        app:layout_constraintStart_toStartOf="@+id/orderPhone"
         app:layout_constraintTop_toBottomOf="@+id/orderOnline" />
 
 

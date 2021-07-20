@@ -176,7 +176,7 @@
     </fragment>
     <fragment
         android:id="@+id/papaJohnsFragment"
-        android:name="com.myapp.fn_android.PapaJohnsFragment"
+        android:name="com.myapp.fn_android.DiningOffCampusFragment"
         android:label="PapaJohnsFragment" >
         <action
             android:id="@+id/action_papaJohnsFragment_to_diningFragment"

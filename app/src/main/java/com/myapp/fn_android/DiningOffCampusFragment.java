@@ -39,23 +39,24 @@ import java.util.concurrent.Executors;
 /**
  * A fragment representing a list of Items.
  */
-public class PapaJohnsFragment extends Fragment {
+public class DiningOffCampusFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private String buildingID;
     private String buildingName;
+    private String url;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PapaJohnsFragment() {
+    public DiningOffCampusFragment() {
     }
 
     @SuppressWarnings("unused")
-    public static PapaJohnsFragment newInstance(int columnCount) {
-        PapaJohnsFragment fragment = new PapaJohnsFragment();
+    public static DiningOffCampusFragment newInstance(int columnCount) {
+        DiningOffCampusFragment fragment = new DiningOffCampusFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -75,7 +76,7 @@ public class PapaJohnsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_papa_johns, container, false);
+        View view = inflater.inflate(R.layout.fragment_dining_off_campus, container, false);
 
         Bundle bundle = this.getArguments();
         if(bundle != null) {
@@ -110,6 +111,9 @@ public class PapaJohnsFragment extends Fragment {
                     JSONArray locArray = new JSONArray(service);
                     JSONObject locObject = locArray.getJSONObject(0);
                     locString = locObject.getString("location");
+
+                    // Get the url
+                    url = locObject.getString("url");
                 }
 
                 // Get the hours
@@ -154,7 +158,7 @@ public class PapaJohnsFragment extends Fragment {
             String finalLocString = locString;
             Drawable finalImage = image;
             handler.post(() -> { // UI updates
-                hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1));
+                hoursRecyclerView.setAdapter(new DiningRecyclerViewAdapter(hoursList,1,this.getContext()));
                 location.setText(finalLocString);
                 diningPicture.setImageDrawable(finalImage);
             });
@@ -320,28 +324,14 @@ public class PapaJohnsFragment extends Fragment {
         });
 
         view.findViewById(R.id.orderOnline).setOnClickListener(v -> {
-            String url = "https://www.papajohns.com/order/stores-near-me";
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
         });
         view.findViewById(R.id.onlineText).setOnClickListener(v -> {
-            String url = "https://www.papajohns.com/order/stores-near-me";
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
-        });
-        view.findViewById(R.id.orderPhone).setOnClickListener(v -> {
-            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-            String s = "tel:8642332244";
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
-        });
-        view.findViewById(R.id.phoneText).setOnClickListener(v -> {
-            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-            String s = "tel:8642332244";
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
         });
     }
 

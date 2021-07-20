@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecyclerViewAdapter.ViewHolder> {
 
@@ -77,25 +78,7 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
             holder.mIdView.setText(ourList.get(position)[1]);
         String id = ourList.get(position)[1];
         //holder.mProgText.setText("P");
-
-        if (type == DINING) {
-            holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
-                Bundle bundle = new Bundle();
-                bundle.putString("id", id);
-                bundle.putString("name", holder.mContentView.getText().toString());
-                if (holder.mContentView.getText().toString().equals("Papa John's Pizza")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
-                else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
-            });
-
-            holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
-                Bundle bundle = new Bundle();
-                bundle.putString("id", id);
-                bundle.putString("name", holder.mContentView.getText().toString());
-                if (holder.mContentView.getText().toString().equals("Papa John's Pizza")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
-                else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
-            });
-        }
-
+        AtomicReference<String> location = new AtomicReference<>("");
 
         if (holder.mOpenCloseButton != null && holder.mProgressBar != null && holder.mImageView != null) {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -151,6 +134,9 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                         JSONArray jsonArray = new JSONArray(service);
                         JSONObject jsonObject = jsonArray.getJSONObject(0);
                         busyness = jsonObject.getInt("busyness");
+
+                        // Get the location
+                        location.set(jsonObject.getString("location"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -202,6 +188,24 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
 
                 });
             });
+
+            if (type == DINING) {
+                holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", id);
+                    bundle.putString("name", holder.mContentView.getText().toString());
+                    if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                    else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                });
+
+                holder.mOpenCloseButton.setOnClickListener(v -> { // Navigate to detail page
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", id);
+                    bundle.putString("name", holder.mContentView.getText().toString());
+                    if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                    else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                });
+            }
         }
     }
 
