@@ -228,7 +228,7 @@ public class TransportationFragment extends Fragment {
                         JSONObject stopObject = stopArray.getJSONObject(i);
                         LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
                         String name = stopObject.getString("vehicle").toUpperCase();
-                        String time = stopObject.getString("updated");
+                        String time = stopObject.getString("lastUpdate");
                         BitmapDescriptor icon;
                         switch (name) {
                             case "TROLLEY":

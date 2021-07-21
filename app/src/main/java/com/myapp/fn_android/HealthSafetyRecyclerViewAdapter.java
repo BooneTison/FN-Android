@@ -82,6 +82,14 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
                 callIntent.setData(Uri.parse(s));
                 context.startActivity(callIntent);
             });
+
+            holder.mIconView.setOnClickListener(v -> { // Phone call
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                String s = holder.mNumberLink;
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
+                context.startActivity(callIntent);
+            });
         }
         else if (holder.mType.equals("link")) {
             holder.mImageButton.setImageResource(R.drawable.ic_baseline_link_24_purple);
@@ -95,6 +103,13 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
             });
 
             holder.mContentView.setOnClickListener(v -> {
+                String url = holder.mNumberLink;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                context.startActivity(i);
+            });
+
+            holder.mIconView.setOnClickListener(v -> {
                 String url = holder.mNumberLink;
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
