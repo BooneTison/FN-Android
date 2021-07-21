@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -138,6 +139,10 @@ public class HoursFragment extends Fragment {
             e.printStackTrace();
             return "I died";
         }
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceBundle) {
+        requireActivity().setTitle(R.string.hours_text);
     }
 
 }

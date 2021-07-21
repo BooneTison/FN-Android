@@ -221,6 +221,8 @@ public class HoursDetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(buildingName);
+
         ImageButton button = view.findViewById(R.id.phoneButton);
         button.setOnClickListener(v -> { // Phone call
             Intent callIntent = new Intent(Intent.ACTION_DIAL);

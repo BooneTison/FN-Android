@@ -74,7 +74,6 @@ public class DatesFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         setHasOptionsMenu(true); // IMPORTANT
-
     }
 
     @Override
@@ -217,6 +216,8 @@ public class DatesFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.dates_text);
+
         // Open the filter page
         ImageButton filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {

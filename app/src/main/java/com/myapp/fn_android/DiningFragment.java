@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -137,5 +138,7 @@ public class DiningFragment extends Fragment {
         }
     }
 
-
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.dining_text);
+    }
 }

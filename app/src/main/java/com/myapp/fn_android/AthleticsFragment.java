@@ -313,6 +313,8 @@ public class AthleticsFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.athletics_text);
+
         // Navigate to website when clicked
         Button link = view.findViewById(R.id.linkButton);
         link.setOnClickListener(v -> {

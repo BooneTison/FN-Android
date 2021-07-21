@@ -303,6 +303,8 @@ public class DiningOffCampusFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(buildingName);
+
         Button mapButton = view.findViewById(R.id.mapviewButton);
         Bundle bundle = new Bundle();
         ExecutorService executor = Executors.newSingleThreadExecutor();

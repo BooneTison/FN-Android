@@ -178,5 +178,9 @@ public class PhoneFragment extends Fragment {
         }
     }
 
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceBundle) {
+        requireActivity().setTitle(R.string.phone_text);
+    }
+
 
 }

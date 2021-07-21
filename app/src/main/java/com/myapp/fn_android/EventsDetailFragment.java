@@ -111,6 +111,8 @@ public class EventsDetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(eventName);
+
         // Set the calendar button action
         view.findViewById(R.id.calendarButton).setOnClickListener(v -> {
             Intent insertCalendarIntent = new Intent(Intent.ACTION_INSERT);

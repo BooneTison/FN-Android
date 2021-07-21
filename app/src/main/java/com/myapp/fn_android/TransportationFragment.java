@@ -135,6 +135,7 @@ public class TransportationFragment extends Fragment {
         walmartText = view.findViewById(R.id.walmartText);
         trolleyText = view.findViewById(R.id.trolleyText);
         noDataLayout = view.findViewById(R.id.NoDataLayout);
+        requireActivity().setTitle(R.string.transportation_text);
     }
 
     private void OnGPS() {
