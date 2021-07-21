@@ -239,6 +239,12 @@ public class AthleticsFragment extends Fragment {
                             sportList.add(jsonObject.getString("sportTitle"));
                     }
                 }
+                else {
+                    todayList.add(new String[]{"No events found","","",""});
+                    tomList.add(new String[]{"No events found","","",""});
+                    weekList.add(new String[]{"No events found","","",""});
+                    resList.add(new String[]{"No results found","","",""});
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -290,6 +296,7 @@ public class AthleticsFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {

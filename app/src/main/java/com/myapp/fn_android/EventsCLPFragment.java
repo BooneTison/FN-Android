@@ -128,6 +128,11 @@ public class EventsCLPFragment extends Fragment {
                         else if (check == 2) weekList.add(new String[]{jsonObject.getString("title"),date + " " + hoursTime.toStringHoursOnly()});
                     }
                 }
+                else {
+                    todayList.add(new String[]{"No events found",""});
+                    tomList.add(new String[]{"No events found",""});
+                    weekList.add(new String[]{"No events found",""});
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -166,6 +171,7 @@ public class EventsCLPFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
