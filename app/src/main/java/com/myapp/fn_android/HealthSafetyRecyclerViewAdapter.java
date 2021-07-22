@@ -64,57 +64,96 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
         else
             holder.mIconView.setImageResource(R.drawable.baseline_health_and_safety_24);
 
-        if (holder.mType.equals("phone")) {
-            holder.mImageButton.setImageResource(R.drawable.ic_baseline_local_phone_24_purple);
+        switch (holder.mType) {
+            case "phone":
+                holder.mImageButton.setImageResource(R.drawable.ic_baseline_local_phone_24_purple);
 
-            holder.mImageButton.setOnClickListener(v -> { // Phone call
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String s = holder.mNumberLink;
-                s = "tel:" + s;
-                callIntent.setData(Uri.parse(s));
-                context.startActivity(callIntent);
-            });
+                holder.mImageButton.setOnClickListener(v -> { // Phone call
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String s = holder.mNumberLink;
+                    s = "tel:" + s;
+                    callIntent.setData(Uri.parse(s));
+                    context.startActivity(callIntent);
+                });
 
-            holder.mContentView.setOnClickListener(v -> { // Phone call
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String s = holder.mNumberLink;
-                s = "tel:" + s;
-                callIntent.setData(Uri.parse(s));
-                context.startActivity(callIntent);
-            });
+                holder.mContentView.setOnClickListener(v -> { // Phone call
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String s = holder.mNumberLink;
+                    s = "tel:" + s;
+                    callIntent.setData(Uri.parse(s));
+                    context.startActivity(callIntent);
+                });
 
-            holder.mIconView.setOnClickListener(v -> { // Phone call
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String s = holder.mNumberLink;
-                s = "tel:" + s;
-                callIntent.setData(Uri.parse(s));
-                context.startActivity(callIntent);
-            });
-        }
-        else if (holder.mType.equals("link")) {
-            holder.mImageButton.setImageResource(R.drawable.ic_baseline_link_24_purple);
+                holder.mIconView.setOnClickListener(v -> { // Phone call
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String s = holder.mNumberLink;
+                    s = "tel:" + s;
+                    callIntent.setData(Uri.parse(s));
+                    context.startActivity(callIntent);
+                });
+                break;
+            case "link":
+                holder.mImageButton.setImageResource(R.drawable.ic_baseline_link_24_purple);
 
-            // Navigate to website when clicked
-            holder.mImageButton.setOnClickListener(v -> {
-                String url = holder.mNumberLink;
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            });
+                // Navigate to website when clicked
+                holder.mImageButton.setOnClickListener(v -> {
+                    String url = holder.mNumberLink;
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    context.startActivity(i);
+                });
 
-            holder.mContentView.setOnClickListener(v -> {
-                String url = holder.mNumberLink;
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            });
+                holder.mContentView.setOnClickListener(v -> {
+                    String url = holder.mNumberLink;
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    context.startActivity(i);
+                });
 
-            holder.mIconView.setOnClickListener(v -> {
-                String url = holder.mNumberLink;
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            });
+                holder.mIconView.setOnClickListener(v -> {
+                    String url = holder.mNumberLink;
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    context.startActivity(i);
+                });
+                break;
+            case "app":
+                holder.mImageButton.setImageResource(R.drawable.ic_baseline_link_24_purple);
+
+                // Open app when clicked
+                holder.mContentView.setOnClickListener(v -> {
+                    String pack = holder.mNumberLink;
+                    Intent i = context.getPackageManager().getLaunchIntentForPackage(pack);
+                    if (i == null) {
+                        String url = "https://play.google.com/store/apps/details?id=" + pack + "&hl=en_US&gl=US";
+                        i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                    }
+                    context.startActivity(i);
+                });
+
+                holder.mImageButton.setOnClickListener(v -> {
+                    String pack = holder.mNumberLink;
+                    Intent i = context.getPackageManager().getLaunchIntentForPackage(pack);
+                    if (i == null) {
+                        String url = "https://play.google.com/store/apps/details?id=" + pack + "&hl=en_US&gl=US";
+                        i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                    }
+                    context.startActivity(i);
+                });
+
+                holder.mIconView.setOnClickListener(v -> {
+                    String pack = holder.mNumberLink;
+                    Intent i = context.getPackageManager().getLaunchIntentForPackage(pack);
+                    if (i == null) {
+                        String url = "https://play.google.com/store/apps/details?id=" + pack + "&hl=en_US&gl=US";
+                        i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                    }
+                    context.startActivity(i);
+                });
+                break;
         }
     }
 
