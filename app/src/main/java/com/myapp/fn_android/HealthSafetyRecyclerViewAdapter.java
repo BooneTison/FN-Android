@@ -118,7 +118,7 @@ public class HealthSafetyRecyclerViewAdapter extends RecyclerView.Adapter<Health
                 });
                 break;
             case "app":
-                holder.mImageButton.setImageResource(R.drawable.ic_baseline_link_24_purple);
+                holder.mImageButton.setImageResource(R.drawable.ic_baseline_exit_to_app_24);
 
                 // Open app when clicked
                 holder.mContentView.setOnClickListener(v -> {
