@@ -49,15 +49,19 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         holder.mHoursView.setText(ourList.get(position)[1]);
 
         holder.mContentView.setOnClickListener(v -> { // Navigate to detail page
-            Bundle bundle = new Bundle();
-            bundle.putString("eventName",holder.mContentView.getText().toString());
-            Navigation.findNavController(v).navigate(R.id.eventsDetailFragment,bundle);
+            if (!holder.mContentView.getText().toString().equals("No events found")) {
+                Bundle bundle = new Bundle();
+                bundle.putString("eventName", holder.mContentView.getText().toString());
+                Navigation.findNavController(v).navigate(R.id.eventsDetailFragment, bundle);
+            }
         });
 
         holder.mHoursView.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("eventName",holder.mContentView.getText().toString());
-            Navigation.findNavController(v).navigate(R.id.eventsDetailFragment,bundle);
+            if (!holder.mContentView.getText().toString().equals("No events found")) {
+                Bundle bundle = new Bundle();
+                bundle.putString("eventName", holder.mContentView.getText().toString());
+                Navigation.findNavController(v).navigate(R.id.eventsDetailFragment, bundle);
+            }
         });
     }
 
