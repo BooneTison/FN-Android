@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".HoursDetailFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -122,11 +121,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:contentDescription="@string/hours_text"
         app:layout_constraintBottom_toTopOf="@+id/location"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phonenumber"
-        android:contentDescription="@string/hours_text" />
+        app:layout_constraintTop_toBottomOf="@+id/phonenumber" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
