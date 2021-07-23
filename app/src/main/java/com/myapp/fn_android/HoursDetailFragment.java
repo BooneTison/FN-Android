@@ -228,20 +228,24 @@ public class HoursDetailFragment extends Fragment {
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             TextView textView = requireView().findViewById(R.id.phonenumber);
             String s = textView.getText().toString();
-            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
-            s = "tel:" + s;
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
+            if (!s.equals("")) {
+                s = s.substring(0, 3) + s.substring(4, 7) + s.substring(8);
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
+                startActivity(callIntent);
+            }
         });
 
         TextView phoneText = view.findViewById(R.id.phonenumber);
         phoneText.setOnClickListener(v -> {
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             String s = phoneText.getText().toString();
-            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
-            s = "tel:" + s;
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
+            if (!s.equals("")) {
+                s = s.substring(0, 3) + s.substring(4, 7) + s.substring(8);
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
+                startActivity(callIntent);
+            }
         });
 
         // Navigate to website when clicked
