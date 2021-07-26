@@ -69,10 +69,8 @@ public class CampusMapFragment extends Fragment {
     final int medHeight= 75;
     final int smallWidth= 50;
     final int smallHeight= 50;
-    final int tinyHeight=35;
-    final int tinyWidth=35;
-    // Declare a variable for the cluster manager.
-    //private ClusterManager<MyItem> clusterManager;
+    //final int tinyHeight=35;
+    //final int tinyWidth=35;
     List<Marker> mapMarkers = new ArrayList<>();
     List<Marker> deletedMarkers = new ArrayList<>();
     List<Marker> searchMarkers = new ArrayList<>();
@@ -101,7 +99,6 @@ public class CampusMapFragment extends Fragment {
                 getLocation();
             }
 
-            //LatLng furman = new LatLng(latitude, longitude);
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(furman));
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
 
@@ -132,7 +129,6 @@ public class CampusMapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
     }
 
@@ -298,7 +294,6 @@ public class CampusMapFragment extends Fragment {
                         String name = stopObject.getString("name");
                         String nickname = stopObject.getString("nickname");
                         String category = stopObject.getString("category");
-                        String location = stopObject.getString("location");
                         String frequency = stopObject.getString("frequency");
 
                         if (nickname.equals("null")) {
@@ -398,7 +393,6 @@ public class CampusMapFragment extends Fragment {
                         LatLng loc = new LatLng(stopObject.getDouble("latitude"), stopObject.getDouble("longitude"));
                         String name = stopObject.getString("fullname");
                         String nickname = stopObject.getString("name");
-                        String location = stopObject.getString("location");
                         String frequency = stopObject.getString("frequency");
                         if (nickname.equals("null")) {
                             nickname = "";
