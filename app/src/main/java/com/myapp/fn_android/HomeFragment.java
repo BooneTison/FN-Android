@@ -123,6 +123,7 @@ public class HomeFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().setTitle(R.string.app_name);
 
         view.findViewById(R.id.athletics_button).setOnClickListener(v -> NavHostFragment.findNavController(HomeFragment.this)
                 .navigate(R.id.action_homeFragment_to_athleticsFragment));
@@ -208,6 +209,7 @@ public class HomeFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {

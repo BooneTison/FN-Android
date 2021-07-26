@@ -184,6 +184,7 @@ public class DiningOffCampusFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -218,6 +219,7 @@ public class DiningOffCampusFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -284,6 +286,7 @@ public class DiningOffCampusFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -300,6 +303,8 @@ public class DiningOffCampusFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(buildingName);
+
         Button mapButton = view.findViewById(R.id.mapviewButton);
         Bundle bundle = new Bundle();
         ExecutorService executor = Executors.newSingleThreadExecutor();

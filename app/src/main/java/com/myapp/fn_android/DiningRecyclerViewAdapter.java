@@ -205,6 +205,30 @@ public class DiningRecyclerViewAdapter extends RecyclerView.Adapter<DiningRecycl
                     if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
                     else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
                 });
+
+                holder.mBusyView.setOnClickListener(v -> { // Navigate to detail page
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", id);
+                    bundle.putString("name", holder.mContentView.getText().toString());
+                    if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                    else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                });
+
+                holder.mImageView.setOnClickListener(v -> { // Navigate to detail page
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", id);
+                    bundle.putString("name", holder.mContentView.getText().toString());
+                    if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                    else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                });
+
+                holder.mProgressBar.setOnClickListener(v -> { // Navigate to detail page
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", id);
+                    bundle.putString("name", holder.mContentView.getText().toString());
+                    if (location.get().contains("Off Campus")) Navigation.findNavController(v).navigate(R.id.papaJohnsFragment,bundle);
+                    else Navigation.findNavController(v).navigate(R.id.diningDetailFragment,bundle);
+                });
             }
         }
     }

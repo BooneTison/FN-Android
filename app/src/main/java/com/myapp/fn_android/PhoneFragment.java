@@ -162,6 +162,7 @@ public class PhoneFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -175,6 +176,10 @@ public class PhoneFragment extends Fragment {
             e.printStackTrace();
             return "I died";
         }
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceBundle) {
+        requireActivity().setTitle(R.string.phone_text);
     }
 
 

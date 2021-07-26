@@ -202,6 +202,7 @@ public class HoursDetailFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -220,25 +221,31 @@ public class HoursDetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(buildingName);
+
         ImageButton button = view.findViewById(R.id.phoneButton);
         button.setOnClickListener(v -> { // Phone call
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             TextView textView = requireView().findViewById(R.id.phonenumber);
             String s = textView.getText().toString();
-            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
-            s = "tel:" + s;
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
+            if (!s.equals("")) {
+                s = s.substring(0, 3) + s.substring(4, 7) + s.substring(8);
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
+                startActivity(callIntent);
+            }
         });
 
         TextView phoneText = view.findViewById(R.id.phonenumber);
         phoneText.setOnClickListener(v -> {
             Intent callIntent = new Intent(Intent.ACTION_DIAL);
             String s = phoneText.getText().toString();
-            s = s.substring(0,3) + s.substring(4,7) + s.substring(8);
-            s = "tel:" + s;
-            callIntent.setData(Uri.parse(s));
-            startActivity(callIntent);
+            if (!s.equals("")) {
+                s = s.substring(0, 3) + s.substring(4, 7) + s.substring(8);
+                s = "tel:" + s;
+                callIntent.setData(Uri.parse(s));
+                startActivity(callIntent);
+            }
         });
 
         // Navigate to website when clicked

@@ -74,7 +74,6 @@ public class DatesFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         setHasOptionsMenu(true); // IMPORTANT
-
     }
 
     @Override
@@ -157,6 +156,9 @@ public class DatesFragment extends Fragment {
                         }
                     }
                 }
+                else {
+                    datesList.add(new String[]{"No dates found","",""});
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -197,6 +199,7 @@ public class DatesFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -213,6 +216,8 @@ public class DatesFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.dates_text);
+
         // Open the filter page
         ImageButton filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {

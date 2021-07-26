@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -121,6 +122,7 @@ public class DiningFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -136,5 +138,7 @@ public class DiningFragment extends Fragment {
         }
     }
 
-
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.dining_text);
+    }
 }

@@ -69,7 +69,6 @@ public class EventsSyncDINFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
     }
 
     @Override
@@ -128,6 +127,11 @@ public class EventsSyncDINFragment extends Fragment {
                         else if (check == 2) weekList.add(new String[]{jsonObject.getString("title"),date + " " + hoursTime.toStringHoursOnly()});
                     }
                 }
+                else {
+                    todayList.add(new String[]{"No events found",""});
+                    tomList.add(new String[]{"No events found",""});
+                    weekList.add(new String[]{"No events found",""});
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -166,6 +170,7 @@ public class EventsSyncDINFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -184,6 +189,8 @@ public class EventsSyncDINFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(R.string.syncdin_text);
+
         // Navigate to website when clicked
         Button link = view.findViewById(R.id.linkButton);
         link.setOnClickListener(v -> {

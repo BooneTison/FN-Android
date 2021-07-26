@@ -111,6 +111,8 @@ public class EventsDetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        requireActivity().setTitle(eventName);
+
         // Set the calendar button action
         view.findViewById(R.id.calendarButton).setOnClickListener(v -> {
             Intent insertCalendarIntent = new Intent(Intent.ACTION_INSERT);
@@ -181,6 +183,7 @@ public class EventsDetailFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {

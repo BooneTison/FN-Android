@@ -66,6 +66,7 @@ public class TransportationFragment extends Fragment {
     TextView saferideText;
     TextView trolleyText;
     TextView walmartText;
+    TextView busText;
     List<Marker> placedMarkers = new ArrayList<>();
     ConstraintLayout noDataLayout;
 
@@ -134,7 +135,9 @@ public class TransportationFragment extends Fragment {
         saferideText = view.findViewById(R.id.saferideText);
         walmartText = view.findViewById(R.id.walmartText);
         trolleyText = view.findViewById(R.id.trolleyText);
+        busText = view.findViewById(R.id.busText);
         noDataLayout = view.findViewById(R.id.NoDataLayout);
+        requireActivity().setTitle(R.string.transportation_text);
     }
 
     private void OnGPS() {
@@ -184,7 +187,6 @@ public class TransportationFragment extends Fragment {
                             case "Bus 503":
                             case "503 Bus":
                                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-                                route = stopObject.getString("eta");
                                 break;
                             case "Daily Shuttle":
                             case "Daily Shuttle ":
@@ -219,6 +221,8 @@ public class TransportationFragment extends Fragment {
             List<MarkerOptions> list = new ArrayList<>();
             boolean noData = false;
             try {
+                List<String> vehicles = new ArrayList<>();
+                vehicles.add("TROLLEY"); vehicles.add("SAFERIDE"); vehicles.add("WALMART"); vehicles.add("503 BUS");
                 // Returns most recent location for each shuttle
                 String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
                 if (!service.equals("]")) {
@@ -245,6 +249,11 @@ public class TransportationFragment extends Fragment {
                                 sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
                                 icon = BitmapDescriptorFactory.fromBitmap(sb);
                                 break;
+                            case "503 BUS":
+                                b = BitmapFactory.decodeResource(getResources(),R.drawable.greenlink);
+                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
+                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                break;
                             default:
                                 b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
                                 sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
@@ -263,6 +272,9 @@ public class TransportationFragment extends Fragment {
                                 case "WALMART":
                                     walmartText.setText(R.string.walmart_running_text);
                                     break;
+                                case "503 BUS":
+                                    busText.setText(R.string.bus_running_text);
+                                    break;
                             }
                         }
                         else {
@@ -276,8 +288,18 @@ public class TransportationFragment extends Fragment {
                                 case "WALMART":
                                     walmartText.setText(R.string.walmart_not_running_text);
                                     break;
+                                case "503 BUS":
+                                    busText.setText(R.string.bus_not_running_text);
+                                    break;
                             }
                         }
+                        vehicles.remove(name);
+                    }
+                    if (vehicles.size() < 4) { // At least one shuttle has data, but others might not and need to be set to inactive
+                        if (vehicles.contains("SAFERIDE")) saferideText.setText(R.string.saferide_not_running_text);
+                        if (vehicles.contains("TROLLEY")) trolleyText.setText(R.string.trolley_not_running_text);
+                        if (vehicles.contains("WALMART")) walmartText.setText(R.string.walmart_not_running_text);
+                        if (vehicles.contains("503 BUS")) busText.setText(R.string.bus_not_running_text);
                     }
                 }
                 else { // No data found, put up the splash screen
@@ -316,6 +338,7 @@ public class TransportationFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
+            if (brack == -1) return "]"; // Empty php file
             line = line.substring(brack,line.length()-1);
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -351,10 +374,13 @@ public class TransportationFragment extends Fragment {
 
             StringBuilder str = new StringBuilder("[");
             int brack = line.indexOf("[");
-            line = line.substring(brack,line.length()-1);
+            if (brack == -1) return "]"; // Empty php file
+            int brack2 = line.indexOf("]");
+            line = line.substring(brack,brack2+1);
             boolean foundSR = false;
             boolean foundTR = false;
             boolean foundWM = false;
+            boolean foundBU = false;
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -370,7 +396,11 @@ public class TransportationFragment extends Fragment {
                     str.append(jsonObject.toString()).append(",");
                     foundWM = true;
                 }
-                if (foundSR && foundTR && foundWM)
+                else if (jsonObject.getString("vehicle").equals("503 Bus") && !foundBU) {
+                    str.append(jsonObject.toString()).append(",");
+                    foundBU = true;
+                }
+                if (foundSR && foundTR && foundWM && foundBU)
                     break;
             }
             str = new StringBuilder(str.substring(0, str.length() - 1));
@@ -383,7 +413,7 @@ public class TransportationFragment extends Fragment {
     }
 
     private boolean updatedRecently(String inputDate) {
-        final int TIME_FRAME = 20;
+        final int TIME_FRAME = 30;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss", Locale.US);
         String todayDate = sdf.format(Calendar.getInstance().getTime());
         int tYear = Integer.parseInt(todayDate.substring(0,4));
