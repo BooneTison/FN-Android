@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,8 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,20 +28,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.internal.IGoogleMapDelegate;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.ClusterItem;
-import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -82,12 +79,18 @@ public class CampusMapFragment extends Fragment {
     final int tinyWidth=35;
     // Declare a variable for the cluster manager.
     //private ClusterManager<MyItem> clusterManager;
-    List<Marker> placedMarkers = new ArrayList<>();
+    List<Marker> mapMarkers = new ArrayList<Marker>();
+    List<Marker> deletedMarkers = new ArrayList<>();
+    List<Marker> searchMarkers = new ArrayList<>();
     float zoom;
     boolean level;
-
-
+  Marker marker;
+    RecyclerView recyclerMenuView ;
+    List<MarkerOptions> list;
+ArrayAdapter<String> arrayAdapter;
+    List<String[]> stringList;
     SearchView searchView;
+
 
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -103,7 +106,6 @@ public class CampusMapFragment extends Fragment {
          */
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            mMap=googleMap;
             boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
             .getString(R.string.style_json))); // Remove built-in points of interest
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -120,40 +122,30 @@ public class CampusMapFragment extends Fragment {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
 
             if (!buildingName.equals("")) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(furman, 16));
-                googleMap.addMarker(new MarkerOptions().position(furman).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
+                LatLng latLng = new LatLng(latitude,longitude);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+                googleMap.addMarker(new MarkerOptions().position(latLng).title(buildingName).icon(BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_BLUE)));
-
             }
+
             else {
 
-                /*final Handler handler = new Handler();
-                final int delay = 1000; // 1000 milliseconds == 1 second
-                handler.postDelayed(new Runnable() { // Runs every interval according to delay
-                    @Override
-                    public void run() {
+
+                LatLng curPos = new LatLng(userLatitude, userLongitude);
+                Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.paladinx3);
+                Bitmap sb = Bitmap.createScaledBitmap(b, 75, 75, false);
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
+                googleMap.addMarker(new MarkerOptions().position(curPos).title("Current Position").icon(icon));
+
+
+                googleMap.setOnCameraIdleListener(() -> {
+                    if (searchMarkers.isEmpty()) {
                         addBuildings(googleMap);
                         addFood(googleMap);
-                        Toast.makeText(requireContext(), "10 Seconds", Toast.LENGTH_SHORT).show();
-                        handler.postDelayed(this, delay);
                     }
-                }
-                    , delay);*/
-
-                //addBuildings(googleMap);
-                addFood(googleMap);
+                });
             }
-
-            LatLng curPos = new LatLng(userLatitude, userLongitude);
-            Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.paladinx3);
-            Bitmap sb = Bitmap.createScaledBitmap(b, 75, 75, false);
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(sb);
-            googleMap.addMarker(new MarkerOptions().position(curPos).title("Current Position").icon(icon));
-
-            googleMap.setOnCameraIdleListener(() -> {
-                addBuildings(googleMap);
-                addFood(googleMap);
-            });
+            mMap=googleMap;
 
         }
     };
@@ -163,13 +155,14 @@ public class CampusMapFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
+      //  arrayAdapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, stringList);
+       // recyclerMenuView.setAdapter(arrayAdapter);
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         setHasOptionsMenu(true);
     }
 
-    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.actionSearch);
@@ -178,23 +171,38 @@ public class CampusMapFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                //arrayAdapter.getFilter().filter(query);
+                //return true;
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText,searchBarList, 0);
+                if (!newText.equals(""))
+                    searchBAR(newText, mMap);
+                else {
+                    while (!searchMarkers.isEmpty()) {
+                        searchMarkers.remove(0).remove();
+                    }
+                    addBuildings(mMap);
+                    addFood(mMap);
+                }
+                //filter(newText);
                 return false;
             }
         });
     }
-    private void filter(String text, List<String[]> list, int type) {
+
+   /* private void filter(String text) {
         List<String[]> filteredlist = new ArrayList<>();
-        for (String[] arr : list) {
+        for (String[] arr : stringList) {
             if (arr[0].toLowerCase().contains(text.toLowerCase())) {
                 filteredlist.add(arr);
-            }    }
-    }
+            }
+        }
+        adapter.filterList(filteredlist);
+    }*/
 
     @Nullable
     @Override
@@ -202,6 +210,7 @@ public class CampusMapFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_campus_map, container, false);
+       recyclerMenuView = view.findViewById(R.id.search_list);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             latitude = bundle.getDouble("latitude");
@@ -222,6 +231,9 @@ public class CampusMapFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+        requireActivity().setTitle(R.string.map_text);
+
+
     }
 
     private void OnGPS() {
@@ -251,43 +263,66 @@ public class CampusMapFragment extends Fragment {
         }
     }
 
-    private void searchBAR(@NonNull GoogleMap googleMap) {
+    private void searchBAR(String text, GoogleMap map) {
+        for (int i = 0; i < mapMarkers.size(); i++)
+            deletedMarkers.add(mapMarkers.get(i));
+        while (!mapMarkers.isEmpty()) {
+            mapMarkers.remove(0).remove();
+        }
+        while (!searchMarkers.isEmpty()) {
+            searchMarkers.remove(0).remove();
+        }
+        List <MarkerOptions> mo = new ArrayList<>();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            List<MarkerOptions> list = new ArrayList<>();
-            List<Marker> placedMarkers = new ArrayList<>();
             try {
-                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
+                String service = makeServiceCall("http://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
                 if (!service.equals("]")) {
-                    JSONArray stopArray = new JSONArray(service);
-                    for (int i = 0; i < stopArray.length(); i++) {
-                        JSONObject stopObject = stopArray.getJSONObject(i);
-                        LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
-                        String name = stopObject.getString("fullname");
-                        String nickname = stopObject.getString("name");
-                        if (nickname.equals("null")){
-                            nickname="";
+                    JSONArray jsonArray = new JSONArray(service);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (jsonObject.getString("name").toLowerCase().contains(text.toLowerCase()) ||
+                                jsonObject.getString("nickname").toLowerCase().contains(text.toLowerCase())) {
+                            LatLng loc = new LatLng(jsonObject.getDouble("latitude"), jsonObject.getDouble("longitude"));
+                            String name = jsonObject.getString("name");
+                            String nickname = jsonObject.getString("nickname");
+                            if (nickname.equals("null")) {
+                                nickname = "";
+                            }
+                            MarkerOptions m = new MarkerOptions().position(loc).title(name).icon(BitmapDescriptorFactory.defaultMarker(
+                                    BitmapDescriptorFactory.HUE_RED)).snippet(nickname);
+                            mo.add(m);
                         }
-                        BitmapDescriptor icon;
-                        switch (nickname) {
-                            default:
-                                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-                                break;
+                    }
+                }
+            service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantGet.php");
+            if (!service.equals("]")) {
+                JSONArray jsonArray = new JSONArray(service);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (jsonObject.getString("fullname").toLowerCase().contains(text.toLowerCase()) ||
+                            jsonObject.getString("name").toLowerCase().contains(text.toLowerCase())) {
+                        LatLng loc = new LatLng(jsonObject.getDouble("latitude"), jsonObject.getDouble("longitude"));
+                        String name = jsonObject.getString("fullname");
+                        String nickname = jsonObject.getString("name");
+                        if (nickname.equals("null")) {
+                            nickname = "";
                         }
-                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                        MarkerOptions m = new MarkerOptions().position(loc).title(name).icon(BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_RED)).snippet(nickname);
+                        mo.add(m);
                     }
                 }
             }
+        }
             catch (Exception e) {
                 e.printStackTrace();
             }
-            handler.post(() -> {
-                while (!list.isEmpty())
-                    googleMap.addMarker(list.remove(0));
-                while (!list.isEmpty())
-                    placedMarkers.add(googleMap.addMarker(list.remove(0)));
-
+            handler.post(() -> { // Update UI
+                while (!mo.isEmpty()) {
+                    searchMarkers.add(map.addMarker(mo.remove(0)));
+                }
             });
         });
     }
@@ -297,7 +332,7 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            List<MarkerOptions> list = new ArrayList<>();
+            List<MarkerOptions> buildList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/buildingGet.php");
                 if (!service.equals("]")) {
@@ -306,8 +341,7 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                         JSONObject stopObject = stopArray.getJSONObject(i);
                         LatLng loc = new LatLng(stopObject.getDouble("latitude"), stopObject.getDouble("longitude"));
 
-                        //String hours= stopObject.getString("hasHours");
-                        // if(hours.equals("0")){
+
                         String name = stopObject.getString("name");
                         String nickname = stopObject.getString("nickname");
                         String category = stopObject.getString("category");
@@ -384,7 +418,7 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                                 break;
                         }
 
-                        list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                        buildList.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
 
                     }
                 }
@@ -395,8 +429,8 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                 e.printStackTrace();
             }
             handler.post(() -> {
-                while (!list.isEmpty())
-                    googleMap.addMarker(list.remove(0));
+                while (!buildList.isEmpty())
+                    mapMarkers.add(googleMap.addMarker(buildList.remove(0)));
             });
         });
     }
@@ -404,10 +438,11 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
 
     private void addFood(@NonNull GoogleMap googleMap) {
         int boo = getZoom(googleMap);
+        //marker= new Marker();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
-            List<MarkerOptions> list = new ArrayList<>();
+             List<MarkerOptions> foodList = new ArrayList<>();
             try {
                 String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/restaurantGet.php");
                 if (!service.equals("]")) {
@@ -452,12 +487,8 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                                         break;
 
                                 }
-                                list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
-                                if (location.equals("in the PalaDen, lower level of Trone")|| location.equals("next to PalaDen, lower level of Trone")){
-                                    //not working as of 7/15
-                                    list.remove(location.equals("in the PalaDen, lower level of Trone"));
-                                    list.remove(location.equals("next to PalaDen, lower level of Trone"));
-                                }
+                                foodList.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+
                             }
                             else {
                                 switch (frequency) {
@@ -487,7 +518,8 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                                         break;
 
                                 }
-                                list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+                                foodList.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(nickname));
+
                             }
 
                     }
@@ -498,18 +530,21 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
                 e.printStackTrace();
             }
             handler.post(() -> {
-                while (!list.isEmpty())
-                    googleMap.addMarker(list.remove(0));
-                while (!placedMarkers.isEmpty())
-                    placedMarkers.remove(0).remove();
+                while (!foodList.isEmpty())
+                    mapMarkers.add(googleMap.addMarker(foodList.remove(0)));
+
             });
         });
     }
 
+    public boolean isSearchSupported() {
+        return true;
+    }
 
     public boolean isZoomSupported(){
         return true;
     }
+
 
 
     public int getZoom(@NonNull GoogleMap googleMap){
@@ -522,7 +557,9 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
             else if (zoom > 16)
                 return 1;
             Toast.makeText(requireContext(), String.valueOf(zoom), Toast.LENGTH_SHORT).show();
+
         }
+
         return 0;
     }
 
@@ -560,6 +597,8 @@ private void addBuildings(@NonNull GoogleMap googleMap) {
             return "I died";
         }
     }
+
+
 
     }
 
