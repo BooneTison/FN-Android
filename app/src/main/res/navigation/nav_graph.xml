@@ -127,7 +127,7 @@
         android:id="@+id/mapFragment"
         android:name="com.myapp.fn_android.CampusMapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_transportation">
+        tools:layout="@layout/fragment_transportation_list">
         <action
             android:id="@+id/action_mapFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

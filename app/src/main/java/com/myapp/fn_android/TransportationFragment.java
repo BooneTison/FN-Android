@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -16,14 +18,17 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +42,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -60,15 +66,12 @@ public class TransportationFragment extends Fragment {
     double longitude = -82.4390771; // Default long, Library
     final int userIconWidth = 75;
     final int userIconHeight = 75;
-    final int shuttleIconWidth = 100;
-    final int shuttleIconHeight = 100;
 
-    TextView saferideText;
-    TextView trolleyText;
-    TextView walmartText;
-    TextView busText;
     List<Marker> placedMarkers = new ArrayList<>();
     ConstraintLayout noDataLayout;
+
+    List<String[]> vehicleList;
+    TransportationRecyclerViewAdapter adapter;
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -122,7 +125,39 @@ public class TransportationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_transportation, container, false);
+        View view = inflater.inflate(R.layout.fragment_transportation_list, container, false);
+
+        // Set the adapter
+        Context context = view.getContext();
+        RecyclerView recyclerMenuView = view.findViewById(R.id.vehicleList);
+        recyclerMenuView.setLayoutManager(new LinearLayoutManager(context));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            // Get the list of contacts
+            vehicleList = new ArrayList<>();
+            try {
+                String service = makeServiceCall("https://cs.furman.edu/~csdaemon/FUNow/vehicleNamesGet.php");
+                if (!service.equals("]")) {
+                    JSONArray jsonArray = new JSONArray(service);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String rgb = jsonObject.getString("colorRed") + "," + jsonObject.getString("colorGreen") + "," + jsonObject.getString("colorBlue");
+                        vehicleList.add(new String[]{jsonObject.getString("name"),jsonObject.getString("iconName"),rgb});
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            handler.post(() -> { // Update UI
+                recyclerMenuView.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
+                adapter = new TransportationRecyclerViewAdapter(vehicleList, 0, this.getContext());
+                recyclerMenuView.setAdapter(adapter);
+            });
+        });
+
+        return view;
     }
 
     @Override
@@ -132,10 +167,6 @@ public class TransportationFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
-        saferideText = view.findViewById(R.id.saferideText);
-        walmartText = view.findViewById(R.id.walmartText);
-        trolleyText = view.findViewById(R.id.trolleyText);
-        busText = view.findViewById(R.id.busText);
         noDataLayout = view.findViewById(R.id.NoDataLayout);
         requireActivity().setTitle(R.string.transportation_text);
     }
@@ -221,8 +252,6 @@ public class TransportationFragment extends Fragment {
             List<MarkerOptions> list = new ArrayList<>();
             boolean noData = false;
             try {
-                List<String> vehicles = new ArrayList<>();
-                vehicles.add("TROLLEY"); vehicles.add("SAFERIDE"); vehicles.add("WALMART"); vehicles.add("503 BUS");
                 // Returns most recent location for each shuttle
                 String service = makeServiceCallByVehicle("http://cs.furman.edu/~csdaemon/FUNow/shuttleGet.php?v=all");
                 if (!service.equals("]")) {
@@ -230,76 +259,32 @@ public class TransportationFragment extends Fragment {
                     for (int i = 0; i < stopArray.length(); i++) {
                         JSONObject stopObject = stopArray.getJSONObject(i);
                         LatLng loc = new LatLng(stopObject.getDouble("latitude"),stopObject.getDouble("longitude"));
-                        String name = stopObject.getString("vehicle").toUpperCase();
+                        String name = stopObject.getString("vehicle");
                         String time = stopObject.getString("updated");
                         BitmapDescriptor icon;
                         switch (name) {
-                            case "TROLLEY":
-                                Bitmap b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
-                                Bitmap sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
-                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                            case "Downtown Trolley":
+                                icon = vectorToBitmap(R.drawable.transport_arrow_down);
                                 break;
-                            case "SAFERIDE":
-                                b = BitmapFactory.decodeResource(getResources(),R.drawable.furmandiamond);
-                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
-                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                            case "SafeRide":
+                                icon = vectorToBitmap(R.drawable.transport_shield);
                                 break;
-                            case "WALMART":
-                                b = BitmapFactory.decodeResource(getResources(),R.drawable.walmart);
-                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
-                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                            case "Walmart Shuttle":
+                                icon = vectorToBitmap(R.drawable.transport_star);
                                 break;
-                            case "503 BUS":
-                                b = BitmapFactory.decodeResource(getResources(),R.drawable.greenlink);
-                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
-                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                            case "503 Bus":
+                                icon = vectorToBitmap(R.drawable.transport_arrow_circle);
+                                break;
+                            case "Daily Shuttle":
+                                icon = vectorToBitmap(R.drawable.transport_car);
                                 break;
                             default:
-                                b = BitmapFactory.decodeResource(getResources(),R.drawable.appicon512);
-                                sb = Bitmap.createScaledBitmap(b,shuttleIconWidth,shuttleIconHeight,false);
-                                icon = BitmapDescriptorFactory.fromBitmap(sb);
+                                icon = vectorToBitmap(R.drawable.appicon512);
                                 break;
                         }
                         if (updatedRecently(time)) {
                             list.add(new MarkerOptions().position(loc).title(name).icon(icon).snippet(time));
-                            switch (name) {
-                                case "SAFERIDE":
-                                    saferideText.setText(R.string.saferide_running_text);
-                                    break;
-                                case "TROLLEY":
-                                    trolleyText.setText(R.string.trolley_running_text);
-                                    break;
-                                case "WALMART":
-                                    walmartText.setText(R.string.walmart_running_text);
-                                    break;
-                                case "503 BUS":
-                                    busText.setText(R.string.bus_running_text);
-                                    break;
-                            }
                         }
-                        else {
-                            switch (name) {
-                                case "SAFERIDE":
-                                    saferideText.setText(R.string.saferide_not_running_text);
-                                    break;
-                                case "TROLLEY":
-                                    trolleyText.setText(R.string.trolley_not_running_text);
-                                    break;
-                                case "WALMART":
-                                    walmartText.setText(R.string.walmart_not_running_text);
-                                    break;
-                                case "503 BUS":
-                                    busText.setText(R.string.bus_not_running_text);
-                                    break;
-                            }
-                        }
-                        vehicles.remove(name);
-                    }
-                    if (vehicles.size() < 4) { // At least one shuttle has data, but others might not and need to be set to inactive
-                        if (vehicles.contains("SAFERIDE")) saferideText.setText(R.string.saferide_not_running_text);
-                        if (vehicles.contains("TROLLEY")) trolleyText.setText(R.string.trolley_not_running_text);
-                        if (vehicles.contains("WALMART")) walmartText.setText(R.string.walmart_not_running_text);
-                        if (vehicles.contains("503 BUS")) busText.setText(R.string.bus_not_running_text);
                     }
                 }
                 else { // No data found, put up the splash screen
@@ -381,18 +366,19 @@ public class TransportationFragment extends Fragment {
             boolean foundTR = false;
             boolean foundWM = false;
             boolean foundBU = false;
+            boolean foundDS = false;
             JSONArray jsonArray = new JSONArray(line);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString("vehicle").equals("saferide") && !foundSR) {
+                if (jsonObject.getString("vehicle").equals("SafeRide") && !foundSR) {
                     str.append(jsonObject.toString()).append(",");
                     foundSR = true;
                 }
-                else if (jsonObject.getString("vehicle").equals("trolley") && !foundTR) {
+                else if (jsonObject.getString("vehicle").equals("Downtown Trolley") && !foundTR) {
                     str.append(jsonObject.toString()).append(",");
                     foundTR = true;
                 }
-                else if (jsonObject.getString("vehicle").equals("walmart") && !foundWM) {
+                else if (jsonObject.getString("vehicle").equals("Walmart Shuttle") && !foundWM) {
                     str.append(jsonObject.toString()).append(",");
                     foundWM = true;
                 }
@@ -400,7 +386,11 @@ public class TransportationFragment extends Fragment {
                     str.append(jsonObject.toString()).append(",");
                     foundBU = true;
                 }
-                if (foundSR && foundTR && foundWM && foundBU)
+                else if (jsonObject.getString("vehicle").equals("Daily Shuttle") && !foundDS) {
+                    str.append(jsonObject.toString()).append(",");
+                    foundDS = true;
+                }
+                if (foundSR && foundTR && foundWM && foundBU && foundDS)
                     break;
             }
             str = new StringBuilder(str.substring(0, str.length() - 1));
@@ -434,5 +424,15 @@ public class TransportationFragment extends Fragment {
 
         if (tYear != iYear || tMonth != iMonth || tDay != iDay) return false; // not same day
         return secondsToday - secondsInput <= TIME_FRAME; // return if within time frame
+    }
+
+    private BitmapDescriptor vectorToBitmap(@DrawableRes int id) {
+        Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(),id,null);
+        assert vectorDrawable != null;
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),vectorDrawable.getIntrinsicHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0,0,canvas.getWidth(),canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

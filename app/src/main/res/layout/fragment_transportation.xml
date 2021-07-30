@@ -1,265 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/transparent"
-    tools:context=".TransportationFragment">
+    android:divider="@android:drawable/bottom_bar"
+    android:orientation="horizontal">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:context=".CampusMapFragment" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/halfScreenGuideline"
+    <ImageView
+        android:id="@+id/vehicleIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".85" />
+        android:layout_weight="0"
+        android:contentDescription="@string/transportation_text" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/LegendLayout"
-        android:layout_width="175dp"
-        android:layout_height="0dp"
-        android:background="@color/furman_light_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/halfScreenGuideline">
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/furman_purple"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/saferideText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/saferide_running_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/activityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_weight="0"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/furman_purple"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/walmartText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/walmart_running_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/saferideText" />
-
-        <TextView
-            android:id="@+id/trolleyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/trolley_running_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/walmartText" />
-
-        <TextView
-            android:id="@+id/busText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/bus_running_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trolleyText" />
-
-        <ImageView
-            android:id="@+id/saferideImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/saferide_running_text"
-            android:scaleType="fitCenter"
-            android:src="@drawable/furmandiamond"
-            app:layout_constraintBottom_toBottomOf="@+id/saferideText"
-            app:layout_constraintEnd_toStartOf="@+id/saferideText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/walmartImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/walmart_running_text"
-            android:scaleType="fitCenter"
-            android:src="@drawable/walmart"
-            app:layout_constraintBottom_toBottomOf="@+id/walmartText"
-            app:layout_constraintEnd_toStartOf="@+id/walmartText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/walmartText" />
-
-        <ImageView
-            android:id="@+id/trolleyImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/trolley_running_text"
-            android:scaleType="fitCenter"
-            android:src="@drawable/appicon512"
-            app:layout_constraintBottom_toBottomOf="@+id/trolleyText"
-            app:layout_constraintEnd_toStartOf="@+id/trolleyText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/trolleyText" />
-
-        <ImageView
-            android:id="@+id/busImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/bus_running_text"
-            android:scaleType="fitCenter"
-            android:src="@drawable/greenlink"
-            app:layout_constraintBottom_toBottomOf="@+id/busText"
-            app:layout_constraintEnd_toStartOf="@+id/busText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/busText" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/NoDataLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/noDataImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="500dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/transportation_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/hs_car" />
-
-        <TextView
-            android:id="@+id/noDataText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/no_data_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="23sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noDataImage" />
-
-        <TextView
-            android:id="@+id/saferideMorningText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="@string/schedule_saferide_morning_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noDataText" />
-
-        <TextView
-            android:id="@+id/saferideAfternoonText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="@string/schedule_saferide_afternoon_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/saferideMorningText" />
-
-        <TextView
-            android:id="@+id/saferideEveningText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="@string/schedule_saferide_evening_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/saferideAfternoonText" />
-
-        <TextView
-            android:id="@+id/walmartSText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="@string/schedule_walmart_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/saferideEveningText" />
-
-        <TextView
-            android:id="@+id/TrolleySText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="@string/schedule_trolley_text"
-            android:textColor="@color/furman_purple"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/walmartSText" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
