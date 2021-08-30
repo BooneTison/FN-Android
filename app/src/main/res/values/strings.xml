@@ -74,5 +74,10 @@
     <string name="schedule_trolley_text">Downtown Trolley: Friday &amp; Saturday from 10:00pm-2:00am</string>
     <string name="order_online_text">Order Online</string>
     <string name="order_phone_text">Order by Phone</string>
+    <string name="version_text">V 1.2</string>
+    <string name="dismiss_text">Dismiss</string>
+    <string name="credits1_text">Created by: Olivia Edwards, Boone Tison, Bryan Catron</string>
+    <string name="credits2_text">with the support of the Furman Department of Computer Science</string>
+    <string name="credits3_text">Report bugs to: furmannowapp@gmail.com</string>
 
 </resources>

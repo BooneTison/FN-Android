@@ -7,10 +7,12 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -190,6 +192,13 @@ public class HomeFragment extends Fragment {
             Drawable finalImage = image;
             handler.post(() -> imageView.setImageDrawable(finalImage));
         });
+
+        // Handle the credits page
+        TextView versionText = view.findViewById(R.id.version);
+        ConstraintLayout creditsLayout = view.findViewById(R.id.CreditsLayout);
+        Button dismissButton = view.findViewById(R.id.dismissButton);
+        versionText.setOnClickListener(v -> creditsLayout.setVisibility(View.VISIBLE));
+        dismissButton.setOnClickListener(V -> creditsLayout.setVisibility(View.INVISIBLE));
     }
 
     public static String makeServiceCall(String reqUrl) {
